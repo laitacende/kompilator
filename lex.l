@@ -22,6 +22,7 @@
 "WRITE"     { return WRITE; }
 
 [0-9]+      { yylval = atoi(yytext); return num; }
-.
+";"         { return yytext[0]; }
+.           {  }
 
 %%

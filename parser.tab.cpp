@@ -74,7 +74,8 @@
     #include <memory>
     #include <fstream>
 
-    #include "IOOperations.hpp"
+    #include "./inc/IOOperations.hpp"
+    #include "./CodeGenerator.hpp"
 
     extern int yylineno;
     extern int yylex();
@@ -82,7 +83,11 @@
 
     int yyerror(std::string s);
 
-#line 86 "parser.tab.cpp"
+    std::shared_ptr<CodeGenerator> codeGen = std::make_shared<CodeGenerator>();
+
+    std::vector<std::string> newSet;
+
+#line 91 "parser.tab.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -456,16 +461,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  8
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   15
+#define YYLAST   17
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  8
+#define YYNTOKENS  9
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  6
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  8
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  16
+#define YYNSTATES  17
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   262
@@ -485,7 +490,7 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     8,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -513,7 +518,7 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    26,    26,    27,    29,    30,    32,    34,    36
+       0,    31,    31,    32,    34,    35,    37,    39,    41
 };
 #endif
 
@@ -523,7 +528,8 @@ static const yytype_int8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "BEGIN_", "END", "VAR", "WRITE", "num",
-  "$accept", "program", "commands", "command", "value", "declarations", YY_NULLPTR
+  "';'", "$accept", "program", "commands", "command", "value",
+  "declarations", YY_NULLPTR
 };
 #endif
 
@@ -532,7 +538,7 @@ static const char *const yytname[] =
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_int16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,   260,   261,   262
+       0,   256,   257,   258,   259,   260,   261,   262,    59
 };
 # endif
 
@@ -550,8 +556,8 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -2,    -4,    -6,     8,     3,     0,    -6,     9,    -6,    -6,
-      -6,    -6,    -6,    -4,     1,    -6
+      -2,    -4,    -6,     8,     2,     0,    -6,     9,    -6,    -6,
+       3,    -6,    -6,    -4,    -6,     1,    -6
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -560,13 +566,13 @@ static const yytype_int8 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,     0,     8,     0,     0,     0,     5,     0,     1,     7,
-       6,     3,     4,     0,     0,     2
+       0,     3,     4,     0,     6,     0,     2
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -6,    -6,     2,    -5,    -6,    -6
+      -6,    -6,     4,    -5,    -6,    -6
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
@@ -580,34 +586,34 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      12,     1,     4,     2,    11,    15,     4,     4,     8,    12,
-       9,     0,    13,     0,     0,    14
+      12,     1,     4,     2,    11,    16,     4,     4,     8,     9,
+      12,    14,    13,     0,     0,     0,     0,    15
 };
 
 static const yytype_int8 yycheck[] =
 {
-       5,     3,     6,     5,     4,     4,     6,     6,     0,    14,
-       7,    -1,     3,    -1,    -1,    13
+       5,     3,     6,     5,     4,     4,     6,     6,     0,     7,
+      15,     8,     3,    -1,    -1,    -1,    -1,    13
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,     5,     9,     6,    10,    11,    13,     0,     7,
-      12,     4,    11,     3,    10,     4
+       0,     3,     5,    10,     6,    11,    12,    14,     0,     7,
+      13,     4,    12,     3,     8,    11,     4
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,     8,     9,     9,    10,    10,    11,    12,    13
+       0,     9,    10,    10,    11,    11,    12,    13,    14
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     5,     3,     2,     1,     2,     1,     0
+       0,     2,     5,     3,     2,     1,     3,     1,     0
 };
 
 
@@ -1303,19 +1309,19 @@ yyreduce:
   switch (yyn)
     {
   case 6:
-#line 32 "parser.ypp"
-                        { std::cout << yyvsp[0]; }
-#line 1309 "parser.tab.cpp"
-    break;
-
-  case 7:
-#line 34 "parser.ypp"
-                { yyval = yyvsp[0]; }
+#line 37 "parser.ypp"
+                           { codeGen->write(yyvsp[-1]); }
 #line 1315 "parser.tab.cpp"
     break;
 
+  case 7:
+#line 39 "parser.ypp"
+                { yyval = yyvsp[0]; }
+#line 1321 "parser.tab.cpp"
+    break;
 
-#line 1319 "parser.tab.cpp"
+
+#line 1325 "parser.tab.cpp"
 
       default: break;
     }
@@ -1547,7 +1553,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 38 "parser.ypp"
+#line 43 "parser.ypp"
 
 
 int yyerror (std::string s) {
@@ -1567,11 +1573,14 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    std::cout << "-------- Compiling... --------" << std::endl;
+    std::cout << "-------- ...Compiling... --------" << std::endl;
 
     yyparse();
 
     // error handling
-    // write to file
+    // write to file if no errors occured
+    codeGen->addInstruction("HALT");
+    io->writeCode(codeGen->getCode());
+    std::cout << "-------- Compilation successfull --------" << std::endl;
     return 0;
 }

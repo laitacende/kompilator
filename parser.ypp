@@ -5,13 +5,18 @@
     #include <memory>
     #include <fstream>
 
-    #include "IOOperations.hpp"
+    #include "./inc/IOOperations.hpp"
+    #include "./CodeGenerator.hpp"
 
     extern int yylineno;
     extern int yylex();
     extern FILE *yyin;
 
     int yyerror(std::string s);
+
+    std::shared_ptr<CodeGenerator> codeGen = std::make_shared<CodeGenerator>();
+
+    std::vector<std::string> newSet;
 %}
 
 %start program
@@ -24,12 +29,12 @@
 %%
 
 program:    VAR declarations BEGIN_ commands END
-            | BEGIN_ commands END;
+            | BEGIN_ commands END
 
 commands:   commands command
             | command
 
-command:    WRITE value { std::cout << $2; }
+command:    WRITE value';' { codeGen->write($2); }
 
 value:      num { $$ = $1; }
 
@@ -54,12 +59,14 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    std::cout << "-------- Compiling... --------" << std::endl;
+    std::cout << "-------- ...Compiling... --------" << std::endl;
 
     yyparse();
 
     // error handling
     // write to file if no errors occured
-    io->writeCode();
+    codeGen->addInstruction("HALT");
+    io->writeCode(codeGen->getCode());
+    std::cout << "-------- Compilation successfull --------" << std::endl;
     return 0;
 }
