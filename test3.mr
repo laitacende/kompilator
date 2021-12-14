@@ -1,0 +1,9 @@
+RESET a
+SWAP b
+RESET a
+INC a
+STORE b
+RESET a
+LOAD a
+PUT
+HALT

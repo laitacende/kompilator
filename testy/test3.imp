@@ -1,0 +1,7 @@
+VAR
+	n
+BEGIN
+	n ASSIGN 20;
+	WRITE n;
+
+END

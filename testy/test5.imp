@@ -1,0 +1,8 @@
+VAR
+	x, y
+BEGIN
+	x ASSIGN 5;
+	y ASSIGN 42;
+	WRITE x;
+	WRITE y;
+END
