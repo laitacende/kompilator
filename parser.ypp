@@ -1,0 +1,65 @@
+%{
+    #define YYSTYPE int
+    #include <iostream>
+    #include <string>
+    #include <memory>
+    #include <fstream>
+
+    #include "IOOperations.hpp"
+
+    extern int yylineno;
+    extern int yylex();
+    extern FILE *yyin;
+
+    int yyerror(std::string s);
+%}
+
+%start program
+%token BEGIN_ /* conflict with macro BEGIN in flex */
+%token END
+%token VAR
+%token WRITE
+%token num
+
+%%
+
+program:    VAR declarations BEGIN_ commands END
+            | BEGIN_ commands END;
+
+commands:   commands command
+            | command
+
+command:    WRITE value { std::cout << $2; }
+
+value:      num { $$ = $1; }
+
+declarations: %empty
+
+%%
+
+int yyerror (std::string s) {
+    std::cerr << "Error " << s << " in line " << yylineno - 1 << std::endl;
+    return 0;
+}
+
+int main(int argc, char** argv) {
+    // variable array
+
+    std::shared_ptr<IOOperations> io = std::make_shared<IOOperations>(argc, argv);
+    // read input file
+    yyin = io->readCode();
+
+    // check if file was read successfully
+    if (yyin == nullptr) {
+        return -1;
+    }
+
+    std::cout << "-------- Compiling... --------" << std::endl;
+
+    yyparse();
+
+    // error handling
+    // write to file if no errors occured
+    io->writeCode();
+    return 0;
+}
