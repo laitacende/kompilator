@@ -1,5 +1,4 @@
 %{
-    #define YYSTYPE int
     #include <iostream>
     #include <string>
     #include <memory>
@@ -14,31 +13,46 @@
 
     int yyerror(std::string s);
 
-    std::shared_ptr<CodeGenerator> codeGen = std::make_shared<CodeGenerator>();
+    std::shared_ptr<MemoryData> dataController = std::make_shared<MemoryData>();
+    std::shared_ptr<CodeGenerator> codeGen = std::make_shared<CodeGenerator>(dataController);
 
     std::vector<std::string> newSet;
 %}
+
+%union types {
+    std::string* pidentifier;
+    long long int num;
+}
 
 %start program
 %token BEGIN_ /* conflict with macro BEGIN in flex */
 %token END
 %token VAR
 %token WRITE
-%token num
+%token ASSIGN
+%token <num> num
+%token <pidentifier> pidentifier
+
+%type <num> value
+%type <num> identifier
 
 %%
 
 program:    VAR declarations BEGIN_ commands END
             | BEGIN_ commands END
 
+declarations: declarations',' pidentifier { codeGen->allocateVariable(*$3); }
+              | pidentifier     { codeGen->allocateVariable(*$1); }
+
 commands:   commands command
             | command
 
 command:    WRITE value';' { codeGen->write($2); }
+            | identifier ASSIGN num';' { codeGen->assignToVariable($1, $3); }
 
-value:      num { $$ = $1; }
+value:      identifier  /*num { $$ = allocateConstant($1); }*/
 
-declarations: %empty
+identifier:     pidentifier { $$ = codeGen->getAddress(*$1); }
 
 %%
 

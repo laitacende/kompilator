@@ -53,13 +53,27 @@ extern int yydebug;
     END = 259,
     VAR = 260,
     WRITE = 261,
-    num = 262
+    ASSIGN = 262,
+    num = 263,
+    pidentifier = 264
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+#line 22 "parser.ypp"
+union types
+{
+#line 22 "parser.ypp"
+
+    std::string* pidentifier;
+    long long int num;
+
+#line 73 "parser.tab.hpp"
+
+};
+#line 22 "parser.ypp"
+typedef union types YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
