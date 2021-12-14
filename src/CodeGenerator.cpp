@@ -74,11 +74,15 @@ long long int CodeGenerator::makeConstant(long long int val) {
 long long int CodeGenerator::allocateConstant(long long int value) {
     long long int address = memo->addConstant(value);
     if (address != -1) {
+        makeConstant(address);
+        addInstruction("SWAP c");
         // constant was allocated under address
         makeConstant(value); // result in register a
-        addInstruction("STORE " + std::to_string(address));
+        addInstruction("STORE c");
+    } else {
+        address = memo->getAddress(std::to_string(value));
     }
-    return value; // TODO handle errors, constant probably is somewhere
+    return address; // TODO handle errors, constant probably is somewhere, return
 }
 
 bool CodeGenerator::allocateVariable(std::string name) {
@@ -88,6 +92,7 @@ bool CodeGenerator::allocateVariable(std::string name) {
 
 bool CodeGenerator::assignToVariable(long long int addr, long long int val) {
     if (addr != -1) {
+        // TODO maybe check if const isn't in memo, that could save time (ale tylko dla duzych, trzeba popatrzec dla jakich)
         makeConstant(addr);
         addInstruction("SWAP c");
         makeConstant(val); // in register a

@@ -1,0 +1,7 @@
+VAR
+	x
+BEGIN
+	x ASSIGN 9;
+	WRITE 10;
+	WRITE x;
+END
