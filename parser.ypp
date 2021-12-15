@@ -33,11 +33,17 @@
 %token VAR
 %token WRITE
 %token ASSIGN
+%token PLUS
+%token MINUS
+%token TIMES
+%token DIV
+%token MOD
 %token <num> num
 %token <pidentifier> pidentifier
 
 %type <var> value
 %type <var> identifier
+%type <var> expression
 
 %%
 
@@ -65,11 +71,17 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                 yyerror("Variable " + $2->name +" is not initialized");
                               }
                             }
-            | identifier ASSIGN value';' {  codeGen->assignToVariable($1, $3);
-                                          }
+            | identifier ASSIGN expression';' {  codeGen->assignToVariable($1, $3); }
+
+expression: value /* TODO trzeba minus unarny */
+            | value PLUS value
+            | value MINUS value
+            | value TIMES value
+            | value DIV value
+            | value MOD value
 
 value:      identifier
-            | num { $$ = codeGen->allocateConstant($1); }
+            | num { $$ = codeGen->allocateConstant($1); } /* if it exists just return its address */
 
 identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                 if (var == nullptr && !error) {
@@ -104,7 +116,7 @@ int main(int argc, char** argv) {
     yyparse();
 
     // error handling
-    // write to file if no errors occured
+    // write to file if no errors occurred
     codeGen->addInstruction("HALT");
     if (!error) {
         io->writeCode(codeGen->getCode());

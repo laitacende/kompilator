@@ -94,12 +94,14 @@ Variable* CodeGenerator::allocateVariable(std::string name) {
 
 bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {
     // TODO var 2 could be variable too
-    if (var1 != nullptr && var2 != nullptr && var2->isConstant) {
+    if (var1 != nullptr && var2 != nullptr) {
         // TODO maybe check if const isn't in memo, that could save time (ale tylko dla duzych, trzeba popatrzec dla jakich)
         var1->isInit = true;
+        var1->val = var2->val;
         makeConstant(var1->address);
         addInstruction("SWAP c");
         makeConstant(var2->val); // in register a
+        //addInstruction("LOAD " + stdvar2->address);
         addInstruction("STORE c");
         return true;
     }
@@ -129,7 +131,6 @@ bool CodeGenerator::getConstant(std::string name) {
 bool CodeGenerator::write(Variable* var) {
     //makeConstant(val);
     // get from memory and load to a
-    // TODO jak zmienna to sprawdzic czy zainicjalizowana
     if (var->isVariable && !var->isInit) {
         return false;
     }
@@ -138,3 +139,5 @@ bool CodeGenerator::write(Variable* var) {
     addInstruction("PUT"); // output register A
     return true;
 }
+
+//bool CodeGenerator::add(Variable* var1, Variable)

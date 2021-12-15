@@ -1,6 +1,8 @@
+VAR
+	a, b
 BEGIN
-WRITE 13;
-WRITE 1;
-WRITE 0;
-WRITE 2;
+	a ASSIGN 2;
+	WRITE a;
+	b ASSIGN a;
+	WRITE b;
 END

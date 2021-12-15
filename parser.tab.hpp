@@ -54,8 +54,13 @@ extern int yydebug;
     VAR = 260,
     WRITE = 261,
     ASSIGN = 262,
-    num = 263,
-    pidentifier = 264
+    PLUS = 263,
+    MINUS = 264,
+    TIMES = 265,
+    DIV = 266,
+    MOD = 267,
+    num = 268,
+    pidentifier = 269
   };
 #endif
 
@@ -70,7 +75,7 @@ union types
     long long int num;
     Variable* var;
 
-#line 74 "parser.tab.hpp"
+#line 79 "parser.tab.hpp"
 
 };
 #line 24 "parser.ypp"
