@@ -51,7 +51,7 @@ declarations: declarations',' pidentifier { Variable* v = codeGen->allocateVaria
                                              }
                                             }
               | pidentifier     { Variable* v = codeGen->allocateVariable(*$1);
-                                    if (nullptr == v) {
+                                    if (nullptr == v && !error) {
                                         error = true;
                                         yyerror("Redeclaration of variable " + *$1);
                                     }
@@ -60,7 +60,7 @@ declarations: declarations',' pidentifier { Variable* v = codeGen->allocateVaria
 commands:   commands command
             | command
 
-command:    WRITE value';' { if (!codeGen->write($2)) {
+command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                 error = true;
                                 yyerror("Variable " + $2->name +" is not initialized");
                               }
@@ -72,7 +72,7 @@ value:      identifier
             | num { $$ = codeGen->allocateConstant($1); }
 
 identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
-                                if (var == nullptr) {
+                                if (var == nullptr && !error) {
                                     error = true;
                                     yyerror("Variable " + *$1 + " not defined");
                                  } else {

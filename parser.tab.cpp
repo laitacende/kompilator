@@ -1348,7 +1348,7 @@ yyreduce:
   case 5:
 #line 53 "parser.ypp"
                                 { Variable* v = codeGen->allocateVariable(*(yyvsp[0].pidentifier));
-                                    if (nullptr == v) {
+                                    if (nullptr == v && !error) {
                                         error = true;
                                         yyerror("Redeclaration of variable " + *(yyvsp[0].pidentifier));
                                     }
@@ -1358,7 +1358,7 @@ yyreduce:
 
   case 8:
 #line 63 "parser.ypp"
-                           { if (!codeGen->write((yyvsp[-1].var))) {
+                           { if (!codeGen->write((yyvsp[-1].var)) && !error) {
                                 error = true;
                                 yyerror("Variable " + (yyvsp[-1].var)->name +" is not initialized");
                               }
@@ -1382,7 +1382,7 @@ yyreduce:
   case 12:
 #line 74 "parser.ypp"
                             { Variable* var = codeGen->getVar(*(yyvsp[0].pidentifier));
-                                if (var == nullptr) {
+                                if (var == nullptr && !error) {
                                     error = true;
                                     yyerror("Variable " + *(yyvsp[0].pidentifier) + " not defined");
                                  } else {
