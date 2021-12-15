@@ -1,0 +1,15 @@
+VAR
+	a, b
+BEGIN
+	a ASSIGN 1 PLUS 9;
+	WRITE a;
+	b ASSIGN 3;
+	WRITE b;
+	a ASSIGN a PLUS 3;
+	WRITE a;
+	b ASSIGN 4;
+	WRITE b;
+	a ASSIGN b MINUS 1;
+	WRITE a;
+	WRITE 11;
+END

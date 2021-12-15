@@ -29,6 +29,7 @@ long long int CodeGenerator::makeConstant(long long int val) {
     // generate code to make constant (result in register A)
     // TODO make negation or sth for negative
     // clear register A
+    addInstruction("( const making " + std::to_string(val) + " )");
     addInstruction("RESET a");
     if (val == 0) {
         return 0;
@@ -75,6 +76,7 @@ long long int CodeGenerator::makeConstant(long long int val) {
 Variable* CodeGenerator::allocateConstant(long long int value) {
     long long int address = memo->addConstant(value);
     if (address != -1) {
+        addInstruction("( const alloc" + std::to_string(value) + " )");
         makeConstant(address);
         addInstruction("SWAP c");
         // constant was allocated under address
@@ -93,15 +95,20 @@ Variable* CodeGenerator::allocateVariable(std::string name) {
 }
 
 bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {
-    // TODO var 2 could be variable too
+    // TODO var 2 could be variable too -  this is probably handled
+    // TODO mozna wczytywac do rejestrow,a nie sa dwa razy do pamieci odwolywac
     if (var1 != nullptr && var2 != nullptr) {
         // TODO maybe check if const isn't in memo, that could save time (ale tylko dla duzych, trzeba popatrzec dla jakich)
         var1->isInit = true;
         var1->val = var2->val;
-        makeConstant(var1->address);
+        // result of expression is in a
+        addInstruction("( assign to " + var1->name + " val " + std::to_string(var2->val) + " )");
+        addInstruction("SWAP d"); // result of expression is in d
+        makeConstant(var1->address); // in register a
         addInstruction("SWAP c");
-        makeConstant(var2->val); // in register a
+        // first opt makeConstant(var2->val); // in register a
         //addInstruction("LOAD " + stdvar2->address);
+        addInstruction("SWAP d"); // result of expression
         addInstruction("STORE c");
         return true;
     }
@@ -113,6 +120,7 @@ long long int CodeGenerator::getAddress(std::string name) {
 }
 
 Variable* CodeGenerator::getVar(std::string name) {
+    // To wczytywac do jakiegos rejestru, najpierw a, pozniej b itp. i miec taki pseudo stos
     return memo->getVar(name);
 }
 
@@ -135,9 +143,57 @@ bool CodeGenerator::write(Variable* var) {
         return false;
     }
     makeConstant(var->address);
+    addInstruction("( write )");
     addInstruction("LOAD a");
     addInstruction("PUT"); // output register A
     return true;
 }
 
-//bool CodeGenerator::add(Variable* var1, Variable)
+// result in register a
+bool CodeGenerator::add(Variable* var1, Variable* var2) {
+    addInstruction("( dodawanie " + std::to_string(var1->val) + " " + std::to_string(var2->val) + " )");
+    // wynik mozna do jakiegos rejestry i wtedy z niego - chyba zrobione
+    if (var1 != nullptr && var2 != nullptr) {
+        makeConstant(var2->address);
+        addInstruction("LOAD a"); // value to a
+        addInstruction("SWAP c"); // store in b
+        makeConstant(var1->address); // in a
+        addInstruction("LOAD a");
+        addInstruction("ADD c"); // result in a
+        return true;
+    }
+    return false;
+}
+
+// result in register a
+bool CodeGenerator::subtract(Variable* var1, Variable* var2) {
+    addInstruction("( odejmowanie " + std::to_string(var1->val) + " " + std::to_string(var2->val) + " )");
+    if (var1 != nullptr && var2 != nullptr) {
+        makeConstant(var2->address);
+        addInstruction("LOAD a"); // value to a
+        addInstruction("SWAP c"); // store in b
+        makeConstant(var1->address); // in a
+        addInstruction("LOAD a");
+        addInstruction("SUB c"); // result in a
+        return true;
+    }
+    return false;
+}
+//
+//bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
+//    addInstruction("( mnozenie " + std::to_string(var1->val) + " " + std::to_string(var2->val) + " )");
+//    if (var1 != nullptr && var2 != nullptr) {
+//        // quick multiplying
+//        // makeConstant(var2->address); to raczej niepotrzebne operowac bedziemy na val
+//        // val of multiplier
+//        long long int multiplier = var2->val;
+//        while
+//            addInstruction("LOAD a"); // value to a
+//        addInstruction("SWAP c"); // store in b
+//        makeConstant(var1->address); // in a
+//        addInstruction("LOAD a");
+//        addInstruction("SUB c"); // result in a
+//        return true;
+//    }
+//    return false;
+//}

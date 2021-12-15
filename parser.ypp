@@ -74,8 +74,8 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
             | identifier ASSIGN expression';' {  codeGen->assignToVariable($1, $3); }
 
 expression: value /* TODO trzeba minus unarny */
-            | value PLUS value
-            | value MINUS value
+            | value PLUS value { codeGen->add($1, $3); }
+            | value MINUS value { codeGen->subtract($1, $3); }
             | value TIMES value
             | value DIV value
             | value MOD value

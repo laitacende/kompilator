@@ -21,6 +21,8 @@ public:
     Variable* allocateVariable(std::string name);
     bool assignToVariable(Variable* var1, Variable* var2);
     Variable* getVar(std::string name);
+    bool subtract(Variable* var1, Variable* var2);
+    bool add(Variable* var1, Variable* var2);
 private:
     std::vector<std::string> code;
     int offset;
