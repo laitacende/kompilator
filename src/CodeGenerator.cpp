@@ -1,5 +1,6 @@
 #include "../inc/CodeGenerator.hpp"
 #include "../inc/MemoryData.hpp"
+#include "../inc/Variable.hpp"
 
 #include <vector>
 #include <string>
@@ -71,7 +72,7 @@ long long int CodeGenerator::makeConstant(long long int val) {
     return val;
 }
 
-long long int CodeGenerator::allocateConstant(long long int value) {
+Variable* CodeGenerator::allocateConstant(long long int value) {
     long long int address = memo->addConstant(value);
     if (address != -1) {
         makeConstant(address);
@@ -79,31 +80,38 @@ long long int CodeGenerator::allocateConstant(long long int value) {
         // constant was allocated under address
         makeConstant(value); // result in register a
         addInstruction("STORE c");
-    } else {
-        address = memo->getAddress(std::to_string(value));
     }
-    return address; // TODO handle errors, constant probably is somewhere, return
+    return memo->getVar(std::to_string(value));
 }
 
-bool CodeGenerator::allocateVariable(std::string name) {
+Variable* CodeGenerator::allocateVariable(std::string name) {
     long long int address = memo->addVariable(name);
-    return address != -1; // TODO handle errors, constant probably is somewhere
+    if (address != -1) {
+        return memo->getVar(name);
+    }
+    return nullptr; // TODO handle errors, variable probably is somewhere
 }
 
-bool CodeGenerator::assignToVariable(long long int addr, long long int val) {
-    if (addr != -1) {
+bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {
+    // TODO var 2 could be variable too
+    if (var1 != nullptr && var2 != nullptr && var2->isConstant) {
         // TODO maybe check if const isn't in memo, that could save time (ale tylko dla duzych, trzeba popatrzec dla jakich)
-        makeConstant(addr);
+        var1->isInit = true;
+        makeConstant(var1->address);
         addInstruction("SWAP c");
-        makeConstant(val); // in register a
+        makeConstant(var2->val); // in register a
         addInstruction("STORE c");
         return true;
     }
-    return false;
+    return false; // variable not defined
 }
 
 long long int CodeGenerator::getAddress(std::string name) {
     return memo->getAddress(name);
+}
+
+Variable* CodeGenerator::getVar(std::string name) {
+    return memo->getVar(name);
 }
 
 bool CodeGenerator::getConstant(std::string name) {
@@ -118,11 +126,15 @@ bool CodeGenerator::getConstant(std::string name) {
 
 // ----------------------------------- OPERATIONS -------------------------------
 
-void CodeGenerator::write(long long int address) {
+bool CodeGenerator::write(Variable* var) {
     //makeConstant(val);
     // get from memory and load to a
     // TODO jak zmienna to sprawdzic czy zainicjalizowana
-    makeConstant(address);
+    if (var->isVariable && !var->isInit) {
+        return false;
+    }
+    makeConstant(var->address);
     addInstruction("LOAD a");
     addInstruction("PUT"); // output register A
+    return true;
 }

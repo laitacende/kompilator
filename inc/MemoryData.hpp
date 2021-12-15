@@ -16,6 +16,7 @@ public:
     //int initVariable(std::string name, long long int val);
     long long int currentAddress = 0;
     long long int getAddress(std::string name);
+    Variable* getVar(std::string name);
 private:
     std::unordered_map<std::string, std::shared_ptr<Symbol>> memo;
 };

@@ -74,7 +74,8 @@
     #include <fstream>
 
     #include "./inc/IOOperations.hpp"
-    #include "./CodeGenerator.hpp"
+    #include "./inc/CodeGenerator.hpp"
+    #include "./inc/Symbol.hpp"
 
     extern int yylineno;
     extern int yylex();
@@ -86,8 +87,9 @@
     std::shared_ptr<CodeGenerator> codeGen = std::make_shared<CodeGenerator>(dataController);
 
     std::vector<std::string> newSet;
+    bool error = false;
 
-#line 91 "parser.tab.cpp"
+#line 93 "parser.tab.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -147,18 +149,19 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-#line 22 "parser.ypp"
+#line 24 "parser.ypp"
 union types
 {
-#line 22 "parser.ypp"
+#line 24 "parser.ypp"
 
     std::string* pidentifier;
     long long int num;
+    Variable* var;
 
-#line 159 "parser.tab.cpp"
+#line 162 "parser.tab.cpp"
 
 };
-#line 22 "parser.ypp"
+#line 24 "parser.ypp"
 typedef union types YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -475,7 +478,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  11
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   24
+#define YYLAST   25
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  12
@@ -532,8 +535,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    41,    41,    42,    44,    45,    47,    48,    50,    51,
-      53,    54,    56
+       0,    44,    44,    45,    47,    53,    60,    61,    63,    68,
+      71,    72,    74
 };
 #endif
 
@@ -558,7 +561,7 @@ static const yytype_int16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF (-8)
+#define YYPACT_NINF (-7)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -572,9 +575,9 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      10,     5,    -7,     3,     9,    -8,     0,    -8,    12,    -8,
-      -2,    -8,    -8,    11,    -8,    -8,    -8,     4,     5,    14,
-      -8,    13,     1,    -8,    -8,    -8
+      14,     6,     4,    18,    -5,    -7,     1,    -7,    13,    -7,
+      -1,    -7,    -7,    10,    -7,    -7,    -7,    -5,     6,    15,
+      -7,    11,     2,    -7,    -7,    -7
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -590,7 +593,7 @@ static const yytype_int8 yydefact[] =
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -8,    -8,    -8,     2,    -6,    -8,    17
+      -7,    -7,    -7,     5,    -6,     8,    -3
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
@@ -604,16 +607,16 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      16,    18,     9,    11,    15,    25,     4,     4,    19,     5,
-       5,     4,    21,     1,     5,     2,    16,    12,     5,    17,
-      22,    14,    20,    23,    24
+      16,    14,    18,    12,     5,    15,    25,     4,     4,    19,
+       5,     5,     4,     9,    14,     5,    16,     1,    11,     2,
+      17,    20,    24,    22,    23,    21
 };
 
 static const yytype_int8 yycheck[] =
 {
-       6,     3,     9,     0,     4,     4,     6,     6,    10,     9,
-       9,     6,     8,     3,     9,     5,    22,     8,     9,     7,
-      18,     4,    11,     9,    11
+       6,     4,     3,     8,     9,     4,     4,     6,     6,    10,
+       9,     9,     6,     9,    17,     9,    22,     3,     0,     5,
+       7,    11,    11,    18,     9,    17
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -622,7 +625,7 @@ static const yytype_int8 yystos[] =
 {
        0,     3,     5,    13,     6,     9,    15,    16,    18,     9,
       14,     0,     8,    17,    18,     4,    16,     7,     3,    10,
-      11,     8,    15,     9,    11,     4
+      11,    17,    15,     9,    11,     4
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -1332,43 +1335,65 @@ yyreduce:
   switch (yyn)
     {
   case 4:
-#line 44 "parser.ypp"
-                                          { codeGen->allocateVariable(*(yyvsp[0].pidentifier)); }
-#line 1338 "parser.tab.cpp"
+#line 47 "parser.ypp"
+                                          { Variable* v = codeGen->allocateVariable(*(yyvsp[0].pidentifier));
+                                             if (nullptr == v) {
+                                                error = true;
+                                                yyerror("Redefinition of variable " + *(yyvsp[0].pidentifier));
+                                             }
+                                            }
+#line 1346 "parser.tab.cpp"
     break;
 
   case 5:
-#line 45 "parser.ypp"
-                                { codeGen->allocateVariable(*(yyvsp[0].pidentifier)); }
-#line 1344 "parser.tab.cpp"
+#line 53 "parser.ypp"
+                                { Variable* v = codeGen->allocateVariable(*(yyvsp[0].pidentifier));
+                                    if (nullptr == v) {
+                                        error = true;
+                                        yyerror("Redeclaration of variable " + *(yyvsp[0].pidentifier));
+                                    }
+                                }
+#line 1357 "parser.tab.cpp"
     break;
 
   case 8:
-#line 50 "parser.ypp"
-                           { codeGen->write((yyvsp[-1].num)); }
-#line 1350 "parser.tab.cpp"
+#line 63 "parser.ypp"
+                           { if (!codeGen->write((yyvsp[-1].var))) {
+                                error = true;
+                                yyerror("Variable " + (yyvsp[-1].var)->name +" is not initialized");
+                              }
+                            }
+#line 1367 "parser.tab.cpp"
     break;
 
   case 9:
-#line 51 "parser.ypp"
-                                       { codeGen->assignToVariable((yyvsp[-3].num), (yyvsp[-1].num)); }
-#line 1356 "parser.tab.cpp"
+#line 68 "parser.ypp"
+                                         {  codeGen->assignToVariable((yyvsp[-3].var), (yyvsp[-1].var));
+                                          }
+#line 1374 "parser.tab.cpp"
     break;
 
   case 11:
-#line 54 "parser.ypp"
-                  { (yyval.num) = codeGen->allocateConstant((yyvsp[0].num)); }
-#line 1362 "parser.tab.cpp"
+#line 72 "parser.ypp"
+                  { (yyval.var) = codeGen->allocateConstant((yyvsp[0].num)); }
+#line 1380 "parser.tab.cpp"
     break;
 
   case 12:
-#line 56 "parser.ypp"
-                            { (yyval.num) = codeGen->getAddress(*(yyvsp[0].pidentifier)); }
-#line 1368 "parser.tab.cpp"
+#line 74 "parser.ypp"
+                            { Variable* var = codeGen->getVar(*(yyvsp[0].pidentifier));
+                                if (var == nullptr) {
+                                    error = true;
+                                    yyerror("Variable " + *(yyvsp[0].pidentifier) + " not defined");
+                                 } else {
+                                    (yyval.var) = var;
+                                 }
+                            }
+#line 1393 "parser.tab.cpp"
     break;
 
 
-#line 1372 "parser.tab.cpp"
+#line 1397 "parser.tab.cpp"
 
       default: break;
     }
@@ -1600,11 +1625,11 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 58 "parser.ypp"
+#line 83 "parser.ypp"
 
 
 int yyerror (std::string s) {
-    std::cerr << "Error " << s << " in line " << yylineno - 1 << std::endl;
+    std::cerr << "Error: " << s << " in line " << yylineno << std::endl;
     return 0;
 }
 
@@ -1627,7 +1652,11 @@ int main(int argc, char** argv) {
     // error handling
     // write to file if no errors occured
     codeGen->addInstruction("HALT");
-    io->writeCode(codeGen->getCode());
-    std::cout << "-------- Compilation successfull --------" << std::endl;
+    if (!error) {
+        io->writeCode(codeGen->getCode());
+        std::cout << "-------- Compilation successful --------" << std::endl;
+    } else {
+        std::cout << "-------- Compilation failed --------" << std::endl;
+    }
     return 0;
 }

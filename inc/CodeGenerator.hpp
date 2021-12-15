@@ -13,13 +13,14 @@ public:
     std::vector<std::string> getCode();
     void addInstruction(std::string newInstr);
     // TODO tu trzeba jakis inny typ, bo nie wiadomo czy stala czy zmienna
-    void write(long long int val);
+    bool write(Variable* var);
     long long int makeConstant(long long int val);
     long long int getAddress(std::string name);
     bool getConstant(std::string name);
-    long long int allocateConstant(long long int value);
-    bool allocateVariable(std::string name);
-    bool assignToVariable(long long int addr, long long int val);
+    Variable* allocateConstant(long long int value);
+    Variable* allocateVariable(std::string name);
+    bool assignToVariable(Variable* var1, Variable* var2);
+    Variable* getVar(std::string name);
 private:
     std::vector<std::string> code;
     int offset;

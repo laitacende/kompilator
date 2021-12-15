@@ -1,4 +1,16 @@
 RESET a
+INC a
+SWAP c
+RESET a
+INC a
+RESET b
+INC b
+SHIFT b
+SHIFT b
+SHIFT b
+ADD b
+STORE c
+RESET a
 SWAP c
 RESET a
 INC a
@@ -11,6 +23,9 @@ ADD b
 STORE c
 RESET a
 INC a
+RESET b
+INC b
+SHIFT b
 SWAP c
 RESET a
 INC a
@@ -23,6 +38,9 @@ SHIFT b
 STORE c
 RESET a
 INC a
+RESET b
+INC b
+SHIFT b
 LOAD a
 PUT
 RESET a

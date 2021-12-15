@@ -23,7 +23,10 @@ long long int MemoryData::addVariable(std::string name) {
     // check if variable exists
     if (!ifExists(name)) {
         // allocate memory
-        memo[name] = std::make_shared<Symbol>(name, currentAddress);
+        Variable* var = new Variable(name, currentAddress);
+        var->isVariable = true;
+        var->isInit = false;
+        memo[name] = std::make_shared<Symbol>(name, currentAddress, var);
         currentAddress++;
         memo[name]->isVariable = true;
         memo[name]->isInit = false;
@@ -36,7 +39,10 @@ long long int MemoryData::addConstant(long long int val) {
     std::string name = std::to_string(val);
     if (!ifExists(name)) {
         // allocate memory
-        memo[name] = std::make_shared<Symbol>(name, currentAddress);
+        Variable* var = new Variable(name, currentAddress);
+        var->isConstant = true;
+        var->val = val;
+        memo[name] = std::make_shared<Symbol>(name, currentAddress, var);
         currentAddress++;
         memo[name]->isVariable = false;
         memo[name]->isConstant = true;
@@ -62,5 +68,10 @@ long long int MemoryData::getAddress(std::string name) {
     return -1;
 }
 
-
+Variable* MemoryData::getVar(std::string name) {
+    if (ifExists(name)) {
+        return memo[name]->var;
+    }
+    return nullptr;
+}
 

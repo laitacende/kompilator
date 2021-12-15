@@ -489,12 +489,14 @@ char *yytext;
 #line 5 "lex.l"
     #include <iostream>
     #include <cstdlib>
+    #include <memory>
 
+    #include "./inc/Symbol.hpp"
     #include "parser.tab.hpp"
 
     int yylex();
-#line 497 "lex.yy.c"
-#line 498 "lex.yy.c"
+#line 499 "lex.yy.c"
+#line 500 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -711,10 +713,10 @@ YY_DECL
 		}
 
 	{
-#line 13 "lex.l"
+#line 15 "lex.l"
 
 
-#line 718 "lex.yy.c"
+#line 720 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -784,76 +786,76 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 15 "lex.l"
+#line 17 "lex.l"
 ; /* skip empty lines */
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 16 "lex.l"
+#line 18 "lex.l"
 ;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 19 "lex.l"
+#line 21 "lex.l"
 { return BEGIN_; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 20 "lex.l"
+#line 22 "lex.l"
 { return END; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 21 "lex.l"
+#line 23 "lex.l"
 { return VAR; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 22 "lex.l"
+#line 24 "lex.l"
 { return WRITE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 23 "lex.l"
+#line 25 "lex.l"
 { return ASSIGN; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 24 "lex.l"
+#line 26 "lex.l"
 { yylval.num = atoi(yytext); return num; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 25 "lex.l"
+#line 27 "lex.l"
 { return yytext[0]; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 26 "lex.l"
+#line 28 "lex.l"
 { return yytext[0]; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 27 "lex.l"
+#line 29 "lex.l"
 {  yylval.pidentifier = new std::string(yytext); return pidentifier; }
 	YY_BREAK
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 28 "lex.l"
+#line 30 "lex.l"
 ;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 29 "lex.l"
+#line 31 "lex.l"
 { std::cout << yytext; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 31 "lex.l"
+#line 33 "lex.l"
 ECHO;
 	YY_BREAK
-#line 857 "lex.yy.c"
+#line 859 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1870,5 +1872,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 31 "lex.l"
+#line 33 "lex.l"
 

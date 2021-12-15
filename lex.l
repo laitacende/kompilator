@@ -4,7 +4,9 @@
 %{
     #include <iostream>
     #include <cstdlib>
+    #include <memory>
 
+    #include "./inc/Symbol.hpp"
     #include "parser.tab.hpp"
 
     int yylex();
