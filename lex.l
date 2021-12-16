@@ -31,6 +31,7 @@
 [0-9]+      { yylval.num = atoi(yytext); return num; }
 ";"         { return yytext[0]; }
 ","         { return yytext[0]; }
+"-"         { return yytext[0]; }
 [_a-z]      {  yylval.pidentifier = new std::string(yytext); return pidentifier; }
 \n          ;
 .           { std::cout << yytext; }

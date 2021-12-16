@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <bitset>
 #include <iostream>
+#include <cstdlib>
 
 
 CodeGenerator::CodeGenerator(std::shared_ptr<MemoryData> controller) {
@@ -28,18 +29,13 @@ int CodeGenerator::addInstruction(std::string newInstr) {
 
 long long int CodeGenerator::makeConstant(long long int val) {
     // generate code to make constant (result in register A)
-    // TODO make negation or sth for negative
     // clear register A
    // addInstruction("( const making " + std::to_string(val) + " )");
     addInstruction("RESET a");
     if (val == 0) {
         return 0;
     }
-    bool isNeg = false;
-    if (val < 0) {
-        val = -val;
-        isNeg = true;
-    }
+
     addInstruction("INC a");
     if (val == 1) {
         return 1;
@@ -66,11 +62,6 @@ long long int CodeGenerator::makeConstant(long long int val) {
             addInstruction("ADD b");
         }
     }
-
-    if(isNeg) {
-        // TODO odjac od 0 najlatwiej
-    }
-
     return val;
 }
 
@@ -85,6 +76,22 @@ Variable* CodeGenerator::allocateConstant(long long int value) {
         addInstruction("STORE c");
     }
     return memo->getVar(std::to_string(value));
+}
+
+Variable* CodeGenerator::allocateConstantNegate(long long int value) {
+    long long int address = memo->addConstant(-value);
+    if (address != -1) {
+        // addInstruction("( const alloc" + std::to_string(value) + " )");
+        makeConstant(address);
+        addInstruction("SWAP c");
+        // constant was allocated under address
+        makeConstant(value); // result in register a
+        addInstruction("SWAP b");
+        addInstruction("RESET a");
+        addInstruction("SUB b");
+        addInstruction("STORE c");
+    }
+    return memo->getVar(std::to_string(-value));
 }
 
 Variable* CodeGenerator::allocateVariable(std::string name) {
@@ -185,6 +192,24 @@ bool CodeGenerator::subtract(Variable* var1, Variable* var2) {
 bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
    // addInstruction("( mnozenie " + std::to_string(var1->val) + " " + std::to_string(var2->val) + " )");
     if (var1 != nullptr && var2 != nullptr) {
+        if (var1->val == 0 || var2->val == 0) {
+            addInstruction("RESET a");
+            return true;
+        }
+        if (var1->val == 1) {
+            makeConstant(var2->address);
+            addInstruction("LOAD a");
+            return true;
+        }
+        if (var2->val == 1) {
+            makeConstant(var1->address);
+            addInstruction("LOAD a");
+            return true;
+        }
+        bool negate = false;
+        if (!(var2->val < 0 && var1->val < 0)) {
+            negate = true;
+        }
         // quick multiplying
         // makeConstant(var2->address); to raczej niepotrzebne operowac bedziemy na val
         // val of multiplier
@@ -192,8 +217,12 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
         long long int mul = var1->val;
         makeConstant(var2->address);
         addInstruction("LOAD a"); // value2 to a
-        addInstruction("PUT");
         addInstruction("SWAP c"); // store in c, c == multiplier
+        if (var2->val < 0) {
+            addInstruction("RESET a");
+            addInstruction("SUB c");
+            addInstruction("SWAP c");
+        }
         addInstruction("RESET d"); // result in d, d == 0
         addInstruction("RESET e");
         addInstruction("DEC e"); // e == -1
@@ -202,6 +231,11 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
         makeConstant(var1->address); // in a
         addInstruction("LOAD a"); // a == val1
         addInstruction("SWAP f"); // f == val1
+        if (var1->val < 0) {
+            addInstruction("RESET a");
+            addInstruction("SUB f");
+            addInstruction("SWAP f");
+        }
 
         addInstruction("RESET h");
         addInstruction("SWAP h");
@@ -228,7 +262,13 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
         addInstruction("SWAP f");
         // jump to checking cond
         addInstruction("JUMP -" + std::to_string(19));
-        addInstruction("SWAP d");
+        if (negate) {
+            addInstruction("RESET a");
+            addInstruction("SUB d");
+           // addInstruction("SWAP d");
+        } else {
+            addInstruction("SWAP d"); // res is now in a
+        }
 //        long long int prev;
 //        while (multiplier != 0) {
 //            prev = multiplier;
@@ -259,54 +299,36 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
 }
 
 // result in register a
-bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
-    // addInstruction("( mnozenie " + std::to_string(var1->val) + " " + std::to_string(var2->val) + " )");
-    if (var1 != nullptr && var2 != nullptr) {
-        // quick multiplying
-        // makeConstant(var2->address); to raczej niepotrzebne operowac bedziemy na val
-        // val of multiplier
-        long long int multiplier = var2->val;
-        long long int mul = var1->val;
-        makeConstant(var2->address);
-        addInstruction("LOAD a"); // value2 to a
-        addInstruction("PUT");
-        addInstruction("SWAP c"); // store in c, c == multiplier
-        addInstruction("RESET d"); // result in d, d == 0
-        addInstruction("RESET e");
-        addInstruction("DEC e"); // e == -1
-        addInstruction("RESET g");
-        addInstruction("INC g");
-        makeConstant(var1->address); // in a
-        addInstruction("LOAD a"); // a == val1
-        addInstruction("SWAP f"); // f == val1
-
-        addInstruction("RESET h");
-        addInstruction("SWAP h");
-        addInstruction("ADD c");
-        addInstruction("SWAP h");
-        addInstruction("SWAP c"); // multiplier in register a
-        addInstruction("JZERO " + std::to_string(15)); // jump if multiplier == 0
-        addInstruction("SHIFT e");
-        addInstruction("SWAP c");
-        // check what was the shifted bit
-        addInstruction("RESET a");
-        addInstruction("ADD c"); // a == mulplier po shifcie
-        addInstruction("SHIFT g"); // a == miltiplier << 1
-        // check if equal
-        addInstruction("SUB h"); // a = multiplier << 1 - poprzednia wartosc multiplier
-        // if not equal then add to result
-        addInstruction("JZERO 4");
-        addInstruction("SWAP d");
-        addInstruction("ADD f");
-        addInstruction("SWAP d");
-        // shift left mul
-        addInstruction("SWAP f");
-        addInstruction("SHIFT g");
-        addInstruction("SWAP f");
-        // jump to checking cond
-        addInstruction("JUMP -" + std::to_string(19));
-        addInstruction("SWAP d");
-        return true;
-    }
-    return false;
-}
+//bool CodeGenerator::divide(Variable* var1, Variable* var2) {
+//    if (var1 != nullptr && var2 != nullptr) {
+//        // quick dividing
+//        if (var2->val == 0 || std::abs(var1->val) < std::abs(var2->val)) {
+//            addInstruction("RESET a");
+//            return true;
+//        }
+//        if (var2->val == 1) {
+//            makeConstant(var1->address);
+//            addInstruction("LOAD a"); // value2 to a
+//        }
+//
+//        makeConstant(var2->address);
+//        addInstruction("LOAD a"); // value2 to a
+//        addInstruction("SWAP c"); // store in c, c == multiplier
+//        addInstruction("RESET d"); // result in d, d == 0
+//        addInstruction("RESET e");
+//        addInstruction("DEC e"); // e == -1
+//        addInstruction("RESET g");
+//        addInstruction("INC g");
+//        makeConstant(var1->address); // in a
+//        addInstruction("LOAD a"); // a == val1
+//        addInstruction("SWAP f"); // f == val1
+//        addInstruction("RESET b"); // remainder
+//
+//        addInstruction("RESET h");
+//        addInstruction("SWAP h");
+//        addInstruction
+//
+//        return true;
+//    }
+//    return false;
+//}

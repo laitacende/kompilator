@@ -1,3 +1,9 @@
+VAR 
+	a
 BEGIN
+	a ASSIGN -9 TIMES 2;
 	WRITE a;
+	a ASSIGN -9 TIMES -9;
+	WRITE a;
+	WRITE -123;
 END

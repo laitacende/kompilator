@@ -18,6 +18,7 @@ public:
     long long int getAddress(std::string name);
     bool getConstant(std::string name);
     Variable* allocateConstant(long long int value);
+    Variable* allocateConstantNegate(long long int value);
     Variable* allocateVariable(std::string name);
     bool assignToVariable(Variable* var1, Variable* var2);
     Variable* getVar(std::string name);
