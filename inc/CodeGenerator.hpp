@@ -23,6 +23,7 @@ public:
     Variable* getVar(std::string name);
     bool subtract(Variable* var1, Variable* var2);
     bool add(Variable* var1, Variable* var2);
+    bool multiply(Variable* var1, Variable* var2);
 private:
     std::vector<std::string> code;
     int offset;

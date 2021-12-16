@@ -1,0 +1,6 @@
+VAR
+	a
+BEGIN
+	a ASSIGN 2 TIMES 1;
+	WRITE a;
+END

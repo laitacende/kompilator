@@ -1395,10 +1395,16 @@ yyreduce:
 #line 1396 "parser.tab.cpp"
     break;
 
+  case 13:
+#line 79 "parser.ypp"
+                                { codeGen->multiply((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1402 "parser.tab.cpp"
+    break;
+
   case 17:
 #line 84 "parser.ypp"
                   { (yyval.var) = codeGen->allocateConstant((yyvsp[0].num)); }
-#line 1402 "parser.tab.cpp"
+#line 1408 "parser.tab.cpp"
     break;
 
   case 18:
@@ -1411,11 +1417,11 @@ yyreduce:
                                     (yyval.var) = var;
                                  }
                             }
-#line 1415 "parser.tab.cpp"
+#line 1421 "parser.tab.cpp"
     break;
 
 
-#line 1419 "parser.tab.cpp"
+#line 1425 "parser.tab.cpp"
 
       default: break;
     }

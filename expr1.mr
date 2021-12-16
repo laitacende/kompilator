@@ -174,7 +174,7 @@ RESET a
 ( write )
 LOAD a
 PUT
-( const alloc11 )
+( const alloc5 )
 ( const making 6 )
 RESET a
 INC a
@@ -184,7 +184,7 @@ SHIFT b
 ADD b
 SHIFT b
 SWAP c
-( const making 11 )
+( const making 5 )
 RESET a
 INC a
 RESET b
@@ -192,9 +192,8 @@ INC b
 SHIFT b
 SHIFT b
 ADD b
-SHIFT b
-ADD b
 STORE c
+( mnozenie 3 5 )
 ( const making 6 )
 RESET a
 INC a
@@ -203,6 +202,125 @@ INC b
 SHIFT b
 ADD b
 SHIFT b
+LOAD a
+SWAP c
+RESET d
+RESET e
+DEC e
+RESET g
+INC g
+( const making 4 )
+RESET a
+INC a
+RESET b
+INC b
+SHIFT b
+SHIFT b
+LOAD a
+SWAP f
+SWAP c
+SHIFT e
+SWAP c
+( multiplier 2 prev 5 )
+SWAP d
+ADD f
+SWAP d
+( mul 6 )
+SWAP f
+SHIFT g
+SWAP f
+SWAP c
+SHIFT e
+SWAP c
+( multiplier 1 prev 2 )
+( mul 12 )
+SWAP f
+SHIFT g
+SWAP f
+SWAP c
+SHIFT e
+SWAP c
+( multiplier 0 prev 1 )
+SWAP d
+ADD f
+SWAP d
+( mul 24 )
+SWAP f
+SHIFT g
+SWAP f
+SWAP d
+( assign to a val 3 )
+SWAP d
+( const making 0 )
+RESET a
+SWAP c
+SWAP d
+STORE c
+( const making 0 )
+RESET a
+( write )
+LOAD a
+PUT
+( const alloc6 )
+( const making 7 )
+RESET a
+INC a
+RESET b
+INC b
+SHIFT b
+ADD b
+SHIFT b
+ADD b
+SWAP c
+( const making 6 )
+RESET a
+INC a
+RESET b
+INC b
+SHIFT b
+ADD b
+SHIFT b
+STORE c
+( assign to b val 6 )
+SWAP d
+( const making 1 )
+RESET a
+INC a
+SWAP c
+SWAP d
+STORE c
+( const making 1 )
+RESET a
+INC a
+( write )
+LOAD a
+PUT
+( odejmowanie 1 1 )
+( const making 2 )
+RESET a
+INC a
+RESET b
+INC b
+SHIFT b
+LOAD a
+SWAP c
+( const making 2 )
+RESET a
+INC a
+RESET b
+INC b
+SHIFT b
+LOAD a
+SUB c
+( assign to a val 1 )
+SWAP d
+( const making 0 )
+RESET a
+SWAP c
+SWAP d
+STORE c
+( const making 0 )
+RESET a
 ( write )
 LOAD a
 PUT
