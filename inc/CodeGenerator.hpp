@@ -11,7 +11,7 @@ class CodeGenerator {
 public:
     CodeGenerator(std::shared_ptr<MemoryData> controller);
     std::vector<std::string> getCode();
-    void addInstruction(std::string newInstr);
+    int addInstruction(std::string newInstr);
     // TODO tu trzeba jakis inny typ, bo nie wiadomo czy stala czy zmienna
     bool write(Variable* var);
     long long int makeConstant(long long int val);

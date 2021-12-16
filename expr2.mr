@@ -1,68 +1,68 @@
-( const alloc2 )
-( const making 1 )
 RESET a
 INC a
 SWAP c
-( const making 2 )
 RESET a
 INC a
 RESET b
 INC b
 SHIFT b
 STORE c
-( const alloc1 )
-( const making 2 )
 RESET a
 INC a
 RESET b
 INC b
 SHIFT b
 SWAP c
-( const making 1 )
 RESET a
 INC a
 STORE c
-( mnozenie 2 1 )
-( const making 2 )
 RESET a
 INC a
 RESET b
 INC b
 SHIFT b
 LOAD a
+PUT
 SWAP c
 RESET d
 RESET e
 DEC e
 RESET g
 INC g
-( const making 1 )
 RESET a
 INC a
 LOAD a
 SWAP f
+RESET h
+SWAP h
+ADD c
+SWAP h
 SWAP c
+JZERO 18
 SHIFT e
+PUT
 SWAP c
-( multiplier 0 prev 1 )
+RESET a
+ADD c
+SHIFT g
+PUT
+SUB h
+PUT
+JZERO 4
 SWAP d
 ADD f
 SWAP d
-( mul 4 )
 SWAP f
 SHIFT g
 SWAP f
+JUMP -22
 SWAP d
-( assign to a val 2 )
 SWAP d
-( const making 0 )
 RESET a
 SWAP c
 SWAP d
 STORE c
-( const making 0 )
 RESET a
-( write )
 LOAD a
 PUT
 HALT
