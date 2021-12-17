@@ -6,6 +6,7 @@ INC a
 RESET b
 INC b
 SHIFT b
+SHIFT b
 STORE c
 RESET a
 INC a
@@ -31,8 +32,7 @@ RESET a
 INC a
 LOAD a
 SUB c
-JZERO 
-JPOS 
+JZERO 19
 RESET a
 INC a
 RESET b
@@ -50,6 +50,7 @@ SHIFT b
 ADD b
 LOAD a
 PUT
+JUMP 19
 RESET a
 INC a
 RESET b

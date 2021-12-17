@@ -1,0 +1,9 @@
+VAR 
+	a
+BEGIN
+	IF 4 NEQ 4 THEN
+		WRITE 0;
+	ELSE
+		WRITE 1;
+	ENDIF
+END

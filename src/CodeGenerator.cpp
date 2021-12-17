@@ -217,7 +217,6 @@ Cond* CodeGenerator::evalGreaterEqual(Variable* var1, Variable* var2) {
 // ----------------------------------- OPERATIONS -------------------------------
 
 bool CodeGenerator::write(Variable* var) {
-    //makeConstant(val);
     // get from memory and load to a
     if (var->isVariable && !var->isInit) {
         return false;

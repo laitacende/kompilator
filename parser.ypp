@@ -20,6 +20,7 @@
 
     std::vector<std::string> newSet;
     bool error = false;
+    long long int line = 0;
 %}
 
 %union types {
@@ -84,9 +85,25 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                 yyerror("Variable " + $2->name +" is not initialized");
                               }
                             }
+
             | identifier ASSIGN expression';' {  codeGen->assignToVariable($1, $3); }
+
             | READ identifier';'    { codeGen->read($2); }
-            | IF condition THEN commands ELSE commands ENDIF
+
+            | IF condition THEN commands { line = codeGen->addInstruction("JUMP "); // omit else, edit later
+                                            std::string instr = codeGen->getInstruction($2->index);
+                                            instr = instr + std::to_string(codeGen->offset - $2->index);
+                                            codeGen->changeInstruction($2->index, instr); // go to else
+                                            if ($2->type == "EQ" || $2->type == "LE" || $2->type == "GE") {
+                                                instr = codeGen->getInstruction($2->index - 1);
+                                                instr = instr + std::to_string(codeGen->offset - $2->index + 1);
+                                                codeGen->changeInstruction($2->index - 1, instr);
+                                            }
+                                          }
+              ELSE commands ENDIF        { std::string instr = "JUMP " + std::to_string(codeGen->offset - line);
+                                            codeGen->changeInstruction(line, instr); // edit instr from first block, jump adter else
+                                         }
+
             | IF condition THEN commands ENDIF {    std::string instr = codeGen->getInstruction($2->index); /* if EQ there are two jumps */
                                                     instr = instr + std::to_string(codeGen->offset - $2->index);
                                                     codeGen->changeInstruction($2->index, instr);
