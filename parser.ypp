@@ -25,6 +25,7 @@
     std::string* pidentifier;
     long long int num;
     Variable* var;
+    bool cond;
 }
 
 %start program
@@ -39,13 +40,18 @@
 %token TIMES
 %token DIV
 %token MOD
+%token IF
+%token THEN
+%token ELSE
+%token ENDIF
+%token NEQ
 %token <num> num
 %token <pidentifier> pidentifier
 
 %type <var> value
 %type <var> identifier
 %type <var> expression
-
+%type <num> condition /* number of line of jump in code */
 %%
 
 program:    VAR declarations BEGIN_ commands END
@@ -74,6 +80,11 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                             }
             | identifier ASSIGN expression';' {  codeGen->assignToVariable($1, $3); }
             | READ identifier';'    { codeGen->read($2); }
+            | IF condition THEN commands ELSE commands ENDIF
+            | IF condition THEN commands ENDIF {    std::string instr = codeGen->getInstruction($2);
+                                                    instr = instr + std::to_string(codeGen->offset - $2);
+                                                    codeGen->changeInstruction($2, instr);
+                                                }
 
 
 expression: value
@@ -82,6 +93,8 @@ expression: value
             | value TIMES value { codeGen->multiply($1, $3); }
             | value DIV value   { codeGen->divide($1, $3); }
             | value MOD value   { codeGen->modulo($1, $3); }
+
+condition:  value NEQ value { $$ = codeGen->evalNotEqual($1, $3); }
 
 value:      identifier { $$ = $1;
                          if (!$1->isInit && !error) {
@@ -104,6 +117,7 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
 %%
 
 int yyerror (std::string s) {
+    error = true;
     std::cerr << "Error: " << s << " in line " << yylineno << std::endl;
     return 0;
 }

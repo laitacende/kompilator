@@ -29,6 +29,11 @@
 "DIV"       { return DIV; }
 "MOD"       { return MOD; }
 "READ"      { return READ; }
+"IF"        { return IF; }
+"THEN"      { return THEN; }
+"ELSE"      { return ELSE; }
+"ENDIF"     { return ENDIF; }
+"NEQ"        { return NEQ; }
 [0-9]+      { yylval.num = atoi(yytext); return num; }
 ";"         { return yytext[0]; }
 ","         { return yytext[0]; }

@@ -139,7 +139,25 @@ bool CodeGenerator::getConstant(std::string name) {
         return true;
     }
     return false; // TODO handle errors
+}
 
+void CodeGenerator::changeInstruction(long long int index, std::string newInstruction) {
+    code[index] = newInstruction;
+}
+
+std::string CodeGenerator::getInstruction(long long int index) {
+    return code[index];
+}
+
+// result in register a; if not equal then it shan't be zero
+long long int CodeGenerator::evalNotEqual(Variable* var1, Variable* var2) {
+    makeConstant(var2->address);
+    addInstruction("LOAD a"); // load var2
+    addInstruction("SWAP c"); // var2 in c
+    makeConstant(var1->address);
+    addInstruction("LOAD a");
+    addInstruction("SUB c");
+    return addInstruction("JZERO "); // later will be changed, return index of this instruction
 }
 
 // ----------------------------------- OPERATIONS -------------------------------

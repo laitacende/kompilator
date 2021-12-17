@@ -60,8 +60,13 @@ extern int yydebug;
     TIMES = 266,
     DIV = 267,
     MOD = 268,
-    num = 269,
-    pidentifier = 270
+    IF = 269,
+    THEN = 270,
+    ELSE = 271,
+    ENDIF = 272,
+    NEQ = 273,
+    num = 274,
+    pidentifier = 275
   };
 #endif
 
@@ -75,8 +80,9 @@ union types
     std::string* pidentifier;
     long long int num;
     Variable* var;
+    bool cond;
 
-#line 80 "parser.tab.hpp"
+#line 86 "parser.tab.hpp"
 
 };
 #line 24 "parser.ypp"

@@ -1,0 +1,12 @@
+VAR
+	a
+BEGIN
+	a ASSIGN 4;
+	WRITE a;
+	IF a NEQ 5 THEN
+		WRITE 1;
+		a ASSIGN 10;
+	ENDIF
+	WRITE 2;
+	WRITE a;
+END
