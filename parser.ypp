@@ -52,6 +52,9 @@
 %token LE
 %token LEQ
 %token GEQ
+%token WHILE
+%token DO
+%token ENDWHILE
 %token <num> num
 %token <pidentifier> pidentifier
 
@@ -114,6 +117,18 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                                     }
                                                 }
 
+            | WHILE condition DO commands ENDWHILE  { std::string instr = codeGen->getInstruction($2->index); /* if EQ there are two jumps */
+                                                      instr = instr + std::to_string((codeGen->offset - $2->index + 1));
+                                                      codeGen->changeInstruction($2->index, instr);
+                                                      if ($2->type == "EQ" || $2->type == "LE" || $2->type == "GE") {
+                                                          instr = codeGen->getInstruction($2->index - 1);
+                                                          instr = instr + std::to_string((codeGen->offset - $2->index + 2));
+                                                          codeGen->changeInstruction($2->index - 1, instr);
+                                                      }
+                                                      //std::cout << codeGen->offset << std::endl;
+                                                      codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - $2->firstIndex + 1)));
+                                                     }
+
 
 expression: value
             | value PLUS value { codeGen->add($1, $3); }
@@ -135,7 +150,7 @@ value:      identifier { $$ = $1;
                             yyerror("Variable " + $1->name + " not initialized");
                          }
                         }
-            | num { $$ = codeGen->allocateConstant($1); } /* if it exists just return its address */
+            | num { $$ = codeGen->allocateConstant($1);  } /* if it exists just return its address */
             | '-' num { $$ = codeGen->allocateConstantNegate($2); }
 
 identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);

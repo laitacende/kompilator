@@ -7,6 +7,7 @@ class Cond {
 public:
     long long int index;
     std::string type;
+    long long int firstIndex;
     Cond(long long int ind, std::string name);
     ~Cond() {};
     Cond() {};

@@ -109,7 +109,7 @@ bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {
     if (var1 != nullptr && var2 != nullptr) {
         // TODO maybe check if const isn't in memo, that could save time (ale tylko dla duzych, trzeba popatrzec dla jakich)
         var1->isInit = true;
-        var1->val = var2->val;
+        var1->val = var2->val; // TODO to bez sensu, w petli nie dziala
         // result of expression is in a
         //addInstruction("( assign to " + var1->name + " val " + std::to_string(var2->val) + " )");
         addInstruction("SWAP d"); // result of expression is in d
@@ -152,16 +152,20 @@ std::string CodeGenerator::getInstruction(long long int index) {
 
 // result in register a; if not equal then it shan't be zero
 Cond* CodeGenerator::evalNotEqual(Variable* var1, Variable* var2) {
+    long long int first = offset + 1;
     makeConstant(var2->address);
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
     makeConstant(var1->address);
     addInstruction("LOAD a");
     addInstruction("SUB c");
-    return new Cond(addInstruction("JZERO "), "NEQ"); // later will be changed, return index of this instruction
+    Cond* c = new Cond(addInstruction("JZERO "), "NEQ");
+    c->firstIndex = first;
+    return c; // later will be changed, return index of this instruction
 }
 
 Cond* CodeGenerator::evalEqual(Variable* var1, Variable* var2) {
+    long long int first = offset + 1;
     makeConstant(var2->address);
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
@@ -169,10 +173,13 @@ Cond* CodeGenerator::evalEqual(Variable* var1, Variable* var2) {
     addInstruction("LOAD a");
     addInstruction("SUB c");
     addInstruction("JPOS ");
-    return new Cond(addInstruction("JNEG "), "EQ"); // later will be changed, return index of this instruction
+    Cond* c = new Cond(addInstruction("JNEG "), "EQ");
+    c->firstIndex = first;
+    return c; // later will be changed, return index of this instruction
 }
 
 Cond* CodeGenerator::evalLess(Variable* var1, Variable* var2) {
+    long long int first = offset + 1;
     makeConstant(var2->address);
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
@@ -180,20 +187,27 @@ Cond* CodeGenerator::evalLess(Variable* var1, Variable* var2) {
     addInstruction("LOAD a");
     addInstruction("SUB c");
     addInstruction("JZERO ");
-    return new Cond(addInstruction("JPOS "), "LE");
+    Cond* c = new Cond(addInstruction("JPOS "), "LE");
+    c->firstIndex = first;
+    return c;
 }
 
 Cond* CodeGenerator::evalLessEqual(Variable* var1, Variable* var2) {
+    long long int first = offset + 1;
     makeConstant(var2->address);
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
     makeConstant(var1->address);
     addInstruction("LOAD a");
     addInstruction("SUB c");
-    return new Cond(addInstruction("JPOS "), "LEQ");
+    Cond* c = new Cond(addInstruction("JPOS "), "LEQ");
+    c->firstIndex = first;
+    return c;
 }
 
 Cond* CodeGenerator::evalGreater(Variable* var1, Variable* var2) {
+    long long int first = offset + 1;
+  //  std::cout<<first<< " " << code[offset - 1] << std::endl;
     makeConstant(var2->address);
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
@@ -201,17 +215,25 @@ Cond* CodeGenerator::evalGreater(Variable* var1, Variable* var2) {
     addInstruction("LOAD a");
     addInstruction("SUB c");
     addInstruction("JZERO ");
-    return new Cond(addInstruction("JNEG "), "GE");
+    Cond* c = new Cond(addInstruction("JNEG "), "GE");
+    c->firstIndex = first;
+    return c;
 }
 
 Cond* CodeGenerator::evalGreaterEqual(Variable* var1, Variable* var2) {
+    long long int first = offset + 1;
     makeConstant(var2->address);
+   // std::cout << var2->address << " var2addr" << std::endl;
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
     makeConstant(var1->address);
+   // std::cout << var1->address << " var1addr" << std::endl;
     addInstruction("LOAD a");
+
     addInstruction("SUB c");
-    return new Cond(addInstruction("JNEG "), "GEQ");
+    Cond* c = new Cond(addInstruction("JNEG "), "GEQ");
+    c->firstIndex = first;
+    return c;
 }
 
 // ----------------------------------- OPERATIONS -------------------------------
@@ -274,50 +296,67 @@ bool CodeGenerator::subtract(Variable* var1, Variable* var2) {
 bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
    // addInstruction("( mnozenie " + std::to_string(var1->val) + " " + std::to_string(var2->val) + " )");
     if (var1 != nullptr && var2 != nullptr) {
-        if (var1->val == 0 || var2->val == 0) {
-            addInstruction("RESET a");
-            return true;
-        }
-        if (var1->val == 1) {
-            makeConstant(var2->address);
-            addInstruction("LOAD a");
-            return true;
-        }
-        if (var2->val == 1) {
-            makeConstant(var1->address);
-            addInstruction("LOAD a");
-            return true;
-        }
-        bool negate = false;
-        if ((var2->val < 0 && var1->val > 0) || (var2->val > 0 && var1->val < 0)) {
-            negate = true;
-        }
+//        if (var1->val == 0 || var2->val == 0) {
+//            addInstruction("RESET a");
+//            return true;
+//        }
+//        if (var1->val == 1) {
+//            makeConstant(var2->address);
+//            addInstruction("LOAD a");
+//            return true;
+//        }
+//        if (var2->val == 1) {
+//            makeConstant(var1->address);
+//            addInstruction("LOAD a");
+//            return true;
+//        }
+//        bool negate = false;
+//        if ((var2->val < 0 && var1->val > 0) || (var2->val > 0 && var1->val < 0)) {
+//            negate = true;
+//        }
         // quick multiplying
         // makeConstant(var2->address); to raczej niepotrzebne operowac bedziemy na val
         // val of multiplier
         long long int multiplier = var2->val;
         long long int mul = var1->val;
+        addInstruction("RESET d");
         makeConstant(var2->address);
         addInstruction("LOAD a"); // value2 to a
+        // check if is negative
+        addInstruction("JPOS 5"); // if positive don't do this
+        // +1 to register d - negate result
+        addInstruction("INC d"); // var2 was negative
+        // make positive
         addInstruction("SWAP c"); // store in c, c == multiplier
-        if (var2->val < 0) {
-            addInstruction("RESET a");
-            addInstruction("SUB c");
-            addInstruction("SWAP c");
-        }
+        addInstruction("RESET a");
+        addInstruction("SUB c");
+        addInstruction("SWAP c"); // positive var2 in register c
+
+        makeConstant(var1->address); // in a
+        addInstruction("LOAD a"); // a == val1
+        addInstruction("JPOS 5"); // var1  > 0
+        addInstruction("SWAP f"); // f == val1
+        // check if var1 is negative
+        // -1 to register d
+        addInstruction("DEC d"); // var1 was negative
+        // make positive
+        addInstruction("RESET a");
+        addInstruction("SUB f");
+        addInstruction("SWAP f"); // positive var2 in register c
+
+        addInstruction("SWAP d");
+        addInstruction("SWAP b"); // if b != 0 then negate
         addInstruction("RESET d"); // result in d, d == 0
         addInstruction("RESET e");
         addInstruction("DEC e"); // e == -1
         addInstruction("RESET g");
         addInstruction("INC g");
-        makeConstant(var1->address); // in a
-        addInstruction("LOAD a"); // a == val1
-        addInstruction("SWAP f"); // f == val1
-        if (var1->val < 0) {
-            addInstruction("RESET a");
-            addInstruction("SUB f");
-            addInstruction("SWAP f");
-        }
+        // TODO TAKIE COS W PETLACH NIE ZADZIALA, TO TRZEBA SPRAWDZAC NORMALNIE W ASM IJUMPY
+//        if (var1->val < 0) {
+//            addInstruction("RESET a");
+//            addInstruction("SUB f");
+//            addInstruction("SWAP f");
+//        }
 
         addInstruction("RESET h");
         addInstruction("SWAP h");
@@ -344,13 +383,21 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
         addInstruction("SWAP f");
         // jump to checking cond
         addInstruction("JUMP -" + std::to_string(19));
-        if (negate) {
-            addInstruction("RESET a");
-            addInstruction("SUB d");
-           // addInstruction("SWAP d");
-        } else {
-            addInstruction("SWAP d"); // res is now in a
-        }
+        addInstruction("SWAP b");
+        addInstruction("JNEG 4"); // negate
+        addInstruction("JPOS 3"); // negate
+        addInstruction("SWAP d");
+        addInstruction("JUMP 3");
+        addInstruction("RESET a");
+        addInstruction("SUB d");
+
+//        if (negate) {
+//            addInstruction("RESET a");
+//            addInstruction("SUB d");
+//           // addInstruction("SWAP d");
+//        } else {
+//            addInstruction("SWAP d"); // res is now in a
+//        }
 //        long long int prev;
 //        while (multiplier != 0) {
 //            prev = multiplier;
@@ -407,6 +454,20 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
         if ((var2->val < 0 && var1->val > 0) || (var2->val > 0 && var1->val < 0)) {
             negate = true;
         }
+//        long long int tmp2 = var2->val;
+//        long long int tmp1 = var1->val;
+//        if (var2->val < 0) {
+//            tmp2 = -tmp2;
+//        }
+//        if(var1->val < 0) {
+//            tmp1 = -tmp1;
+//        }
+//        makeConstant(tmp1 / tmp2);
+//        if (negate) {
+//            addInstruction("SWAP c");
+//            addInstruction("RESET a");
+//            addInstruction("SUB c");
+//        }
 
         makeConstant(var2->address);
         addInstruction("LOAD a"); // value2 to a
