@@ -157,6 +157,17 @@ bool CodeGenerator::write(Variable* var) {
     return true;
 }
 
+bool CodeGenerator::read(Variable* var) {
+    //makeConstant(val);
+    // get from memory and load to a
+    makeConstant(var->address);
+    addInstruction("SWAP b"); // address of variable in register b
+    addInstruction("GET"); // in register a
+    var->isInit = true;
+    addInstruction("STORE b");
+    return true;
+}
+
 // result in register a
 bool CodeGenerator::add(Variable* var1, Variable* var2) {
    // addInstruction("( dodawanie " + std::to_string(var1->val) + " " + std::to_string(var2->val) + " )");

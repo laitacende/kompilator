@@ -28,6 +28,7 @@
 "TIMES"     { return TIMES; }
 "DIV"       { return DIV; }
 "MOD"       { return MOD; }
+"READ"      { return READ; }
 [0-9]+      { yylval.num = atoi(yytext); return num; }
 ";"         { return yytext[0]; }
 ","         { return yytext[0]; }

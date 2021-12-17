@@ -14,6 +14,7 @@ public:
     int addInstruction(std::string newInstr);
     // TODO tu trzeba jakis inny typ, bo nie wiadomo czy stala czy zmienna
     bool write(Variable* var);
+    bool read(Variable* var);
     long long int makeConstant(long long int val);
     long long int getAddress(std::string name);
     bool getConstant(std::string name);
