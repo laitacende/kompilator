@@ -1,0 +1,12 @@
+VAR
+	a, b
+BEGIN
+	READ a;
+	WRITE a;
+	b ASSIGN 3 PLUS a;
+	WRITE b;
+	READ b;
+	WRITE b;
+	READ c;
+
+END
