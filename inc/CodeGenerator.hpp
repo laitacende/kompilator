@@ -26,6 +26,7 @@ public:
     bool add(Variable* var1, Variable* var2);
     bool multiply(Variable* var1, Variable* var2);
     bool divide(Variable* var1, Variable* var2);
+    bool modulo(Variable* var1, Variable* var2);
 private:
     std::vector<std::string> code;
     int offset;

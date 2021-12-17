@@ -207,7 +207,7 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
             return true;
         }
         bool negate = false;
-        if (!(var2->val < 0 && var1->val < 0)) {
+        if ((var2->val < 0 && var1->val > 0) || (var2->val > 0 && var1->val < 0)) {
             negate = true;
         }
         // quick multiplying
@@ -300,31 +300,58 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
 
 // result in register a
 bool CodeGenerator::divide(Variable* var1, Variable* var2) {
+    // TODO  poteg 2 mozna pomylslec zeby tylko byly shifty
+    // TODO sprawdzic czy zwkle robienie stalej bardziej nieoplacalne
     if (var1 != nullptr && var2 != nullptr) {
         // quick dividing
-        if (var2->val == 0 || std::abs(var1->val) < std::abs(var2->val)) {
+        if (var1->val == 0 || var2->val == 0 || std::abs(var1->val) < std::abs(var2->val)) {
             addInstruction("RESET a");
             return true;
         }
-        if (var2->val == 1) {
+        if (var2->val == 1 || var2->val == -1) {
             makeConstant(var1->address);
-            addInstruction("LOAD a"); // value2 to a
+            addInstruction("LOAD a"); // value1 to a
+            if (var2->val == -1 && var1->val > 0) {
+                // negate result
+                addInstruction("SWAP b");
+                addInstruction("RESET a");
+                addInstruction("SUB b");
+            }
             return true;
         }
-        // TODO handle minus
+
+        // sign of result
+        bool negate = false;
+        if ((var2->val < 0 && var1->val > 0) || (var2->val > 0 && var1->val < 0)) {
+            negate = true;
+        }
 
         makeConstant(var2->address);
         addInstruction("LOAD a"); // value2 to a
         addInstruction("SWAP c"); // store in c, c == var2
+        if (var2->val < 0) {
+            addInstruction("RESET a");
+            addInstruction("SUB c");
+            addInstruction("SWAP c");
+        }
         addInstruction("RESET d"); // result in d, d == 0
         addInstruction("RESET e");
         addInstruction("INC e"); // e == -1
         makeConstant(var1->address); // in a
         addInstruction("LOAD a"); // a == val1
         addInstruction("SWAP f"); // f == val1
+        if (var1->val < 0) {
+            addInstruction("RESET a");
+            addInstruction("SUB f");
+            addInstruction("SWAP f");
+        }
+
         // find number of bits in var1 (var1 > var2)
         int counter1 = 0;
         long long int tmp = var1->val;
+        if (tmp < 0) {
+            tmp = -tmp;
+        }
         while (tmp >= 1) {
             tmp = tmp >> 1;
             counter1++;
@@ -332,6 +359,9 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
 
         int counter2 = 0;
         tmp = var2->val;
+        if (tmp < 0) {
+            tmp = -tmp;
+        }
         while (tmp >= 1) {
             tmp = tmp >> 1;
             counter2++;
@@ -339,13 +369,16 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
 
         int counter3 = 0;
         tmp = var1->val / var2->val;
+        if (tmp < 0) {
+            tmp = -tmp;
+        }
         while (tmp >= 1) {
             tmp = tmp >> 1;
             counter3++;
         }
 
         // counter1 in h
-        makeConstant((counter1 + counter3 - 1) / counter3 + counter1 - counter2);
+        makeConstant(counter3);
        // addInstruction("PUT");
         addInstruction("SWAP h");
 
@@ -395,14 +428,170 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
         addInstruction("DEC h");
         addInstruction("JUMP -16");
         // finish
-        // right shift Q by alignment
+        // right shift Q by 1
         addInstruction("RESET a");
-        addInstruction("SUB b");
+        addInstruction("DEC a");
 
-//        addInstruction("PUT");
         addInstruction("SWAP b");
         addInstruction("SWAP d");
         addInstruction("SHIFT b");
+        addInstruction("SWAP d");
+        if (negate) {
+            addInstruction("RESET a");
+            addInstruction("SUB d");
+        } else {
+            addInstruction("SWAP d"); // res is now in a
+        }
+
+        return true;
+    }
+    return false;
+}
+
+// result in register a
+bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
+    if (var1 != nullptr && var2 != nullptr) {
+        // quick modulo
+        if (var1->val == 0 || var2->val == 0) {
+            addInstruction("RESET a");
+            return true;
+        }
+
+        if (std::abs(var1->val) < std::abs(var2->val)) { // remainder is var1 (take into account sign of var2)
+            makeConstant(var1->address);
+            addInstruction("LOAD a"); // value1 to a
+            if ((var2->val < 0 && var1->val > 0) || (var2->val > 0 && var1->val < 0)) { // if var1 < 0 then it already has correct sign
+                // negate result
+                addInstruction("SWAP b");
+                addInstruction("RESET a");
+                addInstruction("SUB b");
+            }
+            return true;
+        }
+
+        if (var2->val == 1 || var2->val == -1) {
+            makeConstant(var1->address);
+            addInstruction("LOAD a"); // value1 to a
+            if (var2->val < 0) {
+                // negate result
+                addInstruction("SWAP b");
+                addInstruction("RESET a");
+                addInstruction("SUB b");
+            }
+            return true;
+        }
+
+        // sign of result
+        bool negate = false;
+        if (var2->val < 0) {
+            negate = true;
+        }
+
+        makeConstant(var2->address);
+        addInstruction("LOAD a"); // value2 to a
+        addInstruction("SWAP c"); // store in c, c == var2
+        if (var2->val < 0) {
+            addInstruction("RESET a");
+            addInstruction("SUB c");
+            addInstruction("SWAP c");
+        }
+        addInstruction("RESET d"); // result in d, d == 0
+        addInstruction("RESET e");
+        addInstruction("INC e"); // e == -1
+        makeConstant(var1->address); // in a
+        addInstruction("LOAD a"); // a == val1
+        addInstruction("SWAP f"); // f == val1
+        if (var1->val < 0) {
+            addInstruction("RESET a");
+            addInstruction("SUB f");
+            addInstruction("SWAP f");
+        }
+
+        // find number of bits in var1 (var1 > var2)
+        int counter1 = 0;
+        long long int tmp = var1->val;
+        if (tmp < 0) {
+            tmp = -tmp;
+        }
+        while (tmp >= 1) {
+            tmp = tmp >> 1;
+            counter1++;
+        }
+
+        int counter2 = 0;
+        tmp = var2->val;
+        if (tmp < 0) {
+            tmp = -tmp;
+        }
+        while (tmp >= 1) {
+            tmp = tmp >> 1;
+            counter2++;
+        }
+
+        int counter3 = 0;
+        tmp = var1->val / var2->val;
+        if (tmp < 0) {
+            tmp = -tmp;
+        }
+        while (tmp >= 1) {
+            tmp = tmp >> 1;
+            counter3++;
+        }
+
+        // counter1 in h
+        makeConstant(counter3);
+        addInstruction("SWAP h");
+
+        // align
+        if (counter1 != counter2) {
+            // shift left var2 by difference
+            makeConstant(counter1 - counter2);
+            addInstruction("SWAP b");
+            addInstruction("SWAP c");
+            addInstruction("SHIFT b");
+            addInstruction("SWAP c"); // in c now var2 is aligned
+        }
+
+        addInstruction("SWAP h");
+        addInstruction("JZERO 16");
+        addInstruction("SWAP h");
+        // make copy of f in a
+        addInstruction("RESET a");
+        addInstruction("ADD f");
+        //addInstruction("SWAP f");
+        addInstruction("SUB c");
+        // check if t>=0
+        addInstruction("JNEG 3"); // t < 0 don't set N = t and don't add +1 to Q
+        // increment Q
+        addInstruction("INC d");
+        // addInstruction("JZERO 10");
+        addInstruction("SWAP f"); // N = t
+        // left N = t and left shift N by 1
+        addInstruction("SWAP f"); // N in a
+        addInstruction("SHIFT e");
+        //addInstruction("PUT");
+        addInstruction("SWAP f");
+        // left shift Q by 1
+        addInstruction("SWAP d");
+        addInstruction("SHIFT e");
+        addInstruction("SWAP d");
+        addInstruction("DEC h");
+        addInstruction("JUMP -16");
+        // finish
+        // right shift N by 1
+        addInstruction("RESET a");
+        addInstruction("DEC a");
+
+        addInstruction("SWAP b");
+        addInstruction("SWAP f");
+        addInstruction("SHIFT b");
+        addInstruction("SWAP f");
+        if (negate) {
+            addInstruction("RESET a");
+            addInstruction("SUB f");
+        } else {
+            addInstruction("SWAP f"); // res is now in a
+        }
 
         return true;
     }

@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 #include <memory>
-
+#include <iostream>
 
 MemoryData::MemoryData() {
     currentAddress = 0;
