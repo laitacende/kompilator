@@ -64,28 +64,29 @@ extern int yydebug;
     THEN = 270,
     ELSE = 271,
     ENDIF = 272,
-    NEQ = 273,
-    num = 274,
-    pidentifier = 275
+    EQ = 273,
+    NEQ = 274,
+    num = 275,
+    pidentifier = 276
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-#line 24 "parser.ypp"
+#line 25 "parser.ypp"
 union types
 {
-#line 24 "parser.ypp"
+#line 25 "parser.ypp"
 
     std::string* pidentifier;
     long long int num;
     Variable* var;
-    bool cond;
+    Cond* cond;
 
-#line 86 "parser.tab.hpp"
+#line 87 "parser.tab.hpp"
 
 };
-#line 24 "parser.ypp"
+#line 25 "parser.ypp"
 typedef union types YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

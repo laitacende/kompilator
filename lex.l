@@ -7,6 +7,7 @@
     #include <memory>
 
     #include "./inc/Symbol.hpp"
+    #include "./inc/Cond.hpp"
     #include "parser.tab.hpp"
 
     int yylex();
@@ -33,6 +34,7 @@
 "THEN"      { return THEN; }
 "ELSE"      { return ELSE; }
 "ENDIF"     { return ENDIF; }
+"EQ"        { return EQ; }
 "NEQ"        { return NEQ; }
 [0-9]+      { yylval.num = atoi(yytext); return num; }
 ";"         { return yytext[0]; }

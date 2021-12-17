@@ -1,9 +1,10 @@
 VAR
-	a
+	a, b
 BEGIN
-	a ASSIGN 4;
+	a ASSIGN 8;
 	WRITE a;
-	IF a NEQ 5 THEN
+	b ASSIGN 2;
+	IF a EQ b THEN
 		WRITE 1;
 		a ASSIGN 10;
 	ENDIF

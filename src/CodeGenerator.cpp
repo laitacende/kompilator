@@ -1,6 +1,7 @@
 #include "../inc/CodeGenerator.hpp"
 #include "../inc/MemoryData.hpp"
 #include "../inc/Variable.hpp"
+#include "../inc/Cond.hpp"
 
 #include <vector>
 #include <string>
@@ -150,14 +151,25 @@ std::string CodeGenerator::getInstruction(long long int index) {
 }
 
 // result in register a; if not equal then it shan't be zero
-long long int CodeGenerator::evalNotEqual(Variable* var1, Variable* var2) {
+Cond* CodeGenerator::evalNotEqual(Variable* var1, Variable* var2) {
     makeConstant(var2->address);
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
     makeConstant(var1->address);
     addInstruction("LOAD a");
     addInstruction("SUB c");
-    return addInstruction("JZERO "); // later will be changed, return index of this instruction
+    return new Cond(addInstruction("JZERO "), "NEQ"); // later will be changed, return index of this instruction
+}
+
+Cond* CodeGenerator::evalEqual(Variable* var1, Variable* var2) {
+    makeConstant(var2->address);
+    addInstruction("LOAD a"); // load var2
+    addInstruction("SWAP c"); // var2 in c
+    makeConstant(var1->address);
+    addInstruction("LOAD a");
+    addInstruction("SUB c");
+    addInstruction("JPOS ");
+    return new Cond(addInstruction("JNEG "), "EQ"); // later will be changed, return index of this instruction
 }
 
 // ----------------------------------- OPERATIONS -------------------------------
