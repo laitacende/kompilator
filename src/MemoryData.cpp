@@ -37,7 +37,7 @@ long long int MemoryData::addVariable(std::string name) {
 
 long long int MemoryData::addConstant(long long int val) {
     std::string name = std::to_string(val);
-    if (!ifExists(name)) {
+    //if (!ifExists(name)) {
         // allocate memory
         Variable* var = new Variable(name, currentAddress);
         var->isConstant = true;
@@ -47,8 +47,9 @@ long long int MemoryData::addConstant(long long int val) {
         memo[name]->isVariable = false;
         memo[name]->isConstant = true;
         return currentAddress - 1;
-    }
-    return -1;
+   // }
+
+   // return -1;
 }
 
 //int MemoryData::initVariable(std::string name, long long int val) {

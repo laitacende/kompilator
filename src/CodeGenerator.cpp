@@ -68,14 +68,14 @@ long long int CodeGenerator::makeConstant(long long int val) {
 
 Variable* CodeGenerator::allocateConstant(long long int value) {
     long long int address = memo->addConstant(value);
-    if (address != -1) {
+    //if (address != -1) { // problem jak kod w ifie, wtedy stala ma zla wartosc, bo nie zostala obliczona
        // addInstruction("( const alloc" + std::to_string(value) + " )");
         makeConstant(address);
         addInstruction("SWAP c");
         // constant was allocated under address
         makeConstant(value); // result in register a
         addInstruction("STORE c");
-    }
+   // }
     return memo->getVar(std::to_string(value));
 }
 
@@ -170,6 +170,48 @@ Cond* CodeGenerator::evalEqual(Variable* var1, Variable* var2) {
     addInstruction("SUB c");
     addInstruction("JPOS ");
     return new Cond(addInstruction("JNEG "), "EQ"); // later will be changed, return index of this instruction
+}
+
+Cond* CodeGenerator::evalLess(Variable* var1, Variable* var2) {
+    makeConstant(var2->address);
+    addInstruction("LOAD a"); // load var2
+    addInstruction("SWAP c"); // var2 in c
+    makeConstant(var1->address);
+    addInstruction("LOAD a");
+    addInstruction("SUB c");
+    addInstruction("JZERO ");
+    return new Cond(addInstruction("JPOS "), "LE");
+}
+
+Cond* CodeGenerator::evalLessEqual(Variable* var1, Variable* var2) {
+    makeConstant(var2->address);
+    addInstruction("LOAD a"); // load var2
+    addInstruction("SWAP c"); // var2 in c
+    makeConstant(var1->address);
+    addInstruction("LOAD a");
+    addInstruction("SUB c");
+    return new Cond(addInstruction("JPOS "), "LEQ");
+}
+
+Cond* CodeGenerator::evalGreater(Variable* var1, Variable* var2) {
+    makeConstant(var2->address);
+    addInstruction("LOAD a"); // load var2
+    addInstruction("SWAP c"); // var2 in c
+    makeConstant(var1->address);
+    addInstruction("LOAD a");
+    addInstruction("SUB c");
+    addInstruction("JZERO ");
+    return new Cond(addInstruction("JNEG "), "GE");
+}
+
+Cond* CodeGenerator::evalGreaterEqual(Variable* var1, Variable* var2) {
+    makeConstant(var2->address);
+    addInstruction("LOAD a"); // load var2
+    addInstruction("SWAP c"); // var2 in c
+    makeConstant(var1->address);
+    addInstruction("LOAD a");
+    addInstruction("SUB c");
+    return new Cond(addInstruction("JNEG "), "GEQ");
 }
 
 // ----------------------------------- OPERATIONS -------------------------------

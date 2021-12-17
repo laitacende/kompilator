@@ -35,7 +35,11 @@
 "ELSE"      { return ELSE; }
 "ENDIF"     { return ENDIF; }
 "EQ"        { return EQ; }
-"NEQ"        { return NEQ; }
+"NEQ"       { return NEQ; }
+"LE"        { return LE; }
+"GE"        { return GE; }
+"LEQ"       { return LEQ; }
+"GEQ"       { return GEQ; }
 [0-9]+      { yylval.num = atoi(yytext); return num; }
 ";"         { return yytext[0]; }
 ","         { return yytext[0]; }

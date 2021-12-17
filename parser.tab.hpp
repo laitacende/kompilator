@@ -66,8 +66,12 @@ extern int yydebug;
     ENDIF = 272,
     EQ = 273,
     NEQ = 274,
-    num = 275,
-    pidentifier = 276
+    GE = 275,
+    LE = 276,
+    LEQ = 277,
+    GEQ = 278,
+    num = 279,
+    pidentifier = 280
   };
 #endif
 
@@ -83,7 +87,7 @@ union types
     Variable* var;
     Cond* cond;
 
-#line 87 "parser.tab.hpp"
+#line 91 "parser.tab.hpp"
 
 };
 #line 25 "parser.ypp"

@@ -34,6 +34,10 @@ public:
     bool modulo(Variable* var1, Variable* var2);
     Cond* evalNotEqual(Variable* var1, Variable* var2);
     Cond* evalEqual(Variable* var1, Variable* var2);
+    Cond* evalLess(Variable* var1, Variable* var2);
+    Cond* evalLessEqual(Variable* var1, Variable* var2);
+    Cond* evalGreater(Variable* var1, Variable* var2);
+    Cond* evalGreaterEqual(Variable* var1, Variable* var2);
 private:
     std::vector<std::string> code;
     std::shared_ptr<MemoryData> memo;

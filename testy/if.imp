@@ -2,12 +2,67 @@ VAR
 	a, b
 BEGIN
 	a ASSIGN 8;
-	WRITE a;
 	b ASSIGN 2;
-	IF a EQ b THEN
+	IF a EQ  8 THEN
 		WRITE 1;
-		a ASSIGN 10;
 	ENDIF
-	WRITE 2;
-	WRITE a;
+	
+	IF a EQ b THEN
+		WRITE 2;
+	ENDIF
+	
+	IF a NEQ b THEN
+		WRITE 3;
+	ENDIF
+	
+	IF a NEQ 8 THEN
+		WRITE 4;
+	ENDIF
+	
+	IF 4 LE a THEN
+		WRITE 5;
+	ENDIF
+	
+	IF 4 LE b THEN
+		WRITE 6;
+	ENDIF
+	
+	IF 5 LE 4 THEN
+		WRITE -1;
+	ENDIF
+	
+	IF 4 LE 5 THEN
+		WRITE -2;
+	ENDIF
+	
+	IF 4 LE 4 THEN
+		WRITE -3;
+	ENDIF
+	
+	IF a GE b THEN
+		WRITE 7;
+	ENDIF
+	
+	IF a GE 10 THEN
+		WRITE 8;
+	ENDIF
+	
+	IF a LEQ 8 THEN 
+		WRITE 9;
+	ENDIF
+	
+	IF a LEQ 1 THEN 
+		WRITE 10;
+	ENDIF
+	
+	IF b GEQ 2 THEN 
+		WRITE 11;
+	ENDIF
+	
+	IF b GEQ a THEN
+		WRITE 12;
+	ENDIF
+	
+
+	 
 END
