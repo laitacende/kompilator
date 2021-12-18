@@ -21,6 +21,7 @@
     std::vector<std::string> newSet;
     bool error = false;
     long long int line = 0;
+    long long int lineRepeat = 0;
 %}
 
 %union types {
@@ -55,6 +56,8 @@
 %token WHILE
 %token DO
 %token ENDWHILE
+%token REPEAT
+%token UNTIL
 %token <num> num
 %token <pidentifier> pidentifier
 
@@ -128,6 +131,20 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                                       //std::cout << codeGen->offset << std::endl;
                                                       codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - $2->firstIndex + 1)));
                                                      }
+
+            | REPEAT { lineRepeat = codeGen->offset; }
+            commands UNTIL condition';'   {   std::string instr = codeGen->getInstruction($5->index); /* if EQ there are two jumps */
+                                                instr = instr + std::to_string((-(codeGen->offset - lineRepeat) + 1));
+                                                codeGen->changeInstruction($5->index, instr);
+                                                if ($5->type == "EQ" || $5->type == "LE" || $5->type == "GE") {
+                                                    instr = codeGen->getInstruction($5->index - 1);
+                                                    instr = instr + std::to_string((-(codeGen->offset - lineRepeat) + 2));
+                                                    codeGen->changeInstruction($5->index - 1, instr);
+                                                }
+                                                //std::cout << codeGen->offset << std::endl;
+
+                                               // codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - lineRepeat)));
+                                           }
 
 
 expression: value

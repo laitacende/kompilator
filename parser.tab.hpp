@@ -73,27 +73,29 @@ extern int yydebug;
     WHILE = 279,
     DO = 280,
     ENDWHILE = 281,
-    num = 282,
-    pidentifier = 283
+    REPEAT = 282,
+    UNTIL = 283,
+    num = 284,
+    pidentifier = 285
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-#line 26 "parser.ypp"
+#line 27 "parser.ypp"
 union types
 {
-#line 26 "parser.ypp"
+#line 27 "parser.ypp"
 
     std::string* pidentifier;
     long long int num;
     Variable* var;
     Cond* cond;
 
-#line 94 "parser.tab.hpp"
+#line 96 "parser.tab.hpp"
 
 };
-#line 26 "parser.ypp"
+#line 27 "parser.ypp"
 typedef union types YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

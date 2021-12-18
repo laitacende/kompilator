@@ -12,5 +12,8 @@ public:
     bool isConstant = false;
     bool isInit = false;
     long long int val;
+    bool isArray = false;
+    long long int size = 1;
+
 };
 #endif //KOMPILATOR_VARIABLE_HPP
