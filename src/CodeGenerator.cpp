@@ -109,7 +109,7 @@ bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {
     if (var1 != nullptr && var2 != nullptr) {
         // TODO maybe check if const isn't in memo, that could save time (ale tylko dla duzych, trzeba popatrzec dla jakich)
         var1->isInit = true;
-        var1->val = var2->val; // TODO to bez sensu, w petli nie dziala
+        var1->val = var2->val;
         // result of expression is in a
         //addInstruction("( assign to " + var1->name + " val " + std::to_string(var2->val) + " )");
         addInstruction("SWAP d"); // result of expression is in d
@@ -266,12 +266,26 @@ bool CodeGenerator::add(Variable* var1, Variable* var2) {
    // addInstruction("( dodawanie " + std::to_string(var1->val) + " " + std::to_string(var2->val) + " )");
     // wynik mozna do jakiegos rejestry i wtedy z niego - chyba zrobione
     if (var1 != nullptr && var2 != nullptr) {
-        makeConstant(var2->address);
-        addInstruction("LOAD a"); // value to a
-        addInstruction("SWAP c"); // store in c
-        makeConstant(var1->address); // in a
-        addInstruction("LOAD a");
-        addInstruction("ADD c"); // result in a
+        if (var1->isConstant && var2->isConstant) {
+            makeConstant(var1->val + var2->val);
+        } else if (var2->isConstant && var1->isVariable) {
+            if (var2->val == 0) {
+                makeConstant(var1->address); // in a
+                addInstruction("LOAD a");
+            } else if (var2->val == 1) {
+                makeConstant(var1->address); // in a
+                addInstruction("LOAD a");
+                addInstruction("INC a");
+            }
+        } else {
+            makeConstant(var2->address);
+            addInstruction("LOAD a"); // value to a
+            addInstruction("SWAP c"); // store in c
+            makeConstant(var1->address); // in a
+            addInstruction("LOAD a");
+            addInstruction("ADD c"); // result in a
+        }
+
         return true;
     }
     return false;
@@ -281,12 +295,25 @@ bool CodeGenerator::add(Variable* var1, Variable* var2) {
 bool CodeGenerator::subtract(Variable* var1, Variable* var2) {
     //addInstruction("( odejmowanie " + std::to_string(var1->val) + " " + std::to_string(var2->val) + " )");
     if (var1 != nullptr && var2 != nullptr) {
-        makeConstant(var2->address);
-        addInstruction("LOAD a"); // value to a
-        addInstruction("SWAP c"); // store in c
-        makeConstant(var1->address); // in a
-        addInstruction("LOAD a");
-        addInstruction("SUB c"); // result in a
+        if (var1->isConstant && var2->isConstant) {
+            makeConstant(var1->val - var2->val);
+        } else if (var2->isConstant && var1->isVariable) {
+            if (var2->val == 0) {
+                makeConstant(var1->address); // in a
+                addInstruction("LOAD a");
+            } else if (var2->val == 1) {
+                makeConstant(var1->address); // in a
+                addInstruction("LOAD a");
+                addInstruction("DEC a");
+            }
+        } else {
+            makeConstant(var2->address);
+            addInstruction("LOAD a"); // value to a
+            addInstruction("SWAP c"); // store in c
+            makeConstant(var1->address); // in a
+            addInstruction("LOAD a");
+            addInstruction("SUB c"); // result in a
+        }
         return true;
     }
     return false;
@@ -315,10 +342,7 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
 //            negate = true;
 //        }
         // quick multiplying
-        // makeConstant(var2->address); to raczej niepotrzebne operowac bedziemy na val
-        // val of multiplier
-        long long int multiplier = var2->val;
-        long long int mul = var1->val;
+
         addInstruction("RESET d");
         makeConstant(var2->address);
         addInstruction("LOAD a"); // value2 to a
