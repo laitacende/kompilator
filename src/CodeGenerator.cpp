@@ -268,23 +268,23 @@ bool CodeGenerator::add(Variable* var1, Variable* var2) {
     if (var1 != nullptr && var2 != nullptr) {
         if (var1->isConstant && var2->isConstant) {
             makeConstant(var1->val + var2->val);
-        } else if (var2->isConstant && var1->isVariable) {
+        } else if (var2->isConstant && var1->isVariable && (var2->val == 0 || var2->val == 1)) {
             if (var2->val == 0) {
                 makeConstant(var1->address); // in a
                 addInstruction("LOAD a");
-            } else if (var2->val == 1) {
+            } else {
                 makeConstant(var1->address); // in a
                 addInstruction("LOAD a");
                 addInstruction("INC a");
             }
-        } else {
+            return true;
+        }
             makeConstant(var2->address);
             addInstruction("LOAD a"); // value to a
             addInstruction("SWAP c"); // store in c
             makeConstant(var1->address); // in a
             addInstruction("LOAD a");
             addInstruction("ADD c"); // result in a
-        }
 
         return true;
     }
@@ -297,23 +297,23 @@ bool CodeGenerator::subtract(Variable* var1, Variable* var2) {
     if (var1 != nullptr && var2 != nullptr) {
         if (var1->isConstant && var2->isConstant) {
             makeConstant(var1->val - var2->val);
-        } else if (var2->isConstant && var1->isVariable) {
+        } else if (var2->isConstant && var1->isVariable && (var2->val == 0 || var2->val == 1)) {
             if (var2->val == 0) {
                 makeConstant(var1->address); // in a
                 addInstruction("LOAD a");
-            } else if (var2->val == 1) {
+            } else {
                 makeConstant(var1->address); // in a
                 addInstruction("LOAD a");
                 addInstruction("DEC a");
             }
-        } else {
+            return true;
+        }
             makeConstant(var2->address);
             addInstruction("LOAD a"); // value to a
             addInstruction("SWAP c"); // store in c
             makeConstant(var1->address); // in a
             addInstruction("LOAD a");
             addInstruction("SUB c"); // result in a
-        }
         return true;
     }
     return false;
@@ -323,6 +323,33 @@ bool CodeGenerator::subtract(Variable* var1, Variable* var2) {
 bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
    // addInstruction("( mnozenie " + std::to_string(var1->val) + " " + std::to_string(var2->val) + " )");
     if (var1 != nullptr && var2 != nullptr) {
+        if (var1->isConstant && var2->isConstant) {
+            if (var1->val == 0 || var2->val == 0) {
+                addInstruction("RESET a");
+            } else {
+                bool negate = false;
+                long long int tmp1 = var1->val;
+                long long int tmp2 = var2->val;
+                if ((var1->val > 0 && var2->val < 0) || (var1->val < 0 && var2->val > 0)) {
+                    negate = true;
+                    if (tmp1 < 0) {
+                        tmp1 = -tmp1;
+                    }
+                    if (tmp2 < 0) {
+                        tmp2 = -tmp2;
+                    }
+                }
+                makeConstant(tmp1 * tmp2);
+
+                if (negate) {
+                    addInstruction("SWAP b");
+                    addInstruction("RESET a");
+                    addInstruction("SUB b");
+                }
+            }
+
+            return true;
+        }
 //        if (var1->val == 0 || var2->val == 0) {
 //            addInstruction("RESET a");
 //            return true;
@@ -454,6 +481,31 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
 bool CodeGenerator::divide(Variable* var1, Variable* var2) {
     // TODO  poteg 2 mozna pomylslec zeby tylko byly shifty
     if (var1 != nullptr && var2 != nullptr) {
+        if (var1->isConstant && var2->isConstant) {
+            if (var2->val == 0 || var1->val == 0) {
+                addInstruction("RESET a");
+            } else {
+                bool negate = false;
+                long long int tmp1 = var1->val;
+                long long int tmp2 = var2->val;
+                if ((var1->val > 0 && var2->val < 0) || (var1->val < 0 && var2->val > 0)) {
+                    negate = true;
+                    if (tmp1 < 0) {
+                        tmp1 = -tmp1;
+                    }
+                    if (tmp2 < 0) {
+                        tmp2 = -tmp2;
+                    }
+                }
+                makeConstant(tmp1 / tmp2);
+                if (negate) {
+                    addInstruction("SWAP b");
+                    addInstruction("RESET a");
+                    addInstruction("SUB b");
+                }
+            }
+            return true;
+        }
         addInstruction("RESET d"); // result
         addInstruction("RESET g");
         makeConstant(var2->address);
@@ -598,7 +650,6 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         addInstruction("RESET a");
         addInstruction("ADD c");
         addInstruction("SUB f");
-        addInstruction("RESET a");
         addInstruction("JPOS 37"); //to end, v2>v1, result is v1, remainder is v1
 
         addInstruction("RESET a");
