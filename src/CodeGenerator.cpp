@@ -253,12 +253,15 @@ bool CodeGenerator::write(Variable* var) {
 bool CodeGenerator::read(Variable* var) {
     //makeConstant(val);
     // get from memory and load to a
-    makeConstant(var->address);
-    addInstruction("SWAP b"); // address of variable in register b
-    addInstruction("GET"); // in register a
-    var->isInit = true;
-    addInstruction("STORE b");
-    return true;
+    if (var != nullptr) {
+        makeConstant(var->address);
+        addInstruction("SWAP b"); // address of variable in register b
+        addInstruction("GET"); // in register a
+        var->isInit = true;
+        addInstruction("STORE b");
+        return true;
+    }
+    return false;
 }
 
 // result in register a

@@ -1025,7 +1025,7 @@ YY_RULE_SETUP
 case 38:
 YY_RULE_SETUP
 #line 61 "lex.l"
-{  }
+{ return ERROR; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
