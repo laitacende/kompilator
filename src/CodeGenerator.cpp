@@ -351,7 +351,6 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
         addInstruction("DEC e"); // e == -1
         addInstruction("RESET g");
         addInstruction("INC g");
-        // TODO TAKIE COS W PETLACH NIE ZADZIALA, TO TRZEBA SPRAWDZAC NORMALNIE W ASM IJUMPY
 //        if (var1->val < 0) {
 //            addInstruction("RESET a");
 //            addInstruction("SUB f");
@@ -430,161 +429,77 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
 // result in register a
 bool CodeGenerator::divide(Variable* var1, Variable* var2) {
     // TODO  poteg 2 mozna pomylslec zeby tylko byly shifty
-    // TODO sprawdzic czy zwkle robienie stalej bardziej nieoplacalne
     if (var1 != nullptr && var2 != nullptr) {
-        // quick dividing
-        if (var1->val == 0 || var2->val == 0 || std::abs(var1->val) < std::abs(var2->val)) {
-            addInstruction("RESET a");
-            return true;
-        }
-        if (var2->val == 1 || var2->val == -1) {
-            makeConstant(var1->address);
-            addInstruction("LOAD a"); // value1 to a
-            if (var2->val == -1 && var1->val > 0) {
-                // negate result
-                addInstruction("SWAP b");
-                addInstruction("RESET a");
-                addInstruction("SUB b");
-            }
-            return true;
-        }
-
-        // sign of result
-        bool negate = false;
-        if ((var2->val < 0 && var1->val > 0) || (var2->val > 0 && var1->val < 0)) {
-            negate = true;
-        }
-//        long long int tmp2 = var2->val;
-//        long long int tmp1 = var1->val;
-//        if (var2->val < 0) {
-//            tmp2 = -tmp2;
-//        }
-//        if(var1->val < 0) {
-//            tmp1 = -tmp1;
-//        }
-//        makeConstant(tmp1 / tmp2);
-//        if (negate) {
-//            addInstruction("SWAP c");
-//            addInstruction("RESET a");
-//            addInstruction("SUB c");
-//        }
-
         makeConstant(var2->address);
         addInstruction("LOAD a"); // value2 to a
-        addInstruction("SWAP c"); // store in c, c == var2
-        if (var2->val < 0) {
-            addInstruction("RESET a");
-            addInstruction("SUB c");
-            addInstruction("SWAP c");
-        }
-        addInstruction("RESET d"); // result in d, d == 0
-        addInstruction("RESET e");
-        addInstruction("INC e"); // e == -1
+        addInstruction("SWAP c"); // positive var2 in register c (will be remainder)
+
         makeConstant(var1->address); // in a
         addInstruction("LOAD a"); // a == val1
         addInstruction("SWAP f"); // f == val1
-        if (var1->val < 0) {
-            addInstruction("RESET a");
-            addInstruction("SUB f");
-            addInstruction("SWAP f");
-        }
 
-        // find number of bits in var1 (var1 > var2)
-        int counter1 = 0;
-        long long int tmp = var1->val;
-        if (tmp < 0) {
-            tmp = -tmp;
-        }
-        while (tmp >= 1) {
-            tmp = tmp >> 1;
-            counter1++;
-        }
-
-        int counter2 = 0;
-        tmp = var2->val;
-        if (tmp < 0) {
-            tmp = -tmp;
-        }
-        while (tmp >= 1) {
-            tmp = tmp >> 1;
-            counter2++;
-        }
-
-        int counter3 = 0;
-        tmp = var1->val / var2->val;
-        if (tmp < 0) {
-            tmp = -tmp;
-        }
-        while (tmp >= 1) {
-            tmp = tmp >> 1;
-            counter3++;
-        }
-
-        // counter1 in h
-        makeConstant(counter3);
-       // addInstruction("PUT");
-        addInstruction("SWAP h");
-
-        // align
-        if (counter1 != counter2) {
-            // shift left var2 by difference
-            makeConstant(counter1 - counter2);
-            addInstruction("SWAP b");
-            addInstruction("SWAP c");
-            addInstruction("SHIFT b");
-            addInstruction("SWAP c"); // in c now var2 is aligned
-        }
-
-
-        // algorithm: Q = N/D
-        // 1. align MSB of n AND d
-        // for i in 1::number of bits in result
-        // 2. compute t = (N-D)
-        // 3. if (t >= 0) add to Q one and N=t
-        // 4. left shift N by 1
-        // 5. Left-shift Q by 1
-        // 6. go to 2.
-        // shift right Q to undo step 1.
-        addInstruction("SWAP h");
-        addInstruction("JZERO 16");
-        addInstruction("SWAP h");
-        // make copy of f in a
-        addInstruction("RESET a");
-        addInstruction("ADD f");
-        //addInstruction("SWAP f");
-        addInstruction("SUB c");
-        // check if t>=0
-        addInstruction("JNEG 3"); // t < 0 don't set N = t and don't add +1 to Q
-        // increment Q
-        addInstruction("INC d");
-       // addInstruction("JZERO 10");
-        addInstruction("SWAP f"); // N = t
-        // left N = t and left shift N by 1
-        addInstruction("SWAP f"); // N in a
-        addInstruction("SHIFT e");
-        //addInstruction("PUT");
-        addInstruction("SWAP f");
-        // left shift Q by 1
-        addInstruction("SWAP d");
-        addInstruction("SHIFT e");
-        addInstruction("SWAP d");
+        addInstruction("RESET e");
+        addInstruction("INC e");
+        addInstruction("RESET h");
         addInstruction("DEC h");
-        addInstruction("JUMP -16");
-        // finish
-        // right shift Q by 1
+        addInstruction("RESET d"); // result
         addInstruction("RESET a");
-        addInstruction("DEC a");
+        addInstruction("ADD c");
+        addInstruction("SWAP b"); // v3 (tmp)
 
-        addInstruction("SWAP b");
+        addInstruction("RESET a");
+        addInstruction("ADD c");
+        addInstruction("SUB f");
+        addInstruction("JPOS 37"); //to end, v2>v1, result is 0, remainder is v1 (jakis swap albo cos)
+
+        addInstruction("RESET a");
+        addInstruction("ADD c");
+        addInstruction("SUB f"); // v2- v1
+        addInstruction("JPOS 5");
+       // addInstruction("JNEG 5"); // skip this, ldivpre
+        addInstruction("SWAP c");
+        addInstruction("SHIFT e");
+        addInstruction("SWAP c");
+        addInstruction("JUMP -7");
+
+        // ldivpre
+        addInstruction("SWAP c");
+        addInstruction("SHIFT h");
+        addInstruction("SWAP c");
+        addInstruction("JUMP 16"); // ldivcond
+
+        // ldivp1
+        addInstruction("SWAP f");
+        addInstruction("SUB c");
+        addInstruction("SWAP f");
+
         addInstruction("SWAP d");
-        addInstruction("SHIFT b");
+        addInstruction("SHIFT e");
+        addInstruction("INC a");
         addInstruction("SWAP d");
-        if (negate) {
-            addInstruction("RESET a");
-            addInstruction("SUB d");
-        } else {
-            addInstruction("SWAP d"); // res is now in a
-        }
+
+        // ldivp2
+        addInstruction("RESET a");
+        addInstruction("ADD c");
+        addInstruction("SUB b");
+        addInstruction("JZERO 14");
+        addInstruction("JNEG 13"); // end
+        addInstruction("SWAP c");
+        addInstruction("SHIFT h");
+        addInstruction("SWAP c");
+
+        // ldivcond
+        addInstruction("RESET a");
+        addInstruction("ADD c");
+        addInstruction("SUB f"); // v2 - v1 <=0
+        addInstruction("JZERO -18"); // ldivp1
+        addInstruction("JNEG -19"); // ldivp1
+        addInstruction("SWAP d");
+        addInstruction("SHIFT e");
+        addInstruction("SWAP d");
+        addInstruction("JUMP -16"); // ldivp2
+
+        addInstruction("SWAP d");
 
         return true;
     }
