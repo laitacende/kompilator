@@ -13,11 +13,18 @@
     int yylex();
 %}
 
+%x COMMENT
+
 %%
 
 \\\n            ; /* skip empty lines */
 [ \t]+          ;
+"("             { BEGIN(COMMENT); }
 
+<COMMENT>{
+    ")"    { BEGIN(INITIAL); }
+    .|\n
+}
 
 "BEGIN"     { return BEGIN_; }
 "END"       { return END; }
