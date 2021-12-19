@@ -56,7 +56,7 @@ long long int MemoryData::addVariableOfSize(std::string name, long long int size
     if (!ifExists(name)) {
         // allocate memory
         Variable* var = new Variable(name, currentAddress);
-        var->isInit = false;
+        var->isInit = true;
         var->size = size;
         var->isArray = true;
         var->startArray = start;

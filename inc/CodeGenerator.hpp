@@ -14,7 +14,6 @@ public:
     std::vector<std::string> getCode();
     int offset;
     int addInstruction(std::string newInstr);
-    // TODO tu trzeba jakis inny typ, bo nie wiadomo czy stala czy zmienna
     bool write(Variable* var);
     bool read(Variable* var);
     long long int makeConstant(long long int val);
@@ -28,6 +27,7 @@ public:
     void changeInstruction(long long int index, std::string newInstruction);
     std::string getInstruction(long long int index);
     Variable* getVar(std::string name);
+    Variable* getVarArrayNum(Variable* var, long long int index);
     bool subtract(Variable* var1, Variable* var2);
     bool add(Variable* var1, Variable* var2);
     bool multiply(Variable* var1, Variable* var2);

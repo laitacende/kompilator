@@ -121,7 +121,6 @@ Variable* CodeGenerator::allocateArray(std::string name, long long int start, lo
 }
 
 bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {
-    // TODO var 2 could be variable too -  this is probably handled
     // TODO mozna wczytywac do rejestrow,a nie sa dwa razy do pamieci odwolywac
     if (var1 != nullptr && var2 != nullptr) {
         // TODO maybe check if const isn't in memo, that could save time (ale tylko dla duzych, trzeba popatrzec dla jakich)
@@ -150,6 +149,25 @@ Variable* CodeGenerator::getVar(std::string name) {
     return memo->getVar(name);
 }
 
+Variable* CodeGenerator::getVarArrayNum(Variable* var, long long int index) {
+    // To wczytywac do jakiegos rejestru, najpierw a, pozniej b itp. i miec taki pseudo stos
+    // check address in memory of element at index
+    // first element address
+    long long int address = var->address;
+    // check if not out of bounds
+    if (index > var->endArray || index < var->startArray) {
+        return nullptr;
+    }
+    long long int addrElement = abs(index - var->startArray) + address;
+    Variable* var1 = new Variable(var->name, addrElement);
+    var->size = var->size;
+    var->isArray = true;
+    var->isInit = true;
+    var->startArray = var->startArray;
+    var->endArray = var->endArray;
+    return var1;
+}
+
 bool CodeGenerator::getConstant(std::string name) {
     if (memo->ifExists(name)) {
         long long int address = memo->getAddress(name);
@@ -166,6 +184,7 @@ void CodeGenerator::changeInstruction(long long int index, std::string newInstru
 std::string CodeGenerator::getInstruction(long long int index) {
     return code[index];
 }
+// ------------------------------- CONDITIONS -----------------------------
 
 // result in register a; if not equal then it shan't be zero
 Cond* CodeGenerator::evalNotEqual(Variable* var1, Variable* var2) {
@@ -257,7 +276,7 @@ Cond* CodeGenerator::evalGreaterEqual(Variable* var1, Variable* var2) {
 
 bool CodeGenerator::write(Variable* var) {
     // get from memory and load to a
-    if (var->isVariable && !var->isInit) {
+    if (var != nullptr && var->isVariable && !var->isArray && !var->isInit) {
         return false;
     }
     makeConstant(var->address);
