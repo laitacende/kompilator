@@ -56,6 +56,9 @@
 ";"         { return yytext[0]; }
 ","         { return yytext[0]; }
 "-"         { return yytext[0]; }
+"["         { return yytext[0]; }
+"]"         { return yytext[0]; }
+":"         { return yytext[0]; }
 [_a-z]+     {  yylval.pidentifier = new std::string(yytext); return pidentifier; }
 \n          ;
 .           { return ERROR; }

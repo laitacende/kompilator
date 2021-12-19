@@ -23,6 +23,7 @@ public:
     Variable* allocateConstant(long long int value);
     Variable* allocateConstantNegate(long long int value);
     Variable* allocateVariable(std::string name);
+    Variable* allocateArray(std::string name, long long int start, long long int end);
     bool assignToVariable(Variable* var1, Variable* var2);
     void changeInstruction(long long int index, std::string newInstruction);
     std::string getInstruction(long long int index);

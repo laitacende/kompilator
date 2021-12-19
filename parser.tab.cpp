@@ -504,16 +504,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  15
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   138
+#define YYLAST   171
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  35
+#define YYNTOKENS  38
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  11
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  32
+#define YYNRULES  40
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  75
+#define YYNSTATES  107
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   286
@@ -532,12 +532,12 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,    32,    34,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    33,
+       2,     2,     2,     2,    32,    36,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    34,    37,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,    33,     2,    35,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -561,12 +561,13 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_int16 yyrline[] =
 {
-       0,    73,    73,    74,    76,    82,    89,    90,    92,    98,
-     100,   105,   105,   119,   129,   141,   141,   156,   157,   158,
-     159,   160,   161,   163,   164,   165,   166,   167,   168,   170,
-     176,   177,   179
+       0,    73,    73,    74,    76,    82,    88,    99,   110,   121,
+     133,   144,   155,   166,   179,   180,   182,   188,   190,   195,
+     195,   209,   219,   231,   231,   246,   247,   248,   249,   250,
+     251,   253,   254,   255,   256,   257,   258,   260,   266,   267,
+     269
 };
 #endif
 
@@ -579,8 +580,8 @@ static const char *const yytname[] =
   "ASSIGN", "PLUS", "MINUS", "TIMES", "DIV", "MOD", "IF", "THEN", "ELSE",
   "ENDIF", "EQ", "NEQ", "GE", "LE", "LEQ", "GEQ", "WHILE", "DO",
   "ENDWHILE", "REPEAT", "UNTIL", "num", "pidentifier", "ERROR", "','",
-  "';'", "'-'", "$accept", "program", "declarations", "commands",
-  "command", "$@1", "$@2", "expression", "condition", "value",
+  "'['", "':'", "']'", "'-'", "';'", "$accept", "program", "declarations",
+  "commands", "command", "$@1", "$@2", "expression", "condition", "value",
   "identifier", YY_NULLPTR
 };
 #endif
@@ -593,11 +594,11 @@ static const yytype_int16 yytoknum[] =
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285,   286,    44,    59,    45
+     285,   286,    44,    91,    58,    93,    45,    59
 };
 # endif
 
-#define YYPACT_NINF (-28)
+#define YYPACT_NINF (-29)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -609,16 +610,19 @@ static const yytype_int16 yytoknum[] =
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-static const yytype_int8 yypact[] =
+static const yytype_int16 yypact[] =
 {
-      32,     6,   -27,    14,   -13,   -11,   -13,   -13,   -28,   -28,
-      57,   -28,    18,   -28,     2,   -28,   -28,    -7,     5,   -28,
-       9,    35,   115,    26,     6,   -28,   -28,   -13,     6,    30,
-     -28,   -28,   -28,     6,   -13,   -13,   -13,   -13,   -13,   -13,
-       6,     1,    29,   111,    61,   -28,    76,   -28,   -28,   -28,
-     -28,   -28,   -28,    88,   -13,   -28,   -13,   -13,   -13,   -13,
-     -13,   -28,   -28,    50,   -28,    36,   -28,   -28,   -28,   -28,
-     -28,     6,   -28,   102,   -28
+      21,   136,   -28,    16,   -17,     0,   -17,   -17,   -29,   -29,
+      50,   -29,    17,     1,     4,   -29,   -29,     3,     6,   -29,
+       8,    24,   133,    22,   136,   -29,   -29,   -17,   -21,   136,
+      19,   -29,   -29,   -29,   136,   -17,   -17,   -17,   -17,   -17,
+     -17,   136,    81,    13,   158,    18,    32,    72,    27,   100,
+     -29,   -29,   -29,   -29,   -29,   -29,   109,   -17,   -29,   -17,
+     -17,   -17,   -17,   -17,   -19,    28,   -29,   -15,   -29,    47,
+     -29,    35,   -29,   -29,   -29,   -29,   -29,    30,    44,    -9,
+      41,    53,   136,   -29,   -29,    48,    49,    68,    -7,    64,
+     114,   -29,   -29,    65,    66,    74,     2,   -29,   -29,   -29,
+      69,    75,    83,   -29,   -29,    78,   -29
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -626,27 +630,30 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     0,     0,     0,     0,     0,     0,     0,    15,    32,
-       0,     7,     0,     5,     0,     1,    30,     0,     0,    29,
-       0,     0,     0,     0,     0,     3,     6,     0,     0,     0,
-      31,     8,    10,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,    17,     0,     4,    11,    24,    23,    26,
-      25,    27,    28,     0,     0,     9,     0,     0,     0,     0,
-       0,     2,    13,     0,    14,     0,    18,    19,    20,    21,
-      22,     0,    16,     0,    12
+       0,     0,     0,     0,     0,     0,     0,     0,    23,    40,
+       0,    15,     0,     5,     0,     1,    38,     0,     0,    37,
+       0,     0,     0,     0,     0,     3,    14,     0,     0,     0,
+       0,    39,    16,    18,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,    25,     0,     0,     0,     4,    19,
+      32,    31,    34,    33,    35,    36,     0,     0,    17,     0,
+       0,     0,     0,     0,     0,     0,     2,     0,    21,     0,
+      22,     0,    26,    27,    28,    29,    30,     0,     0,     0,
+       0,     0,     0,    24,     6,     0,     0,     0,     0,     0,
+       0,     8,     7,     0,     0,     0,     0,    20,     9,    12,
+       0,     0,     0,    11,    10,     0,    13
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -28,   -28,   -28,   -22,     0,   -28,   -28,   -28,    -6,    20,
+     -29,   -29,   -29,   -23,    -5,   -29,   -29,   -29,    -4,    31,
       -1
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     3,    14,    10,    11,    63,    24,    42,    21,    22,
+      -1,     3,    14,    10,    11,    69,    24,    43,    21,    22,
       19
 };
 
@@ -655,70 +662,83 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      12,    23,    41,    13,    20,    28,    44,     4,     5,    12,
-      26,    46,     4,     5,    15,     6,    16,     9,    53,     9,
-       6,    17,    30,    12,    18,     7,    27,    12,     8,    54,
-       7,     9,    12,     8,    29,     1,     9,     2,    31,    12,
-      12,    26,    32,    12,    26,    12,    26,    43,    65,    73,
-      33,    40,    12,    26,    47,    48,    49,    50,    51,    52,
-      45,    25,    55,     4,     5,    61,    71,     4,     5,    72,
-      12,     6,    12,    26,     0,     6,    66,    67,    68,    69,
-      70,     7,     4,     5,     8,     7,     0,     9,     8,     0,
-       6,     9,     0,    62,     4,     5,     0,     0,     0,     0,
-       7,     0,     6,     8,     0,     0,     9,     0,     4,     5,
-       0,     0,     7,     0,    64,     8,     6,     0,     9,    74,
-      56,    57,    58,    59,    60,     0,     7,     0,     0,     8,
-       0,     0,     9,    34,    35,    36,    37,    38,    39
+      12,    42,    13,    23,    20,    26,    47,    29,    45,    12,
+      77,    49,    16,     9,    80,    46,    15,    78,    56,    17,
+      86,    81,    94,    12,     1,    27,     2,    87,    12,    95,
+       9,   101,    31,    12,    28,    18,    30,    26,   102,    34,
+      12,    12,    26,    32,    26,    33,    12,    41,    12,    48,
+      58,    26,    64,    71,    25,    12,     4,     5,    44,    90,
+      67,    65,    79,    82,     6,    84,    50,    51,    52,    53,
+      54,    55,    83,    85,     7,    88,    66,     8,     4,     5,
+       9,    12,    89,    91,    92,    26,     6,     4,     5,    12,
+      72,    73,    74,    75,    76,     6,     7,    93,    96,     8,
+      98,    99,     9,   100,   103,     7,     4,     5,     8,    57,
+     104,     9,   105,   106,     6,     4,     5,    68,     0,     0,
+       4,     5,     0,     6,     7,     0,     0,     8,     6,     0,
+       9,    97,     0,     7,     0,    70,     8,     0,     7,     9,
+       0,     8,     4,     5,     9,     0,     0,     0,     0,     0,
+       6,    35,    36,    37,    38,    39,    40,     0,     0,     0,
+       7,     0,     0,     8,     0,     0,     9,    59,    60,    61,
+      62,    63
 };
 
 static const yytype_int8 yycheck[] =
 {
-       1,     7,    24,    30,     5,     3,    28,     6,     7,    10,
-      10,    33,     6,     7,     0,    14,    29,    30,    40,    30,
-      14,    34,    29,    24,     4,    24,     8,    28,    27,    28,
-      24,    30,    33,    27,    32,     3,    30,     5,    33,    40,
-      41,    41,    33,    44,    44,    46,    46,    27,    54,    71,
-      15,    25,    53,    53,    34,    35,    36,    37,    38,    39,
-      30,     4,    33,     6,     7,     4,    16,     6,     7,    33,
-      71,    14,    73,    73,    -1,    14,    56,    57,    58,    59,
-      60,    24,     6,     7,    27,    24,    -1,    30,    27,    -1,
-      14,    30,    -1,    17,     6,     7,    -1,    -1,    -1,    -1,
-      24,    -1,    14,    27,    -1,    -1,    30,    -1,     6,     7,
-      -1,    -1,    24,    -1,    26,    27,    14,    -1,    30,    17,
-       9,    10,    11,    12,    13,    -1,    24,    -1,    -1,    27,
-      -1,    -1,    30,    18,    19,    20,    21,    22,    23
+       1,    24,    30,     7,     5,    10,    29,     3,    29,    10,
+      29,    34,    29,    30,    29,    36,     0,    36,    41,    36,
+      29,    36,    29,    24,     3,     8,     5,    36,    29,    36,
+      30,    29,    29,    34,    33,     4,    32,    42,    36,    15,
+      41,    42,    47,    37,    49,    37,    47,    25,    49,    30,
+      37,    56,    34,    57,     4,    56,     6,     7,    27,    82,
+      33,    29,    34,    16,    14,    35,    35,    36,    37,    38,
+      39,    40,    37,    29,    24,    34,     4,    27,     6,     7,
+      30,    82,    29,    35,    35,    90,    14,     6,     7,    90,
+      59,    60,    61,    62,    63,    14,    24,    29,    34,    27,
+      35,    35,    30,    29,    35,    24,     6,     7,    27,    28,
+      35,    30,    29,    35,    14,     6,     7,    17,    -1,    -1,
+       6,     7,    -1,    14,    24,    -1,    -1,    27,    14,    -1,
+      30,    17,    -1,    24,    -1,    26,    27,    -1,    24,    30,
+      -1,    27,     6,     7,    30,    -1,    -1,    -1,    -1,    -1,
+      14,    18,    19,    20,    21,    22,    23,    -1,    -1,    -1,
+      24,    -1,    -1,    27,    -1,    -1,    30,     9,    10,    11,
+      12,    13
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,     5,    36,     6,     7,    14,    24,    27,    30,
-      38,    39,    45,    30,    37,     0,    29,    34,    44,    45,
-      45,    43,    44,    43,    41,     4,    39,     8,     3,    32,
-      29,    33,    33,    15,    18,    19,    20,    21,    22,    23,
-      25,    38,    42,    44,    38,    30,    38,    44,    44,    44,
-      44,    44,    44,    38,    28,    33,     9,    10,    11,    12,
-      13,     4,    17,    40,    26,    43,    44,    44,    44,    44,
-      44,    16,    33,    38,    17
+       0,     3,     5,    39,     6,     7,    14,    24,    27,    30,
+      41,    42,    48,    30,    40,     0,    29,    36,    47,    48,
+      48,    46,    47,    46,    44,     4,    42,     8,    33,     3,
+      32,    29,    37,    37,    15,    18,    19,    20,    21,    22,
+      23,    25,    41,    45,    47,    29,    36,    41,    30,    41,
+      47,    47,    47,    47,    47,    47,    41,    28,    37,     9,
+      10,    11,    12,    13,    34,    29,     4,    33,    17,    43,
+      26,    46,    47,    47,    47,    47,    47,    29,    36,    34,
+      29,    36,    16,    37,    35,    29,    29,    36,    34,    29,
+      41,    35,    35,    29,    29,    36,    34,    17,    35,    35,
+      29,    29,    36,    35,    35,    29,    35
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    35,    36,    36,    37,    37,    38,    38,    39,    39,
-      39,    40,    39,    39,    39,    41,    39,    42,    42,    42,
-      42,    42,    42,    43,    43,    43,    43,    43,    43,    44,
-      44,    44,    45
+       0,    38,    39,    39,    40,    40,    40,    40,    40,    40,
+      40,    40,    40,    40,    41,    41,    42,    42,    42,    43,
+      42,    42,    42,    44,    42,    45,    45,    45,    45,    45,
+      45,    46,    46,    46,    46,    46,    46,    47,    47,    47,
+      48
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     5,     3,     3,     1,     2,     1,     3,     4,
-       3,     0,     8,     5,     5,     0,     6,     1,     3,     3,
-       3,     3,     3,     3,     3,     3,     3,     3,     3,     1,
-       1,     2,     1
+       0,     2,     5,     3,     3,     1,     6,     7,     7,     8,
+       9,     9,     8,    10,     2,     1,     3,     4,     3,     0,
+       8,     5,     5,     0,     6,     1,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     1,     1,     2,
+       1
 };
 
 
@@ -1421,7 +1441,7 @@ yyreduce:
                                                 yyerror("Redefinition of variable " + *(yyvsp[0].pidentifier));
                                              }
                                             }
-#line 1425 "parser.tab.cpp"
+#line 1445 "parser.tab.cpp"
     break;
 
   case 5:
@@ -1432,36 +1452,164 @@ yyreduce:
                                         yyerror("Redeclaration of variable " + *(yyvsp[0].pidentifier));
                                     }
                                 }
-#line 1436 "parser.tab.cpp"
+#line 1456 "parser.tab.cpp"
+    break;
+
+  case 6:
+#line 88 "parser.ypp"
+                                             { Variable* v = codeGen->allocateArray(*(yyvsp[-5].pidentifier), (yyvsp[-3].num), (yyvsp[-1].num));
+                                                if (nullptr == v && !error) {
+                                                    error = true;
+                                                    yyerror("Redeclaration of variable " + *(yyvsp[-5].pidentifier));
+                                                }
+
+                                                if (v->name == "error") {
+                                                    error = true;
+                                                    yyerror("Invalid range of array " + *(yyvsp[-5].pidentifier));
+                                                }
+                                             }
+#line 1472 "parser.tab.cpp"
+    break;
+
+  case 7:
+#line 99 "parser.ypp"
+                                                { Variable* v = codeGen->allocateArray(*(yyvsp[-6].pidentifier), -(yyvsp[-3].num), (yyvsp[-1].num));
+                                                               if (nullptr == v && !error) {
+                                                                   error = true;
+                                                                   yyerror("Redeclaration of variable " + *(yyvsp[-6].pidentifier));
+                                                               }
+
+                                                               if (v->name == "error") {
+                                                                   error = true;
+                                                                   yyerror("Invalid range of array " + *(yyvsp[-6].pidentifier));
+                                                               }
+                                                            }
+#line 1488 "parser.tab.cpp"
     break;
 
   case 8:
-#line 92 "parser.ypp"
+#line 110 "parser.ypp"
+                                                { Variable* v = codeGen->allocateArray(*(yyvsp[-6].pidentifier), (yyvsp[-4].num), -(yyvsp[-1].num));
+                                                    if (nullptr == v && !error) {
+                                                        error = true;
+                                                        yyerror("Redeclaration of variable " + *(yyvsp[-6].pidentifier));
+                                                    }
+
+                                                    if (v->name == "error") {
+                                                        error = true;
+                                                        yyerror("Invalid range of array " + *(yyvsp[-6].pidentifier));
+                                                    }
+                                                 }
+#line 1504 "parser.tab.cpp"
+    break;
+
+  case 9:
+#line 121 "parser.ypp"
+                                                   { Variable* v = codeGen->allocateArray(*(yyvsp[-7].pidentifier), -(yyvsp[-4].num), -(yyvsp[-1].num));
+                                                 if (nullptr == v && !error) {
+                                                     error = true;
+                                                     yyerror("Redeclaration of variable " + *(yyvsp[-7].pidentifier));
+                                                 }
+
+                                                 if (v->name == "error") {
+                                                     error = true;
+                                                     yyerror("Invalid range of array " + *(yyvsp[-7].pidentifier));
+                                                 }
+                                              }
+#line 1520 "parser.tab.cpp"
+    break;
+
+  case 10:
+#line 133 "parser.ypp"
+                                                              { Variable* v = codeGen->allocateArray(*(yyvsp[-6].pidentifier), -(yyvsp[-3].num), (yyvsp[-1].num));
+                                                               if (nullptr == v && !error) {
+                                                                   error = true;
+                                                                   yyerror("Redeclaration of variable " + *(yyvsp[-6].pidentifier));
+                                                               }
+
+                                                               if (v->name == "error") {
+                                                                   error = true;
+                                                                   yyerror("Invalid range of array " + *(yyvsp[-6].pidentifier));
+                                                               }
+                                                            }
+#line 1536 "parser.tab.cpp"
+    break;
+
+  case 11:
+#line 144 "parser.ypp"
+                                                              { Variable* v = codeGen->allocateArray(*(yyvsp[-6].pidentifier), (yyvsp[-4].num), -(yyvsp[-1].num));
+                                                                if (nullptr == v && !error) {
+                                                                    error = true;
+                                                                    yyerror("Redeclaration of variable " + *(yyvsp[-6].pidentifier));
+                                                                }
+
+                                                                if (v->name == "error") {
+                                                                    error = true;
+                                                                    yyerror("Invalid range of array " + *(yyvsp[-6].pidentifier));
+                                                                }
+                                                             }
+#line 1552 "parser.tab.cpp"
+    break;
+
+  case 12:
+#line 155 "parser.ypp"
+                                                           { Variable* v = codeGen->allocateArray(*(yyvsp[-5].pidentifier), (yyvsp[-3].num), (yyvsp[-1].num));
+                                                                             if (nullptr == v && !error) {
+                                                                                 error = true;
+                                                                                 yyerror("Redeclaration of variable " + *(yyvsp[-5].pidentifier));
+                                                                             }
+
+                                                                             if (v->name == "error") {
+                                                                                 error = true;
+                                                                                 yyerror("Invalid range of array " + *(yyvsp[-5].pidentifier));
+                                                                             }
+                                                                          }
+#line 1568 "parser.tab.cpp"
+    break;
+
+  case 13:
+#line 166 "parser.ypp"
+                                                                  { Variable* v = codeGen->allocateArray(*(yyvsp[-7].pidentifier), -(yyvsp[-4].num), -(yyvsp[-1].num));
+                                                                  if (nullptr == v && !error) {
+                                                                      error = true;
+                                                                      yyerror("Redeclaration of variable " + *(yyvsp[-7].pidentifier));
+                                                                  }
+
+                                                                  if (v->name == "error") {
+                                                                      error = true;
+                                                                      yyerror("Invalid range of array " + *(yyvsp[-7].pidentifier));
+                                                                  }
+                                                               }
+#line 1584 "parser.tab.cpp"
+    break;
+
+  case 16:
+#line 182 "parser.ypp"
                            { if (!codeGen->write((yyvsp[-1].var)) && !error) {
                                 error = true;
                                 yyerror("Variable " + (yyvsp[-1].var)->name +" is not initialized");
                               }
                             }
-#line 1446 "parser.tab.cpp"
+#line 1594 "parser.tab.cpp"
     break;
 
-  case 9:
-#line 98 "parser.ypp"
+  case 17:
+#line 188 "parser.ypp"
                                               {  codeGen->assignToVariable((yyvsp[-3].var), (yyvsp[-1].var)); }
-#line 1452 "parser.tab.cpp"
+#line 1600 "parser.tab.cpp"
     break;
 
-  case 10:
-#line 100 "parser.ypp"
+  case 18:
+#line 190 "parser.ypp"
                                     { if (!codeGen->read((yyvsp[-1].var)) && !error) {
                                         error = true;
                                       }
                                     }
-#line 1461 "parser.tab.cpp"
+#line 1609 "parser.tab.cpp"
     break;
 
-  case 11:
-#line 105 "parser.ypp"
+  case 19:
+#line 195 "parser.ypp"
                                          { line = codeGen->addInstruction("JUMP "); // omit else, edit later
                                             std::string instr = codeGen->getInstruction((yyvsp[-2].cond)->index);
                                             instr = instr + std::to_string(codeGen->offset - (yyvsp[-2].cond)->index);
@@ -1472,19 +1620,19 @@ yyreduce:
                                                 codeGen->changeInstruction((yyvsp[-2].cond)->index - 1, instr);
                                             }
                                           }
-#line 1476 "parser.tab.cpp"
+#line 1624 "parser.tab.cpp"
     break;
 
-  case 12:
-#line 115 "parser.ypp"
+  case 20:
+#line 205 "parser.ypp"
                                          { std::string instr = "JUMP " + std::to_string(codeGen->offset - line);
                                             codeGen->changeInstruction(line, instr); // edit instr from first block, jump adter else
                                          }
-#line 1484 "parser.tab.cpp"
+#line 1632 "parser.tab.cpp"
     break;
 
-  case 13:
-#line 119 "parser.ypp"
+  case 21:
+#line 209 "parser.ypp"
                                                {    std::string instr = codeGen->getInstruction((yyvsp[-3].cond)->index); /* if EQ there are two jumps */
                                                     instr = instr + std::to_string(codeGen->offset - (yyvsp[-3].cond)->index);
                                                     codeGen->changeInstruction((yyvsp[-3].cond)->index, instr);
@@ -1494,11 +1642,11 @@ yyreduce:
                                                         codeGen->changeInstruction((yyvsp[-3].cond)->index - 1, instr);
                                                     }
                                                 }
-#line 1498 "parser.tab.cpp"
+#line 1646 "parser.tab.cpp"
     break;
 
-  case 14:
-#line 129 "parser.ypp"
+  case 22:
+#line 219 "parser.ypp"
                                                     { std::string instr = codeGen->getInstruction((yyvsp[-3].cond)->index); /* if EQ there are two jumps */
                                                       instr = instr + std::to_string((codeGen->offset - (yyvsp[-3].cond)->index + 1));
                                                       codeGen->changeInstruction((yyvsp[-3].cond)->index, instr);
@@ -1510,17 +1658,17 @@ yyreduce:
                                                       //std::cout << codeGen->offset << std::endl;
                                                       codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - (yyvsp[-3].cond)->firstIndex + 1)));
                                                      }
-#line 1514 "parser.tab.cpp"
+#line 1662 "parser.tab.cpp"
     break;
 
-  case 15:
-#line 141 "parser.ypp"
+  case 23:
+#line 231 "parser.ypp"
                      { lineRepeat = codeGen->offset; }
-#line 1520 "parser.tab.cpp"
+#line 1668 "parser.tab.cpp"
     break;
 
-  case 16:
-#line 142 "parser.ypp"
+  case 24:
+#line 232 "parser.ypp"
                                           {   std::string instr = codeGen->getInstruction((yyvsp[-1].cond)->index); /* if EQ there are two jumps */
                                                 instr = instr + std::to_string((-(codeGen->offset - lineRepeat) + 1));
                                                 codeGen->changeInstruction((yyvsp[-1].cond)->index, instr);
@@ -1533,100 +1681,100 @@ yyreduce:
 
                                                // codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - lineRepeat)));
                                            }
-#line 1537 "parser.tab.cpp"
-    break;
-
-  case 18:
-#line 157 "parser.ypp"
-                               { codeGen->add((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1543 "parser.tab.cpp"
-    break;
-
-  case 19:
-#line 158 "parser.ypp"
-                                { codeGen->subtract((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1549 "parser.tab.cpp"
-    break;
-
-  case 20:
-#line 159 "parser.ypp"
-                                { codeGen->multiply((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1555 "parser.tab.cpp"
-    break;
-
-  case 21:
-#line 160 "parser.ypp"
-                                { codeGen->divide((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1561 "parser.tab.cpp"
-    break;
-
-  case 22:
-#line 161 "parser.ypp"
-                                { codeGen->modulo((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1567 "parser.tab.cpp"
-    break;
-
-  case 23:
-#line 163 "parser.ypp"
-                            { (yyval.cond) = codeGen->evalNotEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1573 "parser.tab.cpp"
-    break;
-
-  case 24:
-#line 164 "parser.ypp"
-                             { (yyval.cond) = codeGen->evalEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1579 "parser.tab.cpp"
-    break;
-
-  case 25:
-#line 165 "parser.ypp"
-                             { (yyval.cond) = codeGen->evalLess((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1585 "parser.tab.cpp"
+#line 1685 "parser.tab.cpp"
     break;
 
   case 26:
-#line 166 "parser.ypp"
-                             { (yyval.cond) = codeGen->evalGreater((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1591 "parser.tab.cpp"
+#line 247 "parser.ypp"
+                               { codeGen->add((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1691 "parser.tab.cpp"
     break;
 
   case 27:
-#line 167 "parser.ypp"
-                              { (yyval.cond) = codeGen->evalLessEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1597 "parser.tab.cpp"
+#line 248 "parser.ypp"
+                                { codeGen->subtract((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1697 "parser.tab.cpp"
     break;
 
   case 28:
-#line 168 "parser.ypp"
-                              { (yyval.cond) = codeGen->evalGreaterEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1603 "parser.tab.cpp"
+#line 249 "parser.ypp"
+                                { codeGen->multiply((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1703 "parser.tab.cpp"
     break;
 
   case 29:
-#line 170 "parser.ypp"
+#line 250 "parser.ypp"
+                                { codeGen->divide((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1709 "parser.tab.cpp"
+    break;
+
+  case 30:
+#line 251 "parser.ypp"
+                                { codeGen->modulo((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1715 "parser.tab.cpp"
+    break;
+
+  case 31:
+#line 253 "parser.ypp"
+                            { (yyval.cond) = codeGen->evalNotEqual((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1721 "parser.tab.cpp"
+    break;
+
+  case 32:
+#line 254 "parser.ypp"
+                             { (yyval.cond) = codeGen->evalEqual((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1727 "parser.tab.cpp"
+    break;
+
+  case 33:
+#line 255 "parser.ypp"
+                             { (yyval.cond) = codeGen->evalLess((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1733 "parser.tab.cpp"
+    break;
+
+  case 34:
+#line 256 "parser.ypp"
+                             { (yyval.cond) = codeGen->evalGreater((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1739 "parser.tab.cpp"
+    break;
+
+  case 35:
+#line 257 "parser.ypp"
+                              { (yyval.cond) = codeGen->evalLessEqual((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1745 "parser.tab.cpp"
+    break;
+
+  case 36:
+#line 258 "parser.ypp"
+                              { (yyval.cond) = codeGen->evalGreaterEqual((yyvsp[-2].var), (yyvsp[0].var)); }
+#line 1751 "parser.tab.cpp"
+    break;
+
+  case 37:
+#line 260 "parser.ypp"
                        { (yyval.var) = (yyvsp[0].var);
                          if ((yyvsp[0].var) != nullptr && !(yyvsp[0].var)->isInit && !error) {
                             error = true;
                             yyerror("Variable " + (yyvsp[0].var)->name + " not initialized");
                          }
                         }
-#line 1614 "parser.tab.cpp"
+#line 1762 "parser.tab.cpp"
     break;
 
-  case 30:
-#line 176 "parser.ypp"
+  case 38:
+#line 266 "parser.ypp"
                   { (yyval.var) = codeGen->allocateConstant((yyvsp[0].num));  }
-#line 1620 "parser.tab.cpp"
+#line 1768 "parser.tab.cpp"
     break;
 
-  case 31:
-#line 177 "parser.ypp"
+  case 39:
+#line 267 "parser.ypp"
                       { (yyval.var) = codeGen->allocateConstantNegate((yyvsp[0].num)); }
-#line 1626 "parser.tab.cpp"
+#line 1774 "parser.tab.cpp"
     break;
 
-  case 32:
-#line 179 "parser.ypp"
+  case 40:
+#line 269 "parser.ypp"
                             { Variable* var = codeGen->getVar(*(yyvsp[0].pidentifier));
                                 if (var == nullptr && !error) {
                                     error = true;
@@ -1636,11 +1784,11 @@ yyreduce:
                                     (yyval.var) = var;
                                  }
                             }
-#line 1640 "parser.tab.cpp"
+#line 1788 "parser.tab.cpp"
     break;
 
 
-#line 1644 "parser.tab.cpp"
+#line 1792 "parser.tab.cpp"
 
       default: break;
     }
@@ -1872,7 +2020,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 189 "parser.ypp"
+#line 279 "parser.ypp"
 
 
 int yyerror (std::string s) {

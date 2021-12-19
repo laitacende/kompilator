@@ -100,7 +100,24 @@ Variable* CodeGenerator::allocateVariable(std::string name) {
     if (address != -1) {
         return memo->getVar(name);
     }
-    return nullptr; // TODO handle errors, variable probably is somewhere
+    return nullptr;
+}
+
+Variable* CodeGenerator::allocateArray(std::string name, long long int start, long long int end) {
+    // check size
+    if (start > end) {
+        Variable* var = new Variable("error", 0); // incorrect range
+        return var;
+    }
+    // determine size
+    long long int size = std::abs(end - start) + 1;
+    //std::cout << " size " << size << std::endl;
+    // create variable
+    long long int address = memo->addVariableOfSize(name, size, start, end);
+    if (address != -1) {
+        return memo->getVar(name);
+    }
+    return nullptr;
 }
 
 bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {

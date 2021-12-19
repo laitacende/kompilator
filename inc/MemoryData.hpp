@@ -12,6 +12,7 @@ public:
     MemoryData();
     long long int addVariable(std::string name);
     long long int addConstant(long long int val);
+    long long int addVariableOfSize(std::string name, long long int size, long long int start, long long int end);
     bool ifExists(std::string);
     //int initVariable(std::string name, long long int val);
     long long int currentAddress = 0;

@@ -52,6 +52,23 @@ long long int MemoryData::addConstant(long long int val) {
    // return -1;
 }
 
+long long int MemoryData::addVariableOfSize(std::string name, long long int size, long long int start, long long int end) {
+    if (!ifExists(name)) {
+        // allocate memory
+        Variable* var = new Variable(name, currentAddress);
+        var->isInit = false;
+        var->size = size;
+        var->isArray = true;
+        var->startArray = start;
+        var->endArray = end;
+        memo[name] = std::make_shared<Symbol>(name, currentAddress, var);
+        currentAddress += size;
+        currentAddress++;
+        return currentAddress - 1 - size;
+    }
+    return -1;
+}
+
 //int MemoryData::initVariable(std::string name, long long int val) {
 //    // check if variable exists in memory
 //    if (memo.find(name) != memo.end) {
