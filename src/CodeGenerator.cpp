@@ -123,14 +123,37 @@ Variable* CodeGenerator::allocateArray(std::string name, long long int start, lo
 bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {
     // TODO mozna wczytywac do rejestrow,a nie sa dwa razy do pamieci odwolywac
     if (var1 != nullptr && var2 != nullptr) {
-        // TODO maybe check if const isn't in memo, that could save time (ale tylko dla duzych, trzeba popatrzec dla jakich)
         var1->isInit = true;
         var1->val = var2->val;
         // result of expression is in a
         //addInstruction("( assign to " + var1->name + " val " + std::to_string(var2->val) + " )");
         addInstruction("SWAP d"); // result of expression is in d
+        // handle arrays with variables as indices
+        // var1 has address of first entry in array in memory and of index
         makeConstant(var1->address); // in register a
         addInstruction("SWAP c");
+        if (var1->isArray && var1->isArrayWithVar) { // in register c address of first element in array
+            // load address of index
+            makeConstant(var1->offset);
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP f"); // value of variable
+            long long int start = var1->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP f"); // in a value of var, in f start of array
+            if (var1->startArray < 0) { // add
+                addInstruction("ADD f"); // index - (-start)
+            } else {
+                addInstruction("SUB f"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD c"); // index - start + address - this is address of element in array
+            addInstruction("SWAP c"); // new address in register c
+        }
         // first opt makeConstant(var2->val); // in register a
         //addInstruction("LOAD " + stdvar2->address);
         addInstruction("SWAP d"); // result of expression
@@ -158,7 +181,7 @@ Variable* CodeGenerator::getVarArrayNum(Variable* var, long long int index) {
     if (index > var->endArray || index < var->startArray) {
         return nullptr;
     }
-    long long int addrElement = abs(index - var->startArray) + address;
+    long long int addrElement = std::abs(index - var->startArray) + address;
     Variable* var1 = new Variable(var->name, addrElement);
     var->size = var->size;
     var->isArray = true;

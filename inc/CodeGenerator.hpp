@@ -28,6 +28,7 @@ public:
     std::string getInstruction(long long int index);
     Variable* getVar(std::string name);
     Variable* getVarArrayNum(Variable* var, long long int index);
+    // Variable* getVarArrayVariable(Variable* var1, Variable* var2);
     bool subtract(Variable* var1, Variable* var2);
     bool add(Variable* var1, Variable* var2);
     bool multiply(Variable* var1, Variable* var2);

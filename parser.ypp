@@ -261,7 +261,7 @@ condition:  value NEQ value { $$ = codeGen->evalNotEqual($1, $3); }
 value:      identifier { $$ = $1;
                          if ($1 != nullptr && $1->isVariable && !$1->isInit && !error) {
                             error = true;
-                            yyerror("Variable " + $1->name + " not initialized");
+                            yyerror("Variable " + $1->name + " is not initialized");
                          }
                         }
             | num { $$ = codeGen->allocateConstant($1);  } /* if it exists just return its address */
@@ -318,6 +318,31 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                               }
                                             }
                                           }
+                | pidentifier'['pidentifier']'  { // make new object variable with address of array and addres of variable
+                                                     Variable* arr = codeGen->getVar(*$1); // first index of table
+                                                     Variable* var = codeGen->getVar(*$3); // variable which is index of array now
+                                                     if (arr == nullptr && !error) {
+                                                           error = true;
+                                                           yyerror("Variable " + *$1 + " not defined");
+                                                           //$$ = nullptr;
+                                                     } else if (var == nullptr && !error) {
+                                                            error = true;
+                                                            yyerror("Variable " + *$3 + " not defined");
+                                                     } else if (!var->isVariable) {
+                                                           error = true;
+                                                           yyerror("Improper use of variable " + *$3);
+                                                     } else if (!var->isInit) {
+                                                        error = true;
+                                                        yyerror("Variable " + var->name + " is not initialized");
+                                                     } else if (!arr->isArray) {
+                                                        error = true;
+                                                        yyerror("Improper use of variable " + *$1);
+                                                     } else { // add to arr offset which is address of var
+                                                        arr->offset = var->address;
+                                                        arr->isArrayWithVar = true;
+                                                        $$ = arr;
+                                                     }
+                                                }
 
 %%
 
