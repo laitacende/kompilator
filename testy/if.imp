@@ -1,29 +1,32 @@
 VAR
-	a, b
+	a, b, c[0:2]
 BEGIN
 	a ASSIGN 8;
 	b ASSIGN 2;
-	IF a EQ  8 THEN
+	c[0] ASSIGN 8;
+	c[1] ASSIGN 2;
+	
+	IF c[0] EQ  8 THEN
 		WRITE 1;
 	ENDIF
 	
-	IF a EQ b THEN
+	IF c[0] EQ c[1] THEN
 		WRITE 2;
 	ENDIF
 	
-	IF a NEQ b THEN
+	IF c[0] NEQ c[1] THEN
 		WRITE 3;
 	ENDIF
 	
-	IF a NEQ 8 THEN
+	IF c[0] NEQ c[1] THEN
 		WRITE 4;
 	ENDIF
 	
-	IF 4 LE a THEN
+	IF 4 LE c[0] THEN
 		WRITE 5;
 	ENDIF
 	
-	IF 4 LE b THEN
+	IF 4 LE c[1] THEN
 		WRITE 6;
 	ENDIF
 	
@@ -39,27 +42,27 @@ BEGIN
 		WRITE -3;
 	ENDIF
 	
-	IF a GE b THEN
+	IF c[0] GE c[1] THEN
 		WRITE 7;
 	ENDIF
 	
-	IF a GE 10 THEN
+	IF c[0] GE 10 THEN
 		WRITE 8;
 	ENDIF
 	
-	IF a LEQ 8 THEN 
+	IF c[0] LEQ 8 THEN 
 		WRITE 9;
 	ENDIF
 	
-	IF a LEQ 1 THEN 
+	IF c[0] LEQ 1 THEN 
 		WRITE 10;
 	ENDIF
 	
-	IF b GEQ 2 THEN 
+	IF c[1] GEQ 2 THEN 
 		WRITE 11;
 	ENDIF
 	
-	IF b GEQ a THEN
+	IF c[1] GEQ c[0] THEN
 		WRITE 12;
 	ENDIF
 	

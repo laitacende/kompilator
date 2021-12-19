@@ -1757,7 +1757,7 @@ yyreduce:
                        { (yyval.var) = (yyvsp[0].var);
                          if ((yyvsp[0].var) != nullptr && (yyvsp[0].var)->isVariable && !(yyvsp[0].var)->isInit && !error) {
                             error = true;
-                            yyerror("Variable " + (yyvsp[0].var)->name + "is not initialized");
+                            yyerror("Variable " + (yyvsp[0].var)->name + " is not initialized");
                          }
                         }
 #line 1764 "parser.tab.cpp"
@@ -1858,7 +1858,7 @@ yyreduce:
                                                            yyerror("Improper use of variable " + *(yyvsp[-1].pidentifier));
                                                      } else if (!var->isInit) {
                                                         error = true;
-                                                        yyerror("Variable " + var->name + "is not initialized");
+                                                        yyerror("Variable " + var->name + " is not initialized");
                                                      } else if (!arr->isArray) {
                                                         error = true;
                                                         yyerror("Improper use of variable " + *(yyvsp[-3].pidentifier));

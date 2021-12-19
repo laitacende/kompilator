@@ -213,9 +213,55 @@ std::string CodeGenerator::getInstruction(long long int index) {
 Cond* CodeGenerator::evalNotEqual(Variable* var1, Variable* var2) {
     long long int first = offset + 1;
     makeConstant(var2->address);
+    if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
+        addInstruction("SWAP c");
+        // load address of index
+        makeConstant(var2->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var2->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var2->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD c"); // index - start + address - this is address of element in array
+        // addInstruction("SWAP c"); // new address in register a
+    }
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
     makeConstant(var1->address);
+    if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
+        addInstruction("SWAP d");
+        // load address of index
+        makeConstant(var1->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var1->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var1->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD d"); // index - start + address - this is address of element in array
+        // new address in register a
+    }
     addInstruction("LOAD a");
     addInstruction("SUB c");
     Cond* c = new Cond(addInstruction("JZERO "), "NEQ");
@@ -226,9 +272,55 @@ Cond* CodeGenerator::evalNotEqual(Variable* var1, Variable* var2) {
 Cond* CodeGenerator::evalEqual(Variable* var1, Variable* var2) {
     long long int first = offset + 1;
     makeConstant(var2->address);
+    if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
+        addInstruction("SWAP c");
+        // load address of index
+        makeConstant(var2->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var2->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var2->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD c"); // index - start + address - this is address of element in array
+        // addInstruction("SWAP c"); // new address in register a
+    }
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
     makeConstant(var1->address);
+    if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
+        addInstruction("SWAP d");
+        // load address of index
+        makeConstant(var1->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var1->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var1->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD d"); // index - start + address - this is address of element in array
+        // new address in register a
+    }
     addInstruction("LOAD a");
     addInstruction("SUB c");
     addInstruction("JPOS ");
@@ -240,9 +332,55 @@ Cond* CodeGenerator::evalEqual(Variable* var1, Variable* var2) {
 Cond* CodeGenerator::evalLess(Variable* var1, Variable* var2) {
     long long int first = offset + 1;
     makeConstant(var2->address);
+    if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
+        addInstruction("SWAP c");
+        // load address of index
+        makeConstant(var2->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var2->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var2->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD c"); // index - start + address - this is address of element in array
+        // addInstruction("SWAP c"); // new address in register a
+    }
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
     makeConstant(var1->address);
+    if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
+        addInstruction("SWAP d");
+        // load address of index
+        makeConstant(var1->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var1->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var1->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD d"); // index - start + address - this is address of element in array
+        // new address in register a
+    }
     addInstruction("LOAD a");
     addInstruction("SUB c");
     addInstruction("JZERO ");
@@ -254,9 +392,56 @@ Cond* CodeGenerator::evalLess(Variable* var1, Variable* var2) {
 Cond* CodeGenerator::evalLessEqual(Variable* var1, Variable* var2) {
     long long int first = offset + 1;
     makeConstant(var2->address);
+
+    if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
+        addInstruction("SWAP c");
+        // load address of index
+        makeConstant(var2->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var2->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var2->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD c"); // index - start + address - this is address of element in array
+        // addInstruction("SWAP c"); // new address in register a
+    }
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
     makeConstant(var1->address);
+    if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
+        addInstruction("SWAP d");
+        // load address of index
+        makeConstant(var1->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var1->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var1->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD d"); // index - start + address - this is address of element in array
+        // new address in register a
+    }
     addInstruction("LOAD a");
     addInstruction("SUB c");
     Cond* c = new Cond(addInstruction("JPOS "), "LEQ");
@@ -268,9 +453,56 @@ Cond* CodeGenerator::evalGreater(Variable* var1, Variable* var2) {
     long long int first = offset + 1;
   //  std::cout<<first<< " " << code[offset - 1] << std::endl;
     makeConstant(var2->address);
+
+    if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
+        addInstruction("SWAP c");
+        // load address of index
+        makeConstant(var2->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var2->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var2->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD c"); // index - start + address - this is address of element in array
+        // addInstruction("SWAP c"); // new address in register a
+    }
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
     makeConstant(var1->address);
+    if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
+        addInstruction("SWAP d");
+        // load address of index
+        makeConstant(var1->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var1->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var1->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD d"); // index - start + address - this is address of element in array
+        // new address in register a
+    }
     addInstruction("LOAD a");
     addInstruction("SUB c");
     addInstruction("JZERO ");
@@ -282,10 +514,56 @@ Cond* CodeGenerator::evalGreater(Variable* var1, Variable* var2) {
 Cond* CodeGenerator::evalGreaterEqual(Variable* var1, Variable* var2) {
     long long int first = offset + 1;
     makeConstant(var2->address);
+    if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
+        addInstruction("SWAP c");
+        // load address of index
+        makeConstant(var2->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var2->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var2->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD c"); // index - start + address - this is address of element in array
+        // addInstruction("SWAP c"); // new address in register a
+    }
    // std::cout << var2->address << " var2addr" << std::endl;
     addInstruction("LOAD a"); // load var2
     addInstruction("SWAP c"); // var2 in c
     makeConstant(var1->address);
+    if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
+        addInstruction("SWAP d");
+        // load address of index
+        makeConstant(var1->offset);
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = var1->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (var1->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD d"); // index - start + address - this is address of element in array
+        // new address in register a
+    }
    // std::cout << var1->address << " var1addr" << std::endl;
     addInstruction("LOAD a");
 
@@ -330,7 +608,7 @@ bool CodeGenerator::add(Variable* var1, Variable* var2) {
     if (var1 != nullptr && var2 != nullptr) {
         if (var1->isConstant && var2->isConstant) {
             makeConstant(var1->val + var2->val);
-        } else if (var2->isConstant && var1->isVariable && (var2->val == 0 || var2->val == 1)) {
+        } else if (var2->isConstant && !var1->isConstant && (var2->val == 0 || var2->val == 1)) {
             if (var2->val == 0) {
                 makeConstant(var1->address); // in a
                 addInstruction("LOAD a");
@@ -342,9 +620,56 @@ bool CodeGenerator::add(Variable* var1, Variable* var2) {
             return true;
         }
             makeConstant(var2->address);
+        if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
+            addInstruction("SWAP c");
+            // load address of index
+            makeConstant(var2->offset);
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP f"); // value of variable
+            long long int start = var2->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP f"); // in a value of var, in f start of array
+            if (var2->startArray < 0) { // add
+                addInstruction("ADD f"); // index - (-start)
+            } else {
+                addInstruction("SUB f"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD c"); // index - start + address - this is address of element in array
+           // addInstruction("SWAP c"); // new address in register a
+        }
             addInstruction("LOAD a"); // value to a
             addInstruction("SWAP c"); // store in c
             makeConstant(var1->address); // in a
+            // check if var1 is also array with variable as index
+        if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
+            addInstruction("SWAP d");
+            // load address of index
+            makeConstant(var1->offset);
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP f"); // value of variable
+            long long int start = var1->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP f"); // in a value of var, in f start of array
+            if (var1->startArray < 0) { // add
+                addInstruction("ADD f"); // index - (-start)
+            } else {
+                addInstruction("SUB f"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD d"); // index - start + address - this is address of element in array
+             // new address in register a
+        }
             addInstruction("LOAD a");
             addInstruction("ADD c"); // result in a
 
@@ -371,9 +696,56 @@ bool CodeGenerator::subtract(Variable* var1, Variable* var2) {
             return true;
         }
             makeConstant(var2->address);
+        if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
+            addInstruction("SWAP c");
+            // load address of index
+            makeConstant(var2->offset);
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP f"); // value of variable
+            long long int start = var2->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP f"); // in a value of var, in f start of array
+            if (var2->startArray < 0) { // add
+                addInstruction("ADD f"); // index - (-start)
+            } else {
+                addInstruction("SUB f"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD c"); // index - start + address - this is address of element in array
+            // addInstruction("SWAP c"); // new address in register a
+        }
             addInstruction("LOAD a"); // value to a
             addInstruction("SWAP c"); // store in c
             makeConstant(var1->address); // in a
+
+        if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
+            addInstruction("SWAP d");
+            // load address of index
+            makeConstant(var1->offset);
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP f"); // value of variable
+            long long int start = var1->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP f"); // in a value of var, in f start of array
+            if (var1->startArray < 0) { // add
+                addInstruction("ADD f"); // index - (-start)
+            } else {
+                addInstruction("SUB f"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD d"); // index - start + address - this is address of element in array
+            // new address in register a
+        }
             addInstruction("LOAD a");
             addInstruction("SUB c"); // result in a
         return true;
@@ -434,6 +806,29 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
 
         addInstruction("RESET d");
         makeConstant(var2->address);
+        if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
+            addInstruction("SWAP c");
+            // load address of index
+            makeConstant(var2->offset);
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP f"); // value of variable
+            long long int start = var2->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP f"); // in a value of var, in f start of array
+            if (var2->startArray < 0) { // add
+                addInstruction("ADD f"); // index - (-start)
+            } else {
+                addInstruction("SUB f"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD c"); // index - start + address - this is address of element in array
+            // addInstruction("SWAP c"); // new address in register a
+        }
         addInstruction("LOAD a"); // value2 to a
         // check if is negative
         addInstruction("JPOS 5"); // if positive don't do this
@@ -446,6 +841,29 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
         addInstruction("SWAP c"); // positive var2 in register c
 
         makeConstant(var1->address); // in a
+        if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
+            addInstruction("SWAP d");
+            // load address of index
+            makeConstant(var1->offset);
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP f"); // value of variable
+            long long int start = var1->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP f"); // in a value of var, in f start of array
+            if (var1->startArray < 0) { // add
+                addInstruction("ADD f"); // index - (-start)
+            } else {
+                addInstruction("SUB f"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD d"); // index - start + address - this is address of element in array
+            // new address in register a
+        }
         addInstruction("LOAD a"); // a == val1
         addInstruction("JPOS 5"); // var1  > 0
         addInstruction("SWAP f"); // f == val1
@@ -571,6 +989,29 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
         addInstruction("RESET d"); // result
         addInstruction("RESET g");
         makeConstant(var2->address);
+        if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
+            addInstruction("SWAP c");
+            // load address of index
+            makeConstant(var2->offset);
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP f"); // value of variable
+            long long int start = var2->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP f"); // in a value of var, in f start of array
+            if (var2->startArray < 0) { // add
+                addInstruction("ADD f"); // index - (-start)
+            } else {
+                addInstruction("SUB f"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD c"); // index - start + address - this is address of element in array
+            // addInstruction("SWAP c"); // new address in register a
+        }
         addInstruction("LOAD a"); // value2 to a
         long long int offset1 = addInstruction("JZERO ");
         addInstruction("JPOS 5"); // if positive don't do this
@@ -584,6 +1025,29 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
 
 
         makeConstant(var1->address); // in a
+        if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
+            addInstruction("SWAP d");
+            // load address of index
+            makeConstant(var1->offset);
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP f"); // value of variable
+            long long int start = var1->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP f"); // in a value of var, in f start of array
+            if (var1->startArray < 0) { // add
+                addInstruction("ADD f"); // index - (-start)
+            } else {
+                addInstruction("SUB f"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD d"); // index - start + address - this is address of element in array
+            // new address in register a
+        }
         addInstruction("LOAD a"); // a == val1
         addInstruction("JPOS 5"); // var1  > 0
         addInstruction("SWAP f"); // f == val1
@@ -678,7 +1142,66 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         addInstruction("RESET g");
         addInstruction("RESET f");
         addInstruction("INC g");
+
+
+        makeConstant(var1->address); // in a
+        if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
+            addInstruction("SWAP d");
+            // load address of index
+            makeConstant(var1->offset);
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP f"); // value of variable
+            long long int start = var1->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP f"); // in a value of var, in f start of array
+            if (var1->startArray < 0) { // add
+                addInstruction("ADD f"); // index - (-start)
+            } else {
+                addInstruction("SUB f"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD d"); // index - start + address - this is address of element in array
+            // new address in register a
+        }
+        addInstruction("LOAD a"); // a == val1
+        addInstruction("JPOS 4"); // var1  > 0
+        addInstruction("SWAP f"); // f == val1
+        // check if var1 is negative
+        // make positive
+        addInstruction("RESET a");
+        addInstruction("SUB f");
+        addInstruction("SWAP f"); // positive var1 in register f
+
+
         makeConstant(var2->address);
+        if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
+            addInstruction("SWAP c");
+            // load address of index
+            makeConstant(var2->offset);
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP h"); // value of variable
+            long long int start = var2->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP h"); // in a value of var, in f start of array
+            if (var2->startArray < 0) { // add
+                addInstruction("ADD h"); // index - (-start)
+            } else {
+                addInstruction("SUB h"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD c"); // index - start + address - this is address of element in array
+            // addInstruction("SWAP c"); // new address in register a
+        }
         addInstruction("LOAD a"); // value2 to a
         long long int offset1 = addInstruction("JZERO ");
         addInstruction("JPOS 5"); // if positive don't do this
@@ -691,15 +1214,15 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         addInstruction("SWAP c"); // positive var2 in register c
 
 
-        makeConstant(var1->address); // in a
-        addInstruction("LOAD a"); // a == val1
-        addInstruction("JPOS 4"); // var1  > 0
-        addInstruction("SWAP f"); // f == val1
-        // check if var1 is negative
-        // make positive
-        addInstruction("RESET a");
-        addInstruction("SUB f");
-        addInstruction("SWAP f"); // positive var1 in register f
+//        makeConstant(var1->address); // in a
+//        addInstruction("LOAD a"); // a == val1
+//        addInstruction("JPOS 4"); // var1  > 0
+//        addInstruction("SWAP f"); // f == val1
+//        // check if var1 is negative
+//        // make positive
+//        addInstruction("RESET a");
+//        addInstruction("SUB f");
+//        addInstruction("SWAP f"); // positive var1 in register f
 
         addInstruction("RESET e");
         addInstruction("INC e");
