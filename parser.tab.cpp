@@ -1686,70 +1686,76 @@ yyreduce:
 #line 1687 "parser.tab.cpp"
     break;
 
+  case 25:
+#line 247 "parser.ypp"
+                               { codeGen->loadVar((yyvsp[0].var)); }
+#line 1693 "parser.tab.cpp"
+    break;
+
   case 26:
 #line 248 "parser.ypp"
                                { codeGen->add((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1693 "parser.tab.cpp"
+#line 1699 "parser.tab.cpp"
     break;
 
   case 27:
 #line 249 "parser.ypp"
                                 { codeGen->subtract((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1699 "parser.tab.cpp"
+#line 1705 "parser.tab.cpp"
     break;
 
   case 28:
 #line 250 "parser.ypp"
                                 { codeGen->multiply((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1705 "parser.tab.cpp"
+#line 1711 "parser.tab.cpp"
     break;
 
   case 29:
 #line 251 "parser.ypp"
                                 { codeGen->divide((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1711 "parser.tab.cpp"
+#line 1717 "parser.tab.cpp"
     break;
 
   case 30:
 #line 252 "parser.ypp"
                                 { codeGen->modulo((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1717 "parser.tab.cpp"
+#line 1723 "parser.tab.cpp"
     break;
 
   case 31:
 #line 254 "parser.ypp"
                             { (yyval.cond) = codeGen->evalNotEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1723 "parser.tab.cpp"
+#line 1729 "parser.tab.cpp"
     break;
 
   case 32:
 #line 255 "parser.ypp"
                              { (yyval.cond) = codeGen->evalEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1729 "parser.tab.cpp"
+#line 1735 "parser.tab.cpp"
     break;
 
   case 33:
 #line 256 "parser.ypp"
                              { (yyval.cond) = codeGen->evalLess((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1735 "parser.tab.cpp"
+#line 1741 "parser.tab.cpp"
     break;
 
   case 34:
 #line 257 "parser.ypp"
                              { (yyval.cond) = codeGen->evalGreater((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1741 "parser.tab.cpp"
+#line 1747 "parser.tab.cpp"
     break;
 
   case 35:
 #line 258 "parser.ypp"
                               { (yyval.cond) = codeGen->evalLessEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1747 "parser.tab.cpp"
+#line 1753 "parser.tab.cpp"
     break;
 
   case 36:
 #line 259 "parser.ypp"
                               { (yyval.cond) = codeGen->evalGreaterEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1753 "parser.tab.cpp"
+#line 1759 "parser.tab.cpp"
     break;
 
   case 37:
@@ -1760,19 +1766,19 @@ yyreduce:
                             yyerror("Variable " + (yyvsp[0].var)->name + " is not initialized");
                          }
                         }
-#line 1764 "parser.tab.cpp"
+#line 1770 "parser.tab.cpp"
     break;
 
   case 38:
 #line 267 "parser.ypp"
                   { (yyval.var) = codeGen->allocateConstant((yyvsp[0].num));  }
-#line 1770 "parser.tab.cpp"
+#line 1776 "parser.tab.cpp"
     break;
 
   case 39:
 #line 268 "parser.ypp"
                       { (yyval.var) = codeGen->allocateConstantNegate((yyvsp[0].num)); }
-#line 1776 "parser.tab.cpp"
+#line 1782 "parser.tab.cpp"
     break;
 
   case 40:
@@ -1790,7 +1796,7 @@ yyreduce:
                                     (yyval.var) = var;
                                  }
                             }
-#line 1794 "parser.tab.cpp"
+#line 1800 "parser.tab.cpp"
     break;
 
   case 41:
@@ -1814,7 +1820,7 @@ yyreduce:
                                             }
                                           }
                                         }
-#line 1818 "parser.tab.cpp"
+#line 1824 "parser.tab.cpp"
     break;
 
   case 42:
@@ -1838,7 +1844,7 @@ yyreduce:
                                               }
                                             }
                                           }
-#line 1842 "parser.tab.cpp"
+#line 1848 "parser.tab.cpp"
     break;
 
   case 43:
@@ -1868,11 +1874,11 @@ yyreduce:
                                                         (yyval.var) = arr;
                                                      }
                                                 }
-#line 1872 "parser.tab.cpp"
+#line 1878 "parser.tab.cpp"
     break;
 
 
-#line 1876 "parser.tab.cpp"
+#line 1882 "parser.tab.cpp"
 
       default: break;
     }

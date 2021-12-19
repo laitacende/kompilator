@@ -34,6 +34,7 @@ public:
     bool multiply(Variable* var1, Variable* var2);
     bool divide(Variable* var1, Variable* var2);
     bool modulo(Variable* var1, Variable* var2);
+    bool loadVar(Variable* var);
     Cond* evalNotEqual(Variable* var1, Variable* var2);
     Cond* evalEqual(Variable* var1, Variable* var2);
     Cond* evalLess(Variable* var1, Variable* var2);
