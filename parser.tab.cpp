@@ -563,11 +563,11 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    73,    73,    74,    76,    82,    88,    99,   110,   121,
-     133,   144,   155,   166,   179,   180,   182,   189,   191,   196,
-     196,   210,   220,   232,   232,   247,   248,   249,   250,   251,
-     252,   254,   255,   256,   257,   258,   259,   261,   267,   268,
-     270,   283,   302,   321
+       0,    73,    73,    74,    76,    83,    90,   103,   116,   129,
+     143,   156,   169,   182,   197,   198,   200,   208,   210,   215,
+     215,   229,   239,   251,   251,   266,   267,   268,   269,   270,
+     271,   273,   274,   275,   276,   277,   278,   280,   287,   288,
+     290,   305,   327,   349
 };
 #endif
 
@@ -1440,178 +1440,197 @@ yyreduce:
                                              if (nullptr == v) {
                                                 error = true;
                                                 yyerror("Redefinition of variable " + *(yyvsp[0].pidentifier));
+                                                YYABORT;
                                              }
                                             }
-#line 1446 "parser.tab.cpp"
+#line 1447 "parser.tab.cpp"
     break;
 
   case 5:
-#line 82 "parser.ypp"
+#line 83 "parser.ypp"
                                 { Variable* v = codeGen->allocateVariable(*(yyvsp[0].pidentifier));
                                     if (nullptr == v && !error) {
                                         error = true;
                                         yyerror("Redeclaration of variable " + *(yyvsp[0].pidentifier));
+                                        YYABORT;
                                     }
                                 }
-#line 1457 "parser.tab.cpp"
+#line 1459 "parser.tab.cpp"
     break;
 
   case 6:
-#line 88 "parser.ypp"
+#line 90 "parser.ypp"
                                              { Variable* v = codeGen->allocateArray(*(yyvsp[-5].pidentifier), (yyvsp[-3].num), (yyvsp[-1].num));
                                                 if (nullptr == v && !error) {
                                                     error = true;
                                                     yyerror("Redeclaration of variable " + *(yyvsp[-5].pidentifier));
+                                                    YYABORT;
                                                 }
 
-                                                if (v->name == "error") {
+                                                if (v->name == "error" && !error) {
                                                     error = true;
                                                     yyerror("Invalid range of array " + *(yyvsp[-5].pidentifier));
+                                                    YYABORT;
                                                 }
                                              }
-#line 1473 "parser.tab.cpp"
+#line 1477 "parser.tab.cpp"
     break;
 
   case 7:
-#line 99 "parser.ypp"
+#line 103 "parser.ypp"
                                                 { Variable* v = codeGen->allocateArray(*(yyvsp[-6].pidentifier), -(yyvsp[-3].num), (yyvsp[-1].num));
-                                                               if (nullptr == v && !error) {
-                                                                   error = true;
-                                                                   yyerror("Redeclaration of variable " + *(yyvsp[-6].pidentifier));
-                                                               }
+                                                   if (nullptr == v && !error) {
+                                                       error = true;
+                                                       yyerror("Redeclaration of variable " + *(yyvsp[-6].pidentifier));
+                                                       YYABORT;
+                                                   }
 
-                                                               if (v->name == "error") {
-                                                                   error = true;
-                                                                   yyerror("Invalid range of array " + *(yyvsp[-6].pidentifier));
-                                                               }
-                                                            }
-#line 1489 "parser.tab.cpp"
+                                                   if (v->name == "error" && !error) {
+                                                       error = true;
+                                                       yyerror("Invalid range of array " + *(yyvsp[-6].pidentifier));
+                                                       YYABORT;
+                                                   }
+                                                }
+#line 1495 "parser.tab.cpp"
     break;
 
   case 8:
-#line 110 "parser.ypp"
+#line 116 "parser.ypp"
                                                 { Variable* v = codeGen->allocateArray(*(yyvsp[-6].pidentifier), (yyvsp[-4].num), -(yyvsp[-1].num));
                                                     if (nullptr == v && !error) {
                                                         error = true;
                                                         yyerror("Redeclaration of variable " + *(yyvsp[-6].pidentifier));
+                                                        YYABORT;
                                                     }
 
-                                                    if (v->name == "error") {
+                                                    if (v->name == "error" && !error) {
                                                         error = true;
                                                         yyerror("Invalid range of array " + *(yyvsp[-6].pidentifier));
+                                                        YYABORT;
                                                     }
                                                  }
-#line 1505 "parser.tab.cpp"
+#line 1513 "parser.tab.cpp"
     break;
 
   case 9:
-#line 121 "parser.ypp"
+#line 129 "parser.ypp"
                                                    { Variable* v = codeGen->allocateArray(*(yyvsp[-7].pidentifier), -(yyvsp[-4].num), -(yyvsp[-1].num));
                                                  if (nullptr == v && !error) {
                                                      error = true;
                                                      yyerror("Redeclaration of variable " + *(yyvsp[-7].pidentifier));
+                                                     YYABORT;
                                                  }
 
-                                                 if (v->name == "error") {
+                                                 if (v->name == "error" && !error) {
                                                      error = true;
                                                      yyerror("Invalid range of array " + *(yyvsp[-7].pidentifier));
+                                                     YYABORT;
                                                  }
                                               }
-#line 1521 "parser.tab.cpp"
+#line 1531 "parser.tab.cpp"
     break;
 
   case 10:
-#line 133 "parser.ypp"
+#line 143 "parser.ypp"
                                                               { Variable* v = codeGen->allocateArray(*(yyvsp[-6].pidentifier), -(yyvsp[-3].num), (yyvsp[-1].num));
                                                                if (nullptr == v && !error) {
                                                                    error = true;
                                                                    yyerror("Redeclaration of variable " + *(yyvsp[-6].pidentifier));
+                                                                   YYABORT;
                                                                }
 
-                                                               if (v->name == "error") {
+                                                               if (v->name == "error" && !error) {
                                                                    error = true;
                                                                    yyerror("Invalid range of array " + *(yyvsp[-6].pidentifier));
+                                                                   YYABORT;
                                                                }
                                                             }
-#line 1537 "parser.tab.cpp"
+#line 1549 "parser.tab.cpp"
     break;
 
   case 11:
-#line 144 "parser.ypp"
+#line 156 "parser.ypp"
                                                               { Variable* v = codeGen->allocateArray(*(yyvsp[-6].pidentifier), (yyvsp[-4].num), -(yyvsp[-1].num));
                                                                 if (nullptr == v && !error) {
                                                                     error = true;
                                                                     yyerror("Redeclaration of variable " + *(yyvsp[-6].pidentifier));
+                                                                    YYABORT;
                                                                 }
 
-                                                                if (v->name == "error") {
+                                                                if (v->name == "error" && !error) {
                                                                     error = true;
                                                                     yyerror("Invalid range of array " + *(yyvsp[-6].pidentifier));
+                                                                    YYABORT;
                                                                 }
                                                              }
-#line 1553 "parser.tab.cpp"
+#line 1567 "parser.tab.cpp"
     break;
 
   case 12:
-#line 155 "parser.ypp"
+#line 169 "parser.ypp"
                                                            { Variable* v = codeGen->allocateArray(*(yyvsp[-5].pidentifier), (yyvsp[-3].num), (yyvsp[-1].num));
-                                                                             if (nullptr == v && !error) {
-                                                                                 error = true;
-                                                                                 yyerror("Redeclaration of variable " + *(yyvsp[-5].pidentifier));
-                                                                             }
+                                                                 if (nullptr == v && !error) {
+                                                                     error = true;
+                                                                     yyerror("Redeclaration of variable " + *(yyvsp[-5].pidentifier));
+                                                                     YYABORT;
+                                                                 }
 
-                                                                             if (v->name == "error") {
-                                                                                 error = true;
-                                                                                 yyerror("Invalid range of array " + *(yyvsp[-5].pidentifier));
-                                                                             }
-                                                                          }
-#line 1569 "parser.tab.cpp"
+                                                                 if (v->name == "error" && !error) {
+                                                                     error = true;
+                                                                     yyerror("Invalid range of array " + *(yyvsp[-5].pidentifier));
+                                                                     YYABORT;
+                                                                 }
+                                                              }
+#line 1585 "parser.tab.cpp"
     break;
 
   case 13:
-#line 166 "parser.ypp"
+#line 182 "parser.ypp"
                                                                   { Variable* v = codeGen->allocateArray(*(yyvsp[-7].pidentifier), -(yyvsp[-4].num), -(yyvsp[-1].num));
                                                                   if (nullptr == v && !error) {
                                                                       error = true;
                                                                       yyerror("Redeclaration of variable " + *(yyvsp[-7].pidentifier));
+                                                                      YYABORT;
                                                                   }
 
-                                                                  if (v->name == "error") {
+                                                                  if (v->name == "error" && !error) {
                                                                       error = true;
                                                                       yyerror("Invalid range of array " + *(yyvsp[-7].pidentifier));
+                                                                      YYABORT;
                                                                   }
                                                                }
-#line 1585 "parser.tab.cpp"
+#line 1603 "parser.tab.cpp"
     break;
 
   case 16:
-#line 182 "parser.ypp"
+#line 200 "parser.ypp"
                            { if (!codeGen->write((yyvsp[-1].var)) && !error) {
                                 error = true;
                                 if ((yyvsp[-1].var) != nullptr)
                                 yyerror("Variable " + (yyvsp[-1].var)->name +" is not initialized");
+                                YYABORT;
                               }
                             }
-#line 1596 "parser.tab.cpp"
+#line 1615 "parser.tab.cpp"
     break;
 
   case 17:
-#line 189 "parser.ypp"
+#line 208 "parser.ypp"
                                               {  codeGen->assignToVariable((yyvsp[-3].var), (yyvsp[-1].var)); }
-#line 1602 "parser.tab.cpp"
+#line 1621 "parser.tab.cpp"
     break;
 
   case 18:
-#line 191 "parser.ypp"
+#line 210 "parser.ypp"
                                     { if (!codeGen->read((yyvsp[-1].var)) && !error) {
                                         error = true;
                                       }
                                     }
-#line 1611 "parser.tab.cpp"
+#line 1630 "parser.tab.cpp"
     break;
 
   case 19:
-#line 196 "parser.ypp"
+#line 215 "parser.ypp"
                                          { line = codeGen->addInstruction("JUMP "); // omit else, edit later
                                             std::string instr = codeGen->getInstruction((yyvsp[-2].cond)->index);
                                             instr = instr + std::to_string(codeGen->offset - (yyvsp[-2].cond)->index);
@@ -1622,19 +1641,19 @@ yyreduce:
                                                 codeGen->changeInstruction((yyvsp[-2].cond)->index - 1, instr);
                                             }
                                           }
-#line 1626 "parser.tab.cpp"
+#line 1645 "parser.tab.cpp"
     break;
 
   case 20:
-#line 206 "parser.ypp"
+#line 225 "parser.ypp"
                                          { std::string instr = "JUMP " + std::to_string(codeGen->offset - line);
                                             codeGen->changeInstruction(line, instr); // edit instr from first block, jump adter else
                                          }
-#line 1634 "parser.tab.cpp"
+#line 1653 "parser.tab.cpp"
     break;
 
   case 21:
-#line 210 "parser.ypp"
+#line 229 "parser.ypp"
                                                {    std::string instr = codeGen->getInstruction((yyvsp[-3].cond)->index); /* if EQ there are two jumps */
                                                     instr = instr + std::to_string(codeGen->offset - (yyvsp[-3].cond)->index);
                                                     codeGen->changeInstruction((yyvsp[-3].cond)->index, instr);
@@ -1644,11 +1663,11 @@ yyreduce:
                                                         codeGen->changeInstruction((yyvsp[-3].cond)->index - 1, instr);
                                                     }
                                                 }
-#line 1648 "parser.tab.cpp"
+#line 1667 "parser.tab.cpp"
     break;
 
   case 22:
-#line 220 "parser.ypp"
+#line 239 "parser.ypp"
                                                     { std::string instr = codeGen->getInstruction((yyvsp[-3].cond)->index); /* if EQ there are two jumps */
                                                       instr = instr + std::to_string((codeGen->offset - (yyvsp[-3].cond)->index + 1));
                                                       codeGen->changeInstruction((yyvsp[-3].cond)->index, instr);
@@ -1660,17 +1679,17 @@ yyreduce:
                                                       //std::cout << codeGen->offset << std::endl;
                                                       codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - (yyvsp[-3].cond)->firstIndex + 1)));
                                                      }
-#line 1664 "parser.tab.cpp"
+#line 1683 "parser.tab.cpp"
     break;
 
   case 23:
-#line 232 "parser.ypp"
+#line 251 "parser.ypp"
                      { lineRepeat = codeGen->offset; }
-#line 1670 "parser.tab.cpp"
+#line 1689 "parser.tab.cpp"
     break;
 
   case 24:
-#line 233 "parser.ypp"
+#line 252 "parser.ypp"
                                           {   std::string instr = codeGen->getInstruction((yyvsp[-1].cond)->index); /* if EQ there are two jumps */
                                                 instr = instr + std::to_string((-(codeGen->offset - lineRepeat) + 1));
                                                 codeGen->changeInstruction((yyvsp[-1].cond)->index, instr);
@@ -1683,131 +1702,136 @@ yyreduce:
 
                                                // codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - lineRepeat)));
                                            }
-#line 1687 "parser.tab.cpp"
+#line 1706 "parser.tab.cpp"
     break;
 
   case 25:
-#line 247 "parser.ypp"
+#line 266 "parser.ypp"
                                { codeGen->loadVar((yyvsp[0].var)); }
-#line 1693 "parser.tab.cpp"
+#line 1712 "parser.tab.cpp"
     break;
 
   case 26:
-#line 248 "parser.ypp"
+#line 267 "parser.ypp"
                                { codeGen->add((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1699 "parser.tab.cpp"
+#line 1718 "parser.tab.cpp"
     break;
 
   case 27:
-#line 249 "parser.ypp"
+#line 268 "parser.ypp"
                                 { codeGen->subtract((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1705 "parser.tab.cpp"
+#line 1724 "parser.tab.cpp"
     break;
 
   case 28:
-#line 250 "parser.ypp"
+#line 269 "parser.ypp"
                                 { codeGen->multiply((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1711 "parser.tab.cpp"
+#line 1730 "parser.tab.cpp"
     break;
 
   case 29:
-#line 251 "parser.ypp"
+#line 270 "parser.ypp"
                                 { codeGen->divide((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1717 "parser.tab.cpp"
+#line 1736 "parser.tab.cpp"
     break;
 
   case 30:
-#line 252 "parser.ypp"
+#line 271 "parser.ypp"
                                 { codeGen->modulo((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1723 "parser.tab.cpp"
+#line 1742 "parser.tab.cpp"
     break;
 
   case 31:
-#line 254 "parser.ypp"
+#line 273 "parser.ypp"
                             { (yyval.cond) = codeGen->evalNotEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1729 "parser.tab.cpp"
+#line 1748 "parser.tab.cpp"
     break;
 
   case 32:
-#line 255 "parser.ypp"
+#line 274 "parser.ypp"
                              { (yyval.cond) = codeGen->evalEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1735 "parser.tab.cpp"
+#line 1754 "parser.tab.cpp"
     break;
 
   case 33:
-#line 256 "parser.ypp"
+#line 275 "parser.ypp"
                              { (yyval.cond) = codeGen->evalLess((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1741 "parser.tab.cpp"
+#line 1760 "parser.tab.cpp"
     break;
 
   case 34:
-#line 257 "parser.ypp"
+#line 276 "parser.ypp"
                              { (yyval.cond) = codeGen->evalGreater((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1747 "parser.tab.cpp"
+#line 1766 "parser.tab.cpp"
     break;
 
   case 35:
-#line 258 "parser.ypp"
+#line 277 "parser.ypp"
                               { (yyval.cond) = codeGen->evalLessEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1753 "parser.tab.cpp"
+#line 1772 "parser.tab.cpp"
     break;
 
   case 36:
-#line 259 "parser.ypp"
+#line 278 "parser.ypp"
                               { (yyval.cond) = codeGen->evalGreaterEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1759 "parser.tab.cpp"
+#line 1778 "parser.tab.cpp"
     break;
 
   case 37:
-#line 261 "parser.ypp"
+#line 280 "parser.ypp"
                        { (yyval.var) = (yyvsp[0].var);
                          if ((yyvsp[0].var) != nullptr && (yyvsp[0].var)->isVariable && !(yyvsp[0].var)->isInit && !error) {
                             error = true;
                             yyerror("Variable " + (yyvsp[0].var)->name + " is not initialized");
+                            YYABORT;
                          }
                         }
-#line 1770 "parser.tab.cpp"
+#line 1790 "parser.tab.cpp"
     break;
 
   case 38:
-#line 267 "parser.ypp"
+#line 287 "parser.ypp"
                   { (yyval.var) = codeGen->allocateConstant((yyvsp[0].num));  }
-#line 1776 "parser.tab.cpp"
+#line 1796 "parser.tab.cpp"
     break;
 
   case 39:
-#line 268 "parser.ypp"
+#line 288 "parser.ypp"
                       { (yyval.var) = codeGen->allocateConstantNegate((yyvsp[0].num)); }
-#line 1782 "parser.tab.cpp"
+#line 1802 "parser.tab.cpp"
     break;
 
   case 40:
-#line 270 "parser.ypp"
+#line 290 "parser.ypp"
                             { Variable* var = codeGen->getVar(*(yyvsp[0].pidentifier));
                                 if (var == nullptr && !error) {
                                     error = true;
                                     yyerror("Variable " + *(yyvsp[0].pidentifier) + " not defined");
+                                    YYABORT;
                                    // $$ = nullptr;
                                  } else if (!var->isVariable) {
                                     error = true;
                                     yyerror("Improper use of array variable " + *(yyvsp[0].pidentifier));
+                                    YYABORT;
                                     //$$ = nullptr;
                                  } else {
                                     (yyval.var) = var;
                                  }
                             }
-#line 1800 "parser.tab.cpp"
+#line 1822 "parser.tab.cpp"
     break;
 
   case 41:
-#line 283 "parser.ypp"
+#line 305 "parser.ypp"
                                        {  Variable* var = codeGen->getVar(*(yyvsp[-3].pidentifier)); // first index of table
                                           if (var == nullptr && !error) {
                                                 yyerror("Variable " + *(yyvsp[-3].pidentifier) + " not defined");
+                                                YYABORT;
                                                 (yyval.var) = nullptr;
                                           } else if (!var->isArray) {
                                                 error = true;
                                                 yyerror("Improper use of variable " + *(yyvsp[-3].pidentifier));
+                                                YYABORT;
                                                 //$$ = nullptr;
                                           } else {
                                             // get this variable with index
@@ -1815,23 +1839,26 @@ yyreduce:
                                             if (var1 == nullptr && !error) {
                                                 error = true;
                                                 yyerror("Index out of bounds for array " + *(yyvsp[-3].pidentifier));
+                                                YYABORT;
                                             } else {
                                                 (yyval.var) = var1;
                                             }
                                           }
                                         }
-#line 1824 "parser.tab.cpp"
+#line 1849 "parser.tab.cpp"
     break;
 
   case 42:
-#line 302 "parser.ypp"
+#line 327 "parser.ypp"
                                           {  Variable* var = codeGen->getVar(*(yyvsp[-4].pidentifier)); // first index of table
                                             if (var == nullptr && !error) {
                                                   yyerror("Variable " + *(yyvsp[-4].pidentifier) + " not defined");
+                                                  YYABORT;
                                                   (yyval.var) = nullptr;
                                             } else if (!var->isArray) {
                                                   error = true;
                                                   yyerror("Improper use of variable " + *(yyvsp[-4].pidentifier));
+                                                  YYABORT;
                                                   //$$ = nullptr;
                                             } else {
                                               // get this variable with index
@@ -1839,46 +1866,52 @@ yyreduce:
                                               if (var1 == nullptr && !error) {
                                                   error = true;
                                                   yyerror("Index out of bounds for array " + *(yyvsp[-4].pidentifier));
+                                                  YYABORT;
                                               } else {
                                                   (yyval.var) = var1;
                                               }
                                             }
                                           }
-#line 1848 "parser.tab.cpp"
+#line 1876 "parser.tab.cpp"
     break;
 
   case 43:
-#line 321 "parser.ypp"
+#line 349 "parser.ypp"
                                                 { // make new object variable with address of array and addres of variable
                                                      Variable* arr = codeGen->getVar(*(yyvsp[-3].pidentifier)); // first index of table
                                                      Variable* var = codeGen->getVar(*(yyvsp[-1].pidentifier)); // variable which is index of array now
                                                      if (arr == nullptr && !error) {
                                                            error = true;
                                                            yyerror("Variable " + *(yyvsp[-3].pidentifier) + " not defined");
+                                                           YYABORT;
                                                            //$$ = nullptr;
                                                      } else if (var == nullptr && !error) {
                                                             error = true;
                                                             yyerror("Variable " + *(yyvsp[-1].pidentifier) + " not defined");
+                                                            YYABORT;
                                                      } else if (!var->isVariable) {
                                                            error = true;
                                                            yyerror("Improper use of variable " + *(yyvsp[-1].pidentifier));
+                                                           YYABORT;
                                                      } else if (!var->isInit) {
                                                         error = true;
                                                         yyerror("Variable " + var->name + " is not initialized");
+                                                        YYABORT;
                                                      } else if (!arr->isArray) {
                                                         error = true;
                                                         yyerror("Improper use of variable " + *(yyvsp[-3].pidentifier));
+                                                        YYABORT;
                                                      } else { // add to arr offset which is address of var
                                                         arr->offset = var->address;
                                                         arr->isArrayWithVar = true;
                                                         (yyval.var) = arr;
                                                      }
                                                 }
-#line 1878 "parser.tab.cpp"
+#line 1911 "parser.tab.cpp"
     break;
 
 
-#line 1882 "parser.tab.cpp"
+#line 1915 "parser.tab.cpp"
 
       default: break;
     }
@@ -2110,13 +2143,13 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 347 "parser.ypp"
+#line 380 "parser.ypp"
 
 
 int yyerror (std::string s) {
     error = true;
     std::cerr << "Error: " << s << " in line " << yylineno << std::endl;
-    return 0;
+    return 1;
 }
 
 int main(int argc, char** argv) {

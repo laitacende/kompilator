@@ -77,56 +77,66 @@ declarations: declarations',' pidentifier { Variable* v = codeGen->allocateVaria
                                              if (nullptr == v) {
                                                 error = true;
                                                 yyerror("Redefinition of variable " + *$3);
+                                                YYABORT;
                                              }
                                             }
               | pidentifier     { Variable* v = codeGen->allocateVariable(*$1);
                                     if (nullptr == v && !error) {
                                         error = true;
                                         yyerror("Redeclaration of variable " + *$1);
+                                        YYABORT;
                                     }
                                 }
              | pidentifier'['num':'num']'    { Variable* v = codeGen->allocateArray(*$1, $3, $5);
                                                 if (nullptr == v && !error) {
                                                     error = true;
                                                     yyerror("Redeclaration of variable " + *$1);
+                                                    YYABORT;
                                                 }
 
-                                                if (v->name == "error") {
+                                                if (v->name == "error" && !error) {
                                                     error = true;
                                                     yyerror("Invalid range of array " + *$1);
+                                                    YYABORT;
                                                 }
                                              }
              | pidentifier'[''-'num':'num']'    { Variable* v = codeGen->allocateArray(*$1, -$4, $6);
-                                                               if (nullptr == v && !error) {
-                                                                   error = true;
-                                                                   yyerror("Redeclaration of variable " + *$1);
-                                                               }
+                                                   if (nullptr == v && !error) {
+                                                       error = true;
+                                                       yyerror("Redeclaration of variable " + *$1);
+                                                       YYABORT;
+                                                   }
 
-                                                               if (v->name == "error") {
-                                                                   error = true;
-                                                                   yyerror("Invalid range of array " + *$1);
-                                                               }
-                                                            }
+                                                   if (v->name == "error" && !error) {
+                                                       error = true;
+                                                       yyerror("Invalid range of array " + *$1);
+                                                       YYABORT;
+                                                   }
+                                                }
              | pidentifier'['num':''-'num']'    { Variable* v = codeGen->allocateArray(*$1, $3, -$6);
                                                     if (nullptr == v && !error) {
                                                         error = true;
                                                         yyerror("Redeclaration of variable " + *$1);
+                                                        YYABORT;
                                                     }
 
-                                                    if (v->name == "error") {
+                                                    if (v->name == "error" && !error) {
                                                         error = true;
                                                         yyerror("Invalid range of array " + *$1);
+                                                        YYABORT;
                                                     }
                                                  }
              | pidentifier'[''-'num':''-'num']'    { Variable* v = codeGen->allocateArray(*$1, -$4, -$7);
                                                  if (nullptr == v && !error) {
                                                      error = true;
                                                      yyerror("Redeclaration of variable " + *$1);
+                                                     YYABORT;
                                                  }
 
-                                                 if (v->name == "error") {
+                                                 if (v->name == "error" && !error) {
                                                      error = true;
                                                      yyerror("Invalid range of array " + *$1);
+                                                     YYABORT;
                                                  }
                                               }
 
@@ -134,44 +144,52 @@ declarations: declarations',' pidentifier { Variable* v = codeGen->allocateVaria
                                                                if (nullptr == v && !error) {
                                                                    error = true;
                                                                    yyerror("Redeclaration of variable " + *$3);
+                                                                   YYABORT;
                                                                }
 
-                                                               if (v->name == "error") {
+                                                               if (v->name == "error" && !error) {
                                                                    error = true;
                                                                    yyerror("Invalid range of array " + *$3);
+                                                                   YYABORT;
                                                                }
                                                             }
              | declarations',' pidentifier'['num':''-'num']'  { Variable* v = codeGen->allocateArray(*$3, $5, -$8);
                                                                 if (nullptr == v && !error) {
                                                                     error = true;
                                                                     yyerror("Redeclaration of variable " + *$3);
+                                                                    YYABORT;
                                                                 }
 
-                                                                if (v->name == "error") {
+                                                                if (v->name == "error" && !error) {
                                                                     error = true;
                                                                     yyerror("Invalid range of array " + *$3);
+                                                                    YYABORT;
                                                                 }
                                                              }
              | declarations',' pidentifier'['num':'num']'  { Variable* v = codeGen->allocateArray(*$3, $5, $7);
-                                                                             if (nullptr == v && !error) {
-                                                                                 error = true;
-                                                                                 yyerror("Redeclaration of variable " + *$3);
-                                                                             }
+                                                                 if (nullptr == v && !error) {
+                                                                     error = true;
+                                                                     yyerror("Redeclaration of variable " + *$3);
+                                                                     YYABORT;
+                                                                 }
 
-                                                                             if (v->name == "error") {
-                                                                                 error = true;
-                                                                                 yyerror("Invalid range of array " + *$3);
-                                                                             }
-                                                                          }
+                                                                 if (v->name == "error" && !error) {
+                                                                     error = true;
+                                                                     yyerror("Invalid range of array " + *$3);
+                                                                     YYABORT;
+                                                                 }
+                                                              }
               | declarations',' pidentifier'[''-'num':''-'num']'  { Variable* v = codeGen->allocateArray(*$3, -$6, -$9);
                                                                   if (nullptr == v && !error) {
                                                                       error = true;
                                                                       yyerror("Redeclaration of variable " + *$3);
+                                                                      YYABORT;
                                                                   }
 
-                                                                  if (v->name == "error") {
+                                                                  if (v->name == "error" && !error) {
                                                                       error = true;
                                                                       yyerror("Invalid range of array " + *$3);
+                                                                      YYABORT;
                                                                   }
                                                                }
 
@@ -183,6 +201,7 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                 error = true;
                                 if ($2 != nullptr)
                                 yyerror("Variable " + $2->name +" is not initialized");
+                                YYABORT;
                               }
                             }
 
@@ -262,6 +281,7 @@ value:      identifier { $$ = $1;
                          if ($1 != nullptr && $1->isVariable && !$1->isInit && !error) {
                             error = true;
                             yyerror("Variable " + $1->name + " is not initialized");
+                            YYABORT;
                          }
                         }
             | num { $$ = codeGen->allocateConstant($1);  } /* if it exists just return its address */
@@ -271,10 +291,12 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                 if (var == nullptr && !error) {
                                     error = true;
                                     yyerror("Variable " + *$1 + " not defined");
+                                    YYABORT;
                                    // $$ = nullptr;
                                  } else if (!var->isVariable) {
                                     error = true;
                                     yyerror("Improper use of array variable " + *$1);
+                                    YYABORT;
                                     //$$ = nullptr;
                                  } else {
                                     $$ = var;
@@ -283,10 +305,12 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                 | pidentifier'['num']' {  Variable* var = codeGen->getVar(*$1); // first index of table
                                           if (var == nullptr && !error) {
                                                 yyerror("Variable " + *$1 + " not defined");
+                                                YYABORT;
                                                 $$ = nullptr;
                                           } else if (!var->isArray) {
                                                 error = true;
                                                 yyerror("Improper use of variable " + *$1);
+                                                YYABORT;
                                                 //$$ = nullptr;
                                           } else {
                                             // get this variable with index
@@ -294,6 +318,7 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                             if (var1 == nullptr && !error) {
                                                 error = true;
                                                 yyerror("Index out of bounds for array " + *$1);
+                                                YYABORT;
                                             } else {
                                                 $$ = var1;
                                             }
@@ -302,10 +327,12 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                 | pidentifier'[''-'num']' {  Variable* var = codeGen->getVar(*$1); // first index of table
                                             if (var == nullptr && !error) {
                                                   yyerror("Variable " + *$1 + " not defined");
+                                                  YYABORT;
                                                   $$ = nullptr;
                                             } else if (!var->isArray) {
                                                   error = true;
                                                   yyerror("Improper use of variable " + *$1);
+                                                  YYABORT;
                                                   //$$ = nullptr;
                                             } else {
                                               // get this variable with index
@@ -313,6 +340,7 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                               if (var1 == nullptr && !error) {
                                                   error = true;
                                                   yyerror("Index out of bounds for array " + *$1);
+                                                  YYABORT;
                                               } else {
                                                   $$ = var1;
                                               }
@@ -324,19 +352,24 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                                      if (arr == nullptr && !error) {
                                                            error = true;
                                                            yyerror("Variable " + *$1 + " not defined");
+                                                           YYABORT;
                                                            //$$ = nullptr;
                                                      } else if (var == nullptr && !error) {
                                                             error = true;
                                                             yyerror("Variable " + *$3 + " not defined");
+                                                            YYABORT;
                                                      } else if (!var->isVariable) {
                                                            error = true;
                                                            yyerror("Improper use of variable " + *$3);
+                                                           YYABORT;
                                                      } else if (!var->isInit) {
                                                         error = true;
                                                         yyerror("Variable " + var->name + " is not initialized");
+                                                        YYABORT;
                                                      } else if (!arr->isArray) {
                                                         error = true;
                                                         yyerror("Improper use of variable " + *$1);
+                                                        YYABORT;
                                                      } else { // add to arr offset which is address of var
                                                         arr->offset = var->address;
                                                         arr->isArrayWithVar = true;
@@ -349,7 +382,7 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
 int yyerror (std::string s) {
     error = true;
     std::cerr << "Error: " << s << " in line " << yylineno << std::endl;
-    return 0;
+    return 1;
 }
 
 int main(int argc, char** argv) {
