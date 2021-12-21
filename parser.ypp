@@ -3,6 +3,7 @@
     #include <string>
     #include <memory>
     #include <fstream>
+    #include <stack>
 
     #include "./inc/IOOperations.hpp"
     #include "./inc/CodeGenerator.hpp"
@@ -21,7 +22,9 @@
     std::vector<std::string> newSet;
     bool error = false;
     long long int line = 0;
-    long long int lineRepeat = 0;
+    std::stack<long long int> repeatStack;
+    std::stack<long long int> forStack;
+
 %}
 
 %define parse.error verbose
@@ -203,16 +206,17 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                 yyerror("Variable " + $2->name +" is not initialized");
                                 YYABORT;
                               }
+
                             }
 
-            | identifier ASSIGN expression';' {  codeGen->assignToVariable($1, $3); }
+            | identifier ASSIGN expression';' { codeGen->assignToVariable($1, $3); }
 
-            | READ identifier';'    { if (!codeGen->read($2) && !error) {
+            | READ identifier';'    {  if (!codeGen->read($2) && !error) {
                                         error = true;
                                       }
                                     }
 
-            | IF condition THEN commands { line = codeGen->addInstruction("JUMP "); // omit else, edit later
+            | IF condition THEN commands {  line = codeGen->addInstruction("JUMP "); // omit else, edit later
                                             std::string instr = codeGen->getInstruction($2->index);
                                             instr = instr + std::to_string(codeGen->offset - $2->index);
                                             codeGen->changeInstruction($2->index, instr); // go to else
@@ -222,11 +226,11 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                                 codeGen->changeInstruction($2->index - 1, instr);
                                             }
                                           }
-              ELSE commands ENDIF        { std::string instr = "JUMP " + std::to_string(codeGen->offset - line);
+              ELSE commands ENDIF        {  std::string instr = "JUMP " + std::to_string(codeGen->offset - line);
                                             codeGen->changeInstruction(line, instr); // edit instr from first block, jump adter else
                                          }
 
-            | IF condition THEN commands ENDIF {    std::string instr = codeGen->getInstruction($2->index); /* if EQ there are two jumps */
+            | IF condition THEN commands ENDIF {  std::string instr = codeGen->getInstruction($2->index); /* if EQ there are two jumps */
                                                     instr = instr + std::to_string(codeGen->offset - $2->index);
                                                     codeGen->changeInstruction($2->index, instr);
                                                     if ($2->type == "EQ" || $2->type == "LE" || $2->type == "GE") {
@@ -248,19 +252,26 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                                       codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - $2->firstIndex + 1)));
                                                      }
 
-            | REPEAT { lineRepeat = codeGen->offset; }
+            | REPEAT { // push first instruction to stack
+                        repeatStack.push(codeGen->offset);
+                      }
             commands UNTIL condition';'   {   std::string instr = codeGen->getInstruction($5->index); /* if EQ there are two jumps */
-                                                instr = instr + std::to_string((-(codeGen->offset - lineRepeat) + 1));
+                                               long long int firstLine = repeatStack.top();
+                                               repeatStack.pop();
+                                                instr = instr + std::to_string((-(codeGen->offset - firstLine - 1)));
+
                                                 codeGen->changeInstruction($5->index, instr);
                                                 if ($5->type == "EQ" || $5->type == "LE" || $5->type == "GE") {
                                                     instr = codeGen->getInstruction($5->index - 1);
-                                                    instr = instr + std::to_string((-(codeGen->offset - lineRepeat) + 2));
+                                                    instr = instr + std::to_string((-(codeGen->offset - firstLine - 2)));
                                                     codeGen->changeInstruction($5->index - 1, instr);
                                                 }
                                                 //std::cout << codeGen->offset << std::endl;
 
                                                // codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - lineRepeat)));
                                            }
+
+
 
 
 expression: value              { codeGen->loadVar($1); }
