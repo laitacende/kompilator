@@ -36,6 +36,32 @@ long long int MemoryData::addVariable(std::string name) {
     return -1;
 }
 
+bool MemoryData::copyVarToTemp(std::string name) {
+    if (ifExists(name)) {
+        memoTemp[name] = memo[name];
+        return true;
+    }
+    return false;
+}
+
+bool MemoryData::copyVarToMem(std::string name) {
+    std::unordered_map<std::string, std::shared_ptr<Symbol>>::iterator it = memoTemp.find(name);
+
+    if(it != memoTemp.end()) {
+        memo[name] = memoTemp[name];
+        return true;
+    }
+    return false;
+}
+
+bool MemoryData::eraseVariable(std::string name) {
+    if (ifExists(name)) {
+        memo.erase(name);
+        return true;
+    }
+    return false;
+}
+
 long long int MemoryData::addConstant(long long int val) {
     std::string name = std::to_string(val);
     //if (!ifExists(name)) {

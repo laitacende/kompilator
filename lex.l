@@ -52,6 +52,11 @@
 "ENDWHILE"  { return ENDWHILE; }
 "REPEAT"    { return REPEAT; }
 "UNTIL"     { return UNTIL; }
+"FOR"       { return FOR; }
+"FROM"      { return FROM; }
+"TO"        { return TO; }
+"DOWNTO"    { return DOWNTO; }
+"ENDFOR"    { return  ENDFOR; }
 [0-9]+      { yylval.num = atoi(yytext); return num; }
 ";"         { return yytext[0]; }
 ","         { return yytext[0]; }

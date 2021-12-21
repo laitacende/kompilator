@@ -102,6 +102,25 @@ Variable* CodeGenerator::allocateVariable(std::string name) {
     return nullptr;
 }
 
+Variable* CodeGenerator::allocateIterator(std::string name) {
+    long long int address = memo->addVariable(name);
+    // check if variable of this name exists
+    if (address == -1) { // there is variable of such name, copy io to temporary memo
+        // check if this variable isn't iterator too
+        Variable* var = memo->getVar(name);
+        if (var->isIterator) {
+            return nullptr;
+        }
+        memo->copyVarToTemp(name); // original variable in temp
+        memo->eraseVariable(name);
+        memo->addVariable(name);
+    }
+    Variable* var = memo->getVar(name); // TODO INIT ITERATOR WITH CORRECT VALUE
+    var->isIterator = true;
+    var->isInit = true;
+    return var;
+}
+
 Variable* CodeGenerator::allocateArray(std::string name, long long int start, long long int end) {
     // check size
     if (start > end) {
@@ -120,6 +139,92 @@ Variable* CodeGenerator::allocateArray(std::string name, long long int start, lo
         return memo->getVar(name);
     }
     return nullptr;
+}
+
+bool CodeGenerator::restoreVariable(std::string name) {
+    //memo->eraseVariable(name);
+    memo->copyVarToMem(name);
+    return true;
+}
+
+bool CodeGenerator::initializeIterator(Variable* iterator, Variable* from, Variable* to) {
+    // if end is constant then just add its address to iterator
+    makeConstant(iterator->address);
+    addInstruction("SWAP g");
+    makeConstant(from->address);
+    // if its array with variable
+    if (from->isArray && from->isArrayWithVar) { // in register c address of first element in array
+    addInstruction("SWAP c");
+    // load address of index
+    makeConstant(from->offset);
+    // load value of this variable
+    addInstruction("LOAD a");
+    // calculate offset in array (how many cells of memory to 'jump'
+    addInstruction("SWAP f"); // value of variable
+    long long int start = to->startArray;
+    if (start < 0) {
+    start = -start;
+    }
+    makeConstant(start); // has to be positive
+    addInstruction("SWAP f"); // in a value of var, in f start of array
+    if (from->startArray < 0) { // add
+    addInstruction("ADD f"); // index - (-start)
+    } else {
+    addInstruction("SUB f"); // index - start
+    }
+    // add address of array's first element
+    addInstruction("ADD c"); // index - start + address - this is address of element in array
+    // addInstruction("SWAP c"); // new address in register a
+    }
+    addInstruction("LOAD a"); // load from value
+    addInstruction("STORE g"); // start value is now in iterator memory address
+
+    if (!to->isConstant) {
+        // copy to new memory cell
+        makeConstant(memo->currentAddress); // new address
+        iterator->toIterator = memo->currentAddress;
+        memo->currentAddress = memo->currentAddress + 1; // allocate new constant
+        addInstruction("SWAP c");
+        makeConstant(to->address);
+        addInstruction("LOAD a");
+        addInstruction("STORE c");
+    } else {
+        iterator->toIterator = to->address;
+    }
+    return true;
+}
+
+long long int CodeGenerator::generateFor(Variable* iterator, Variable* to, bool isDown) {
+    // load current iterator value
+    makeConstant(iterator->address);
+    addInstruction("LOAD a");
+    addInstruction("SWAP c");
+
+    // load current value of end condition
+    makeConstant(iterator->toIterator);
+    addInstruction("LOAD a");
+    addInstruction("SUB c");
+    if (isDown) {
+        return addInstruction("JPOS ");
+    }
+    return addInstruction("JNEG "); // modify later
+}
+
+bool CodeGenerator::modifyIterator(Variable* iterator, bool isDown) {
+    // load iterator value and address
+    makeConstant(iterator->address);
+
+    addInstruction("SWAP c");
+    addInstruction("RESET a");
+    addInstruction("ADD c");
+    addInstruction("LOAD a");
+    if (isDown) {
+        addInstruction("DEC a");
+    } else {
+        addInstruction("INC a");
+    }
+    addInstruction("STORE c"); // load new value of iterator
+    return true;
 }
 
 bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {
@@ -610,7 +715,8 @@ Cond* CodeGenerator::evalGreaterEqual(Variable* var1, Variable* var2) {
 
 bool CodeGenerator::write(Variable* var) {
     // get from memory and load to a
-    if (var != nullptr && var->isVariable && !var->isArray && !var->isInit) {
+   // std::cout << var->name << std::endl;
+    if (var != nullptr && var->isVariable && !var->isArray && !var->isIterator && !var->isInit) {
         return false;
     }
     makeConstant(var->address);

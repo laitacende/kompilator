@@ -18,6 +18,9 @@ public:
     long long int endArray = 0;
     long long int offset = 0; // address of variable when accessing array with variable
     bool isArrayWithVar = false; // true when accessing array with variable
+    bool isIterator = false;
+    long long int fromIterator = 0; // address of variable from in loop
+    long long int toIterator = 0; // address of variable in end condition in for loop
 
 };
 #endif //KOMPILATOR_VARIABLE_HPP

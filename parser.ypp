@@ -23,7 +23,9 @@
     bool error = false;
     long long int line = 0;
     std::stack<long long int> repeatStack;
-    std::stack<long long int> forStack;
+    std::stack<Variable*> forStack;
+    std::stack<long long int> forNowStack;
+    std::stack<long long int> forModifyStack;
 
 %}
 
@@ -63,6 +65,11 @@
 %token ENDWHILE
 %token REPEAT
 %token UNTIL
+%token FOR
+%token FROM
+%token TO
+%token DOWNTO
+%token ENDFOR
 %token <num> num
 %token <pidentifier> pidentifier
 %token ERROR
@@ -182,7 +189,7 @@ declarations: declarations',' pidentifier { Variable* v = codeGen->allocateVaria
                                                                      YYABORT;
                                                                  }
                                                               }
-              | declarations',' pidentifier'[''-'num':''-'num']'  { Variable* v = codeGen->allocateArray(*$3, -$6, -$9);
+             | declarations',' pidentifier'[''-'num':''-'num']'  { Variable* v = codeGen->allocateArray(*$3, -$6, -$9);
                                                                   if (nullptr == v && !error) {
                                                                       error = true;
                                                                       yyerror("Redeclaration of variable " + *$3);
@@ -255,20 +262,77 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
             | REPEAT { // push first instruction to stack
                         repeatStack.push(codeGen->offset);
                       }
-            commands UNTIL condition';'   {   std::string instr = codeGen->getInstruction($5->index); /* if EQ there are two jumps */
+            commands UNTIL condition';'   {    std::string instr = codeGen->getInstruction($5->index); /* if EQ there are two jumps */
                                                long long int firstLine = repeatStack.top();
                                                repeatStack.pop();
-                                                instr = instr + std::to_string((-(codeGen->offset - firstLine - 1)));
+                                               instr = instr + std::to_string((-(codeGen->offset - firstLine - 1)));
 
-                                                codeGen->changeInstruction($5->index, instr);
-                                                if ($5->type == "EQ" || $5->type == "LE" || $5->type == "GE") {
-                                                    instr = codeGen->getInstruction($5->index - 1);
-                                                    instr = instr + std::to_string((-(codeGen->offset - firstLine - 2)));
-                                                    codeGen->changeInstruction($5->index - 1, instr);
-                                                }
-                                                //std::cout << codeGen->offset << std::endl;
+                                               codeGen->changeInstruction($5->index, instr);
+                                               if ($5->type == "EQ" || $5->type == "LE" || $5->type == "GE") {
+                                                   instr = codeGen->getInstruction($5->index - 1);
+                                                   instr = instr + std::to_string((-(codeGen->offset - firstLine - 2)));
+                                                   codeGen->changeInstruction($5->index - 1, instr);
+                                               }
+                                           }
 
-                                               // codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - lineRepeat)));
+           | FOR  pidentifier FROM value TO value { // push first instruction to stack
+                                                    // allocate iterator variable
+                                                     Variable* var = codeGen->allocateIterator(*$2);
+                                                     if (var == nullptr && !error) {
+                                                        error = true;
+                                                        yyerror("Iterator " + *$2 + " is already defined");
+                                                        YYABORT;
+                                                     }
+                                                     // initialize iterator
+                                                     codeGen->initializeIterator(var, $4 , $6);
+                                                     long long int now = codeGen->offset;
+                                                     forNowStack.push(now);
+                                                     // generate code
+                                                     long long int modify = codeGen->generateFor(var, $6, false);
+                                                     forModifyStack.push(modify);
+                                                     forStack.push(var);
+                                                   }
+            DO commands ENDFOR  {   Variable* var = forStack.top();
+                                    long long int modify = forModifyStack.top();
+                                    forModifyStack.pop();
+                                    long long int now = forNowStack.top();
+                                    forNowStack.pop();
+                                    codeGen->modifyIterator(var, false);
+                                    codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - now)));
+                                    std::string instr = codeGen->getInstruction(modify);
+                                    instr = instr + std::to_string((codeGen->offset - modify));
+                                    codeGen->changeInstruction(modify, instr);
+                                    codeGen->restoreVariable(var->name);
+                                }
+
+            | FOR  pidentifier FROM value DOWNTO value { // push first instruction to stack
+                                                               // allocate iterator variable
+                                                                Variable* var = codeGen->allocateIterator(*$2);
+                                                                if (var == nullptr && !error) {
+                                                                   error = true;
+                                                                   yyerror("Iterator " + *$2 + " is already defined");
+                                                                   YYABORT;
+                                                                }
+                                                                // initialize iterator
+                                                                codeGen->initializeIterator(var, $4 , $6);
+                                                                long long int now = codeGen->offset;
+                                                                forNowStack.push(now);
+                                                                // generate code
+                                                                long long int modify = codeGen->generateFor(var, $6, true);
+                                                                forModifyStack.push(modify);
+                                                                forStack.push(var);
+                                                              }
+                       DO commands ENDFOR  {   Variable* var = forStack.top();
+                                               long long int modify = forModifyStack.top();
+                                               forModifyStack.pop();
+                                               long long int now = forNowStack.top();
+                                               forNowStack.pop();
+                                               codeGen->modifyIterator(var, true);
+                                               codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - now)));
+                                               std::string instr = codeGen->getInstruction(modify);
+                                               instr = instr + std::to_string((codeGen->offset - modify));
+                                               codeGen->changeInstruction(modify, instr);
+                                               codeGen->restoreVariable(var->name);
                                            }
 
 

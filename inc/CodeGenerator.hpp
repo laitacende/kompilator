@@ -23,6 +23,7 @@ public:
     Variable* allocateConstantNegate(long long int value);
     Variable* allocateVariable(std::string name);
     Variable* allocateArray(std::string name, long long int start, long long int end);
+    Variable* allocateIterator(std::string name);
     bool assignToVariable(Variable* var1, Variable* var2);
     void changeInstruction(long long int index, std::string newInstruction);
     std::string getInstruction(long long int index);
@@ -41,6 +42,10 @@ public:
     Cond* evalLessEqual(Variable* var1, Variable* var2);
     Cond* evalGreater(Variable* var1, Variable* var2);
     Cond* evalGreaterEqual(Variable* var1, Variable* var2);
+    long long int generateFor(Variable* iterator, Variable* to, bool isDown);
+    bool initializeIterator(Variable* iterator, Variable* from, Variable* to);
+    bool modifyIterator(Variable* iterator, bool isDown);
+    bool restoreVariable(std::string name);
 private:
     std::vector<std::string> code;
     std::shared_ptr<MemoryData> memo;

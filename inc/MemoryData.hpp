@@ -18,7 +18,11 @@ public:
     long long int currentAddress = 0;
     long long int getAddress(std::string name);
     Variable* getVar(std::string name);
+    bool copyVarToTemp(std::string name);
+    bool copyVarToMem(std::string name);
+    bool eraseVariable(std::string name);
 private:
     std::unordered_map<std::string, std::shared_ptr<Symbol>> memo;
+    std::unordered_map<std::string, std::shared_ptr<Symbol>> memoTemp;
 };
 #endif //KOMPILATOR_MEMORYDATA_HPP
