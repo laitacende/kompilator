@@ -104,6 +104,7 @@ Variable* CodeGenerator::allocateVariable(std::string name) {
 
 Variable* CodeGenerator::allocateIterator(std::string name) {
     long long int address = memo->addVariable(name);
+   // std::cout << "name it: " << name << " address " << address << std::endl;
     // check if variable of this name exists
     if (address == -1) { // there is variable of such name, copy io to temporary memo
         // check if this variable isn't iterator too
@@ -142,7 +143,7 @@ Variable* CodeGenerator::allocateArray(std::string name, long long int start, lo
 }
 
 bool CodeGenerator::restoreVariable(std::string name) {
-    //memo->eraseVariable(name);
+    memo->eraseVariable(name);
     memo->copyVarToMem(name);
     return true;
 }
@@ -212,6 +213,7 @@ long long int CodeGenerator::generateFor(Variable* iterator, Variable* to, bool 
 
 bool CodeGenerator::modifyIterator(Variable* iterator, bool isDown) {
     // load iterator value and address
+    //std::cout << "modify it address name" << iterator->address << "  " << iterator->name << std::endl;
     makeConstant(iterator->address);
 
     addInstruction("SWAP c");

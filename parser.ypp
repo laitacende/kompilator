@@ -216,7 +216,15 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
 
                             }
 
-            | identifier ASSIGN expression';' { codeGen->assignToVariable($1, $3); }
+            | identifier ASSIGN expression';' { // don't modify iterators!!!
+                                                if ($1->isIterator && !error) {
+                                                    error = true;
+                                                    yyerror("Modification of iterator " + $1->name +" not permitted");
+                                                    YYABORT;
+                                                } else {
+                                                    codeGen->assignToVariable($1, $3);
+                                                }
+                                               }
 
             | READ identifier';'    {  if (!codeGen->read($2) && !error) {
                                         error = true;
@@ -293,6 +301,7 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                                      forStack.push(var);
                                                    }
             DO commands ENDFOR  {   Variable* var = forStack.top();
+                                    forStack.pop();
                                     long long int modify = forModifyStack.top();
                                     forModifyStack.pop();
                                     long long int now = forNowStack.top();
@@ -302,6 +311,7 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                     std::string instr = codeGen->getInstruction(modify);
                                     instr = instr + std::to_string((codeGen->offset - modify));
                                     codeGen->changeInstruction(modify, instr);
+                                    //codeGen->eraseVariable(var->name);
                                     codeGen->restoreVariable(var->name);
                                 }
 
@@ -323,6 +333,7 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                                                 forStack.push(var);
                                                               }
                        DO commands ENDFOR  {   Variable* var = forStack.top();
+                                               forStack.pop();
                                                long long int modify = forModifyStack.top();
                                                forModifyStack.pop();
                                                long long int now = forNowStack.top();
@@ -332,7 +343,9 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                                std::string instr = codeGen->getInstruction(modify);
                                                instr = instr + std::to_string((codeGen->offset - modify));
                                                codeGen->changeInstruction(modify, instr);
+                                               //codeGen->eraseVariable(var->name);
                                                codeGen->restoreVariable(var->name);
+
                                            }
 
 
