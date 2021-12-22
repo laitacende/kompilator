@@ -2,6 +2,7 @@
 #define KOMPILATOR_VARIABLE_HPP
 
 #include <string>
+#include <stack>
 
 class Variable {
 public:
@@ -21,6 +22,6 @@ public:
     bool isIterator = false;
     long long int fromIterator = 0; // address of variable from in loop
     long long int toIterator = 0; // address of variable in end condition in for loop
-
+    std::stack<long long int> offsetStack;
 };
 #endif //KOMPILATOR_VARIABLE_HPP

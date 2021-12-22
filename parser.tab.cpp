@@ -2032,16 +2032,19 @@ yyreduce:
                                                         yyerror("Improper use of variable " + *(yyvsp[-3].pidentifier));
                                                         YYABORT;
                                                      } else { // add to arr offset which is address of var
-                                                        arr->offset = var->address;
+
+                                                       // arr->offset = var->address;
+                                                       arr->offsetStack.push(var->address);
                                                         arr->isArrayWithVar = true;
                                                         (yyval.var) = arr;
+                                                       
                                                      }
                                                 }
-#line 2041 "parser.tab.cpp"
+#line 2044 "parser.tab.cpp"
     break;
 
 
-#line 2045 "parser.tab.cpp"
+#line 2048 "parser.tab.cpp"
 
       default: break;
     }
@@ -2273,7 +2276,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 468 "parser.ypp"
+#line 471 "parser.ypp"
 
 
 int yyerror (std::string s) {

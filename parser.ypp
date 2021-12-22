@@ -459,9 +459,12 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                                         yyerror("Improper use of variable " + *$1);
                                                         YYABORT;
                                                      } else { // add to arr offset which is address of var
-                                                        arr->offset = var->address;
+
+                                                       // arr->offset = var->address;
+                                                       arr->offsetStack.push(var->address);
                                                         arr->isArrayWithVar = true;
                                                         $$ = arr;
+
                                                      }
                                                 }
 

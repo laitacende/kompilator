@@ -157,7 +157,8 @@ bool CodeGenerator::initializeIterator(Variable* iterator, Variable* from, Varia
     if (from->isArray && from->isArrayWithVar) { // in register c address of first element in array
     addInstruction("SWAP c");
     // load address of index
-    makeConstant(from->offset);
+    makeConstant(from->offsetStack.top());
+    from->offsetStack.pop();
     // load value of this variable
     addInstruction("LOAD a");
     // calculate offset in array (how many cells of memory to 'jump'
@@ -243,7 +244,10 @@ bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {
         addInstruction("SWAP c");
         if (var1->isArray && var1->isArrayWithVar) { // in register c address of first element in array
             // load address of index
-            makeConstant(var1->offset);
+            makeConstant(var1->offsetStack.top());
+           // std::cout << "offset " << var1->offsetStack.top() << std::endl;
+            var1->offsetStack.pop();
+
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -256,6 +260,8 @@ bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {
             addInstruction("SWAP f"); // in a value of var, in f start of array
             if (var1->startArray < 0) { // add
                 addInstruction("ADD f"); // index - (-start)
+//            } else if (var1->startArray == 0) {
+//                addInstruction("INC a");
             } else {
                 addInstruction("SUB f"); // index - start
             }
@@ -324,7 +330,8 @@ bool CodeGenerator::loadVar(Variable* var) {
     if (var->isArray && var->isArrayWithVar) { // in register c address of first element in array
         addInstruction("SWAP c");
         // load address of index
-        makeConstant(var->offset);
+        makeConstant(var->offsetStack.top());
+        var->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -356,7 +363,8 @@ Cond* CodeGenerator::evalNotEqual(Variable* var1, Variable* var2) {
     if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
         addInstruction("SWAP c");
         // load address of index
-        makeConstant(var2->offset);
+        makeConstant(var2->offsetStack.top());
+        var2->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -382,7 +390,8 @@ Cond* CodeGenerator::evalNotEqual(Variable* var1, Variable* var2) {
     if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
         addInstruction("SWAP d");
         // load address of index
-        makeConstant(var1->offset);
+        makeConstant(var1->offsetStack.top());
+        var1->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -415,7 +424,8 @@ Cond* CodeGenerator::evalEqual(Variable* var1, Variable* var2) {
     if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
         addInstruction("SWAP c");
         // load address of index
-        makeConstant(var2->offset);
+        makeConstant(var2->offsetStack.top());
+        var2->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -441,7 +451,8 @@ Cond* CodeGenerator::evalEqual(Variable* var1, Variable* var2) {
     if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
         addInstruction("SWAP d");
         // load address of index
-        makeConstant(var1->offset);
+        makeConstant(var1->offsetStack.top());
+        var1->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -475,7 +486,8 @@ Cond* CodeGenerator::evalLess(Variable* var1, Variable* var2) {
     if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
         addInstruction("SWAP c");
         // load address of index
-        makeConstant(var2->offset);
+        makeConstant(var2->offsetStack.top());
+        var2->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -501,7 +513,8 @@ Cond* CodeGenerator::evalLess(Variable* var1, Variable* var2) {
     if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
         addInstruction("SWAP d");
         // load address of index
-        makeConstant(var1->offset);
+        makeConstant(var1->offsetStack.top());
+        var1->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -536,7 +549,8 @@ Cond* CodeGenerator::evalLessEqual(Variable* var1, Variable* var2) {
     if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
         addInstruction("SWAP c");
         // load address of index
-        makeConstant(var2->offset);
+        makeConstant(var2->offsetStack.top());
+        var2->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -562,7 +576,8 @@ Cond* CodeGenerator::evalLessEqual(Variable* var1, Variable* var2) {
     if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
         addInstruction("SWAP d");
         // load address of index
-        makeConstant(var1->offset);
+        makeConstant(var1->offsetStack.top());
+        var1->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -597,7 +612,8 @@ Cond* CodeGenerator::evalGreater(Variable* var1, Variable* var2) {
     if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
         addInstruction("SWAP c");
         // load address of index
-        makeConstant(var2->offset);
+        makeConstant(var2->offsetStack.top());
+        var2->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -623,7 +639,8 @@ Cond* CodeGenerator::evalGreater(Variable* var1, Variable* var2) {
     if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
         addInstruction("SWAP d");
         // load address of index
-        makeConstant(var1->offset);
+        makeConstant(var1->offsetStack.top());
+        var1->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -657,7 +674,8 @@ Cond* CodeGenerator::evalGreaterEqual(Variable* var1, Variable* var2) {
     if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
         addInstruction("SWAP c");
         // load address of index
-        makeConstant(var2->offset);
+        makeConstant(var2->offsetStack.top());
+        var2->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -684,7 +702,8 @@ Cond* CodeGenerator::evalGreaterEqual(Variable* var1, Variable* var2) {
     if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
         addInstruction("SWAP d");
         // load address of index
-        makeConstant(var1->offset);
+        makeConstant(var1->offsetStack.top());
+        var1->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -727,7 +746,8 @@ bool CodeGenerator::write(Variable* var) {
     if (var->isArray && var->isArrayWithVar) { // in register c address of first element in array
         addInstruction("SWAP c");
         // load address of index
-        makeConstant(var->offset);
+        makeConstant(var->offsetStack.top());
+        var->offsetStack.pop();
         // load value of this variable
         addInstruction("LOAD a");
         // calculate offset in array (how many cells of memory to 'jump'
@@ -761,7 +781,8 @@ bool CodeGenerator::read(Variable* var) {
         if (var->isArray && var->isArrayWithVar) { // in register c address of first element in array
             addInstruction("SWAP c");
             // load address of index
-            makeConstant(var->offset);
+            makeConstant(var->offsetStack.top());
+            var->offsetStack.pop();
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -797,7 +818,7 @@ bool CodeGenerator::add(Variable* var1, Variable* var2) {
     if (var1 != nullptr && var2 != nullptr) {
         if (var1->isConstant && var2->isConstant) {
             makeConstant(var1->val + var2->val);
-        } else if (var2->isConstant && !var1->isConstant && (var2->val == 0 || var2->val == 1)) {
+        } else if (var2->isConstant && var1->isVariable && (var2->val == 0 || var2->val == 1)) { // TODO mozna zrobic tez dla tab;ic
             if (var2->val == 0) {
                 makeConstant(var1->address); // in a
                 addInstruction("LOAD a");
@@ -812,7 +833,8 @@ bool CodeGenerator::add(Variable* var1, Variable* var2) {
         if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
             addInstruction("SWAP c");
             // load address of index
-            makeConstant(var2->offset);
+            makeConstant(var2->offsetStack.top());
+            var2->offsetStack.pop();
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -839,7 +861,8 @@ bool CodeGenerator::add(Variable* var1, Variable* var2) {
         if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
             addInstruction("SWAP d");
             // load address of index
-            makeConstant(var1->offset);
+            makeConstant(var1->offsetStack.top());
+            var1->offsetStack.pop();
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -888,7 +911,8 @@ bool CodeGenerator::subtract(Variable* var1, Variable* var2) {
         if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
             addInstruction("SWAP c");
             // load address of index
-            makeConstant(var2->offset);
+            makeConstant(var2->offsetStack.top());
+            var2->offsetStack.pop();
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -915,7 +939,8 @@ bool CodeGenerator::subtract(Variable* var1, Variable* var2) {
         if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
             addInstruction("SWAP d");
             // load address of index
-            makeConstant(var1->offset);
+            makeConstant(var1->offsetStack.top());
+            var1->offsetStack.pop();
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -998,7 +1023,8 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
         if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
             addInstruction("SWAP c");
             // load address of index
-            makeConstant(var2->offset);
+            makeConstant(var2->offsetStack.top());
+            var2->offsetStack.pop();
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -1031,9 +1057,10 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
 
         makeConstant(var1->address); // in a
         if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
-            addInstruction("SWAP d");
+            addInstruction("SWAP h");
             // load address of index
-            makeConstant(var1->offset);
+            makeConstant(var1->offsetStack.top());
+            var1->offsetStack.pop();
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -1050,7 +1077,7 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
                 addInstruction("SUB f"); // index - start
             }
             // add address of array's first element
-            addInstruction("ADD d"); // index - start + address - this is address of element in array
+            addInstruction("ADD h"); // index - start + address - this is address of element in array
             // new address in register a
         }
         addInstruction("LOAD a"); // a == val1
@@ -1181,7 +1208,8 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
         if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
             addInstruction("SWAP c");
             // load address of index
-            makeConstant(var2->offset);
+            makeConstant(var2->offsetStack.top());
+            var2->offsetStack.pop();
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -1217,7 +1245,8 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
         if (var1->isArray && var1->isArrayWithVar) { // in register d address of first element in array
             addInstruction("SWAP d");
             // load address of index
-            makeConstant(var1->offset);
+            makeConstant(var1->offsetStack.top());
+            var1->offsetStack.pop();
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -1248,6 +1277,7 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
         addInstruction("SUB f");
         addInstruction("SWAP f"); // positive var1 in register f
 
+        addInstruction("RESET d");
         addInstruction("RESET e");
         addInstruction("INC e");
         addInstruction("RESET h");
@@ -1337,7 +1367,8 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
             addInstruction("SWAP c");
             // load address of index
-            makeConstant(var2->offset);
+            makeConstant(var2->offsetStack.top());
+            var2->offsetStack.pop();
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -1373,7 +1404,8 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         if (var1->isArray && var1->isArrayWithVar) { // in register c address of first element in array
             addInstruction("SWAP f");
             // load address of index
-            makeConstant(var1->offset);
+            makeConstant(var1->offsetStack.top());
+            var1->offsetStack.pop();
             // load value of this variable
             addInstruction("LOAD a");
             // calculate offset in array (how many cells of memory to 'jump'
@@ -1384,7 +1416,7 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
             }
             makeConstant(start); // has to be positive
             addInstruction("SWAP h"); // in a value of var, in f start of array
-            if (var2->startArray < 0) { // add
+            if (var1->startArray < 0) { // add
                 addInstruction("ADD h"); // index - (-start)
             } else {
                 addInstruction("SUB h"); // index - start
