@@ -2037,7 +2037,7 @@ yyreduce:
                                                        arr->offsetStack.push(var->address);
                                                         arr->isArrayWithVar = true;
                                                         (yyval.var) = arr;
-                                                       
+
                                                      }
                                                 }
 #line 2044 "parser.tab.cpp"

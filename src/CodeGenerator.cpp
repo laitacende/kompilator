@@ -163,7 +163,7 @@ bool CodeGenerator::initializeIterator(Variable* iterator, Variable* from, Varia
     addInstruction("LOAD a");
     // calculate offset in array (how many cells of memory to 'jump'
     addInstruction("SWAP f"); // value of variable
-    long long int start = to->startArray;
+    long long int start = from->startArray;
     if (start < 0) {
     start = -start;
     }
@@ -193,6 +193,7 @@ bool CodeGenerator::initializeIterator(Variable* iterator, Variable* from, Varia
     } else {
         iterator->toIterator = to->address;
     }
+    iterator->toIteratorVar = to;
     return true;
 }
 
@@ -202,8 +203,32 @@ long long int CodeGenerator::generateFor(Variable* iterator, Variable* to, bool 
     addInstruction("LOAD a");
     addInstruction("SWAP c");
 
-    // load current value of end condition
+    // load current value of end condition and save it
     makeConstant(iterator->toIterator);
+    if (iterator->toIteratorVar->isArray && iterator->toIteratorVar->isArrayWithVar) { // in register c address of first element in array
+        addInstruction("SWAP d");
+        // load address of index
+        makeConstant(iterator->toIteratorVar->offsetStack.top());
+        iterator->toIteratorVar->offsetStack.pop();
+        // load value of this variable
+        addInstruction("LOAD a");
+        // calculate offset in array (how many cells of memory to 'jump'
+        addInstruction("SWAP f"); // value of variable
+        long long int start = iterator->toIteratorVar->startArray;
+        if (start < 0) {
+            start = -start;
+        }
+        makeConstant(start); // has to be positive
+        addInstruction("SWAP f"); // in a value of var, in f start of array
+        if (iterator->toIteratorVar->startArray < 0) { // add
+            addInstruction("ADD f"); // index - (-start)
+        } else {
+            addInstruction("SUB f"); // index - start
+        }
+        // add address of array's first element
+        addInstruction("ADD d"); // index - start + address - this is address of element in array
+        // addInstruction("SWAP c"); // new address in register a
+    }
     addInstruction("LOAD a");
     addInstruction("SUB c");
     if (isDown) {
