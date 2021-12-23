@@ -1237,26 +1237,7 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
                 return true;
             }
         }
-//        if (var1->val == 0 || var2->val == 0) {
-//            addInstruction("RESET a");
-//            return true;
-//        }
-//        if (var1->val == 1) {
-//            makeConstant(var2->address);
-//            addInstruction("LOAD a");
-//            return true;
-//        }
-//        if (var2->val == 1) {
-//            makeConstant(var1->address);
-//            addInstruction("LOAD a");
-//            return true;
-//        }
-//        bool negate = false;
-//        if ((var2->val < 0 && var1->val > 0) || (var2->val > 0 && var1->val < 0)) {
-//            negate = true;
-//        }
         // quick multiplying
-        std::cout << "here12" << std::endl;
         addInstruction("RESET d");
         makeConstant(var2->address);
         if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
@@ -1337,11 +1318,7 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
         addInstruction("DEC e"); // e == -1
         addInstruction("RESET g");
         addInstruction("INC g");
-//        if (var1->val < 0) {
-//            addInstruction("RESET a");
-//            addInstruction("SUB f");
-//            addInstruction("SWAP f");
-//        }
+
 
         addInstruction("RESET h");
         addInstruction("SWAP h");
@@ -1440,6 +1417,16 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
                 addInstruction("SWAP c");
                 addInstruction("RESET a");
                 addInstruction("SUB c");
+            } else if (std::floor(std::log2(var2->val)) == std::ceil(std::log2(var2->val))) { // is power of 2
+                addInstruction("SWAP c"); // var1
+                addInstruction("RESET a");
+                addInstruction("DEC a");
+                addInstruction("SWAP c");
+                long long int iter = std::floor(std::log2(var2->val));
+                while (iter != 0) {
+                    iter--;
+                    addInstruction("SHIFT c");
+                }
             }
 
             return true;
