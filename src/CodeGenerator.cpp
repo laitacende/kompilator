@@ -9,6 +9,7 @@
 #include <bitset>
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 
 
 CodeGenerator::CodeGenerator(std::shared_ptr<MemoryData> controller) {
@@ -1134,7 +1135,8 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
             }
 
             return true;
-        } else if (var1->isConstant && !var2->isConstant && (var1->val == 0 || var1->val == 1 || var1->val == -1)) {
+        } else if (var1->isConstant && !var2->isConstant && (var1->val == 0 || var1->val == 1 || var1->val == -1
+            || std::floor(std::log2(var1->val)) == std::ceil(std::log2(var1->val)))) {
             if (var1->val == 0) {
                 addInstruction("RESET a");
             } else {
@@ -1170,11 +1172,22 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
                     addInstruction("SWAP c");
                     addInstruction("RESET a");
                     addInstruction("SUB c");
+                } else if (std::floor(std::log2(var1->val)) == std::ceil(std::log2(var1->val))) { // is power of 2
+                    addInstruction("SWAP c"); // var2
+                    addInstruction("RESET a");
+                    addInstruction("INC a");
+                    addInstruction("SWAP c");
+                    long long int iter = std::floor(std::log2(var1->val));
+                    while (iter != 0) {
+                        iter--;
+                        addInstruction("SHIFT c");
+                    }
                 }
 
                 return true;
             }
-        } else if (var2->isConstant && !var1->isConstant && (var2->val == 0 || var2->val == 1 || var2->val == -1)) {
+        } else if (var2->isConstant && !var1->isConstant && (var2->val == 0 || var2->val == 1 || var2->val == -1 ||
+                std::floor(std::log2(var2->val)) == std::ceil(std::log2(var2->val)))) {
             if (var2->val == 0) {
                 addInstruction("RESET a");
             } else {
@@ -1210,6 +1223,16 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
                     addInstruction("SWAP c");
                     addInstruction("RESET a");
                     addInstruction("SUB c");
+                }  else if (std::floor(std::log2(var2->val)) == std::ceil(std::log2(var2->val))) { // is power of 2
+                    addInstruction("SWAP c"); // var2
+                    addInstruction("RESET a");
+                    addInstruction("INC a");
+                    addInstruction("SWAP c");
+                    long long int iter = std::floor(std::log2(var2->val));
+                    while (iter != 0) {
+                        iter--;
+                        addInstruction("SHIFT c");
+                    }
                 }
                 return true;
             }
@@ -1233,7 +1256,7 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
 //            negate = true;
 //        }
         // quick multiplying
-
+        std::cout << "here12" << std::endl;
         addInstruction("RESET d");
         makeConstant(var2->address);
         if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
