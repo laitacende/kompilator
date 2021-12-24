@@ -576,9 +576,9 @@ static const yytype_int16 yyrline[] =
 {
        0,    83,    83,    84,    86,    93,   100,   113,   126,   139,
      153,   166,   179,   192,   207,   208,   210,   219,   229,   234,
-     234,   248,   258,   270,   270,   286,   286,   318,   318,   354,
-     355,   356,   357,   358,   359,   361,   362,   363,   364,   365,
-     366,   368,   375,   376,   378,   393,   415,   437
+     234,   250,   266,   278,   278,   294,   294,   326,   326,   362,
+     363,   364,   365,   366,   367,   369,   370,   371,   372,   373,
+     374,   376,   383,   384,   386,   401,   423,   445
 };
 #endif
 
@@ -1677,42 +1677,50 @@ yyreduce:
   case 19:
 #line 234 "parser.ypp"
                                          {  line = codeGen->addInstruction("JUMP "); // omit else, edit later
-                                            std::string instr = codeGen->getInstruction((yyvsp[-2].cond)->index);
-                                            instr = instr + std::to_string(codeGen->offset - (yyvsp[-2].cond)->index);
-                                            codeGen->changeInstruction((yyvsp[-2].cond)->index, instr); // go to else
-                                            if ((yyvsp[-2].cond)->type == "EQ" || (yyvsp[-2].cond)->type == "LE" || (yyvsp[-2].cond)->type == "GE") {
-                                                instr = codeGen->getInstruction((yyvsp[-2].cond)->index - 1);
-                                                instr = instr + std::to_string(codeGen->offset - (yyvsp[-2].cond)->index + 1);
-                                                codeGen->changeInstruction((yyvsp[-2].cond)->index - 1, instr);
+                                            if ((yyvsp[-2].cond)->index != -1 && (yyvsp[-2].cond)->type != "TRUE") { // if condition isn't always true
+                                                std::string instr = codeGen->getInstruction((yyvsp[-2].cond)->index);
+                                                instr = instr + std::to_string(codeGen->offset - (yyvsp[-2].cond)->index);
+                                                codeGen->changeInstruction((yyvsp[-2].cond)->index, instr); // go to else
+                                                if ((yyvsp[-2].cond)->type == "EQ" || (yyvsp[-2].cond)->type == "LE" || (yyvsp[-2].cond)->type == "GE") {
+                                                    instr = codeGen->getInstruction((yyvsp[-2].cond)->index - 1);
+                                                    instr = instr + std::to_string(codeGen->offset - (yyvsp[-2].cond)->index + 1);
+                                                    codeGen->changeInstruction((yyvsp[-2].cond)->index - 1, instr);
+                                                }
                                             }
                                           }
-#line 1690 "parser.tab.cpp"
+#line 1692 "parser.tab.cpp"
     break;
 
   case 20:
-#line 244 "parser.ypp"
+#line 246 "parser.ypp"
                                          {  std::string instr = "JUMP " + std::to_string(codeGen->offset - line);
-                                            codeGen->changeInstruction(line, instr); // edit instr from first block, jump adter else
+                                            codeGen->changeInstruction(line, instr); // edit instr from first block, jump after else
                                          }
-#line 1698 "parser.tab.cpp"
+#line 1700 "parser.tab.cpp"
     break;
 
   case 21:
-#line 248 "parser.ypp"
-                                               {  std::string instr = codeGen->getInstruction((yyvsp[-3].cond)->index); /* if EQ there are two jumps */
-                                                    instr = instr + std::to_string(codeGen->offset - (yyvsp[-3].cond)->index);
-                                                    codeGen->changeInstruction((yyvsp[-3].cond)->index, instr);
-                                                    if ((yyvsp[-3].cond)->type == "EQ" || (yyvsp[-3].cond)->type == "LE" || (yyvsp[-3].cond)->type == "GE") {
-                                                        instr = codeGen->getInstruction((yyvsp[-3].cond)->index - 1);
-                                                        instr = instr + std::to_string(codeGen->offset - (yyvsp[-3].cond)->index + 1);
-                                                        codeGen->changeInstruction((yyvsp[-3].cond)->index - 1, instr);
+#line 250 "parser.ypp"
+                                               {    if ((yyvsp[-3].cond)->type == "FALSE") { // condition always false, just jump
+                                                        std::string instr = codeGen->getInstruction((yyvsp[-3].cond)->index);
+                                                        instr = instr + std::to_string(codeGen->offset - (yyvsp[-3].cond)->index);
+                                                        codeGen->changeInstruction((yyvsp[-3].cond)->index, instr);
+                                                    } else if ((yyvsp[-3].cond)->index != -1 && (yyvsp[-3].cond)->type != "TRUE") { // if condition is always true then don't add any jump
+                                                        std::string instr = codeGen->getInstruction((yyvsp[-3].cond)->index); /* if EQ there are two jumps */
+                                                        instr = instr + std::to_string(codeGen->offset - (yyvsp[-3].cond)->index);
+                                                        codeGen->changeInstruction((yyvsp[-3].cond)->index, instr);
+                                                        if ((yyvsp[-3].cond)->type == "EQ" || (yyvsp[-3].cond)->type == "LE" || (yyvsp[-3].cond)->type == "GE") {
+                                                            instr = codeGen->getInstruction((yyvsp[-3].cond)->index - 1);
+                                                            instr = instr + std::to_string(codeGen->offset - (yyvsp[-3].cond)->index + 1);
+                                                            codeGen->changeInstruction((yyvsp[-3].cond)->index - 1, instr);
+                                                        }
                                                     }
                                                 }
-#line 1712 "parser.tab.cpp"
+#line 1720 "parser.tab.cpp"
     break;
 
   case 22:
-#line 258 "parser.ypp"
+#line 266 "parser.ypp"
                                                     { std::string instr = codeGen->getInstruction((yyvsp[-3].cond)->index); /* if EQ there are two jumps */
                                                       instr = instr + std::to_string((codeGen->offset - (yyvsp[-3].cond)->index + 1));
                                                       codeGen->changeInstruction((yyvsp[-3].cond)->index, instr);
@@ -1724,19 +1732,19 @@ yyreduce:
                                                       //std::cout << codeGen->offset << std::endl;
                                                       codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - (yyvsp[-3].cond)->firstIndex + 1)));
                                                      }
-#line 1728 "parser.tab.cpp"
-    break;
-
-  case 23:
-#line 270 "parser.ypp"
-                     { // push first instruction to stack
-                        repeatStack.push(codeGen->offset);
-                      }
 #line 1736 "parser.tab.cpp"
     break;
 
+  case 23:
+#line 278 "parser.ypp"
+                     { // push first instruction to stack
+                        repeatStack.push(codeGen->offset);
+                      }
+#line 1744 "parser.tab.cpp"
+    break;
+
   case 24:
-#line 273 "parser.ypp"
+#line 281 "parser.ypp"
                                           {    std::string instr = codeGen->getInstruction((yyvsp[-1].cond)->index); /* if EQ there are two jumps */
                                                long long int firstLine = repeatStack.top();
                                                repeatStack.pop();
@@ -1749,11 +1757,11 @@ yyreduce:
                                                    codeGen->changeInstruction((yyvsp[-1].cond)->index - 1, instr);
                                                }
                                            }
-#line 1753 "parser.tab.cpp"
+#line 1761 "parser.tab.cpp"
     break;
 
   case 25:
-#line 286 "parser.ypp"
+#line 294 "parser.ypp"
                                                   { // push first instruction to stack
                                                     // allocate iterator variable
                                                      Variable* var = codeGen->allocateIterator(*(yyvsp[-4].pidentifier));
@@ -1771,11 +1779,11 @@ yyreduce:
                                                      forModifyStack.push(modify);
                                                      forStack.push(var);
                                                    }
-#line 1775 "parser.tab.cpp"
+#line 1783 "parser.tab.cpp"
     break;
 
   case 26:
-#line 303 "parser.ypp"
+#line 311 "parser.ypp"
                                 {   Variable* var = forStack.top();
                                     forStack.pop();
                                     long long int modify = forModifyStack.top();
@@ -1790,11 +1798,11 @@ yyreduce:
                                     //codeGen->eraseVariable(var->name);
                                     codeGen->restoreVariable(var->name);
                                 }
-#line 1794 "parser.tab.cpp"
+#line 1802 "parser.tab.cpp"
     break;
 
   case 27:
-#line 318 "parser.ypp"
+#line 326 "parser.ypp"
                                                        { // push first instruction to stack
                                                                // allocate iterator variable
                                                                 Variable* var = codeGen->allocateIterator(*(yyvsp[-4].pidentifier));
@@ -1812,11 +1820,11 @@ yyreduce:
                                                                 forModifyStack.push(modify);
                                                                 forStack.push(var);
                                                               }
-#line 1816 "parser.tab.cpp"
+#line 1824 "parser.tab.cpp"
     break;
 
   case 28:
-#line 335 "parser.ypp"
+#line 343 "parser.ypp"
                                            {   Variable* var = forStack.top();
                                                forStack.pop();
                                                long long int modify = forModifyStack.top();
@@ -1832,83 +1840,83 @@ yyreduce:
                                                codeGen->restoreVariable(var->name);
 
                                            }
-#line 1836 "parser.tab.cpp"
+#line 1844 "parser.tab.cpp"
     break;
 
   case 29:
-#line 354 "parser.ypp"
+#line 362 "parser.ypp"
                                { codeGen->loadVar((yyvsp[0].var)); }
-#line 1842 "parser.tab.cpp"
+#line 1850 "parser.tab.cpp"
     break;
 
   case 30:
-#line 355 "parser.ypp"
+#line 363 "parser.ypp"
                                { codeGen->add((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1848 "parser.tab.cpp"
+#line 1856 "parser.tab.cpp"
     break;
 
   case 31:
-#line 356 "parser.ypp"
+#line 364 "parser.ypp"
                                 { codeGen->subtract((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1854 "parser.tab.cpp"
+#line 1862 "parser.tab.cpp"
     break;
 
   case 32:
-#line 357 "parser.ypp"
+#line 365 "parser.ypp"
                                 { codeGen->multiply((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1860 "parser.tab.cpp"
+#line 1868 "parser.tab.cpp"
     break;
 
   case 33:
-#line 358 "parser.ypp"
+#line 366 "parser.ypp"
                                 { codeGen->divide((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1866 "parser.tab.cpp"
+#line 1874 "parser.tab.cpp"
     break;
 
   case 34:
-#line 359 "parser.ypp"
+#line 367 "parser.ypp"
                                 { codeGen->modulo((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1872 "parser.tab.cpp"
+#line 1880 "parser.tab.cpp"
     break;
 
   case 35:
-#line 361 "parser.ypp"
+#line 369 "parser.ypp"
                             { (yyval.cond) = codeGen->evalNotEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1878 "parser.tab.cpp"
+#line 1886 "parser.tab.cpp"
     break;
 
   case 36:
-#line 362 "parser.ypp"
+#line 370 "parser.ypp"
                              { (yyval.cond) = codeGen->evalEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1884 "parser.tab.cpp"
+#line 1892 "parser.tab.cpp"
     break;
 
   case 37:
-#line 363 "parser.ypp"
+#line 371 "parser.ypp"
                              { (yyval.cond) = codeGen->evalLess((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1890 "parser.tab.cpp"
+#line 1898 "parser.tab.cpp"
     break;
 
   case 38:
-#line 364 "parser.ypp"
+#line 372 "parser.ypp"
                              { (yyval.cond) = codeGen->evalGreater((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1896 "parser.tab.cpp"
+#line 1904 "parser.tab.cpp"
     break;
 
   case 39:
-#line 365 "parser.ypp"
+#line 373 "parser.ypp"
                               { (yyval.cond) = codeGen->evalLessEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1902 "parser.tab.cpp"
+#line 1910 "parser.tab.cpp"
     break;
 
   case 40:
-#line 366 "parser.ypp"
+#line 374 "parser.ypp"
                               { (yyval.cond) = codeGen->evalGreaterEqual((yyvsp[-2].var), (yyvsp[0].var)); }
-#line 1908 "parser.tab.cpp"
+#line 1916 "parser.tab.cpp"
     break;
 
   case 41:
-#line 368 "parser.ypp"
+#line 376 "parser.ypp"
                        { (yyval.var) = (yyvsp[0].var);
                          if ((yyvsp[0].var) != nullptr && (yyvsp[0].var)->isVariable && !(yyvsp[0].var)->isInit && !error) {
                             error = true;
@@ -1916,23 +1924,23 @@ yyreduce:
                             YYABORT;
                          }
                         }
-#line 1920 "parser.tab.cpp"
+#line 1928 "parser.tab.cpp"
     break;
 
   case 42:
-#line 375 "parser.ypp"
+#line 383 "parser.ypp"
                   { (yyval.var) = codeGen->allocateConstant((yyvsp[0].num));  }
-#line 1926 "parser.tab.cpp"
+#line 1934 "parser.tab.cpp"
     break;
 
   case 43:
-#line 376 "parser.ypp"
+#line 384 "parser.ypp"
                       { (yyval.var) = codeGen->allocateConstantNegate((yyvsp[0].num)); }
-#line 1932 "parser.tab.cpp"
+#line 1940 "parser.tab.cpp"
     break;
 
   case 44:
-#line 378 "parser.ypp"
+#line 386 "parser.ypp"
                             { Variable* var = codeGen->getVar(*(yyvsp[0].pidentifier));
                                 if (var == nullptr && !error) {
                                     error = true;
@@ -1948,11 +1956,11 @@ yyreduce:
                                     (yyval.var) = var;
                                  }
                             }
-#line 1952 "parser.tab.cpp"
+#line 1960 "parser.tab.cpp"
     break;
 
   case 45:
-#line 393 "parser.ypp"
+#line 401 "parser.ypp"
                                        {  Variable* var = codeGen->getVar(*(yyvsp[-3].pidentifier)); // first index of table
                                           if (var == nullptr && !error) {
                                                 yyerror("Variable " + *(yyvsp[-3].pidentifier) + " not defined");
@@ -1975,11 +1983,11 @@ yyreduce:
                                             }
                                           }
                                         }
-#line 1979 "parser.tab.cpp"
+#line 1987 "parser.tab.cpp"
     break;
 
   case 46:
-#line 415 "parser.ypp"
+#line 423 "parser.ypp"
                                           {  Variable* var = codeGen->getVar(*(yyvsp[-4].pidentifier)); // first index of table
                                             if (var == nullptr && !error) {
                                                   yyerror("Variable " + *(yyvsp[-4].pidentifier) + " not defined");
@@ -2002,11 +2010,11 @@ yyreduce:
                                               }
                                             }
                                           }
-#line 2006 "parser.tab.cpp"
+#line 2014 "parser.tab.cpp"
     break;
 
   case 47:
-#line 437 "parser.ypp"
+#line 445 "parser.ypp"
                                                 { // make new object variable with address of array and addres of variable
                                                      Variable* arr = codeGen->getVar(*(yyvsp[-3].pidentifier)); // first index of table
                                                      Variable* var = codeGen->getVar(*(yyvsp[-1].pidentifier)); // variable which is index of array now
@@ -2040,11 +2048,11 @@ yyreduce:
 
                                                      }
                                                 }
-#line 2044 "parser.tab.cpp"
+#line 2052 "parser.tab.cpp"
     break;
 
 
-#line 2048 "parser.tab.cpp"
+#line 2056 "parser.tab.cpp"
 
       default: break;
     }
@@ -2276,7 +2284,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 471 "parser.ypp"
+#line 479 "parser.ypp"
 
 
 int yyerror (std::string s) {

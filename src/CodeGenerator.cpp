@@ -384,6 +384,17 @@ bool CodeGenerator::loadVar(Variable* var) {
 
 // result in register a; if not equal then it shan't be zero
 Cond* CodeGenerator::evalNotEqual(Variable* var1, Variable* var2) {
+    if (var1->isConstant && var2->isConstant) {
+        if (var1->val != var2->val) {
+            // always true, don't jump
+            Cond* c = new Cond(-1, "TRUE");
+            return c;
+        } else if (var1->val == var2->val) {
+            // always false, just jump
+            Cond* c = new Cond(addInstruction("JUMP "), "FALSE");
+            return c;
+        }
+    }
     long long int first = offset + 1;
     makeConstant(var2->address);
     if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
@@ -445,6 +456,17 @@ Cond* CodeGenerator::evalNotEqual(Variable* var1, Variable* var2) {
 }
 
 Cond* CodeGenerator::evalEqual(Variable* var1, Variable* var2) {
+    if (var1->isConstant && var2->isConstant) {
+        if (var1->val == var2->val) {
+            // always true, don't jump
+            Cond* c = new Cond(-1, "TRUE");
+            return c;
+        } else if (var1->val != var2->val) {
+            // always false, just jump
+            Cond* c = new Cond(addInstruction("JUMP "), "FALSE");
+            return c;
+        }
+    }
     long long int first = offset + 1;
     makeConstant(var2->address);
     if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
@@ -507,6 +529,17 @@ Cond* CodeGenerator::evalEqual(Variable* var1, Variable* var2) {
 }
 
 Cond* CodeGenerator::evalLess(Variable* var1, Variable* var2) {
+    if (var1->isConstant && var2->isConstant) {
+        if (var1->val < var2->val) {
+            // always true, don't jump
+            Cond* c = new Cond(-1, "TRUE");
+            return c;
+        } else {
+            // always false, just jump
+            Cond* c = new Cond(addInstruction("JUMP "), "FALSE");
+            return c;
+        }
+    }
     long long int first = offset + 1;
     makeConstant(var2->address);
     if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
@@ -569,6 +602,17 @@ Cond* CodeGenerator::evalLess(Variable* var1, Variable* var2) {
 }
 
 Cond* CodeGenerator::evalLessEqual(Variable* var1, Variable* var2) {
+    if (var1->isConstant && var2->isConstant) {
+        if (var1->val <= var2->val) {
+            // always true, don't jump
+            Cond* c = new Cond(-1, "TRUE");
+            return c;
+        } else {
+            // always false, just jump
+            Cond* c = new Cond(addInstruction("JUMP "), "FALSE");
+            return c;
+        }
+    }
     long long int first = offset + 1;
     makeConstant(var2->address);
 
@@ -631,6 +675,17 @@ Cond* CodeGenerator::evalLessEqual(Variable* var1, Variable* var2) {
 }
 
 Cond* CodeGenerator::evalGreater(Variable* var1, Variable* var2) {
+    if (var1->isConstant && var2->isConstant) {
+        if (var1->val > var2->val) {
+            // always true, don't jump
+            Cond* c = new Cond(-1, "TRUE");
+            return c;
+        } else {
+            // always false, just jump
+            Cond* c = new Cond(addInstruction("JUMP "), "FALSE");
+            return c;
+        }
+    }
     long long int first = offset + 1;
   //  std::cout<<first<< " " << code[offset - 1] << std::endl;
     makeConstant(var2->address);
@@ -695,6 +750,17 @@ Cond* CodeGenerator::evalGreater(Variable* var1, Variable* var2) {
 }
 
 Cond* CodeGenerator::evalGreaterEqual(Variable* var1, Variable* var2) {
+    if (var1->isConstant && var2->isConstant) {
+        if (var1->val >= var2->val) {
+            // always true, don't jump
+            Cond* c = new Cond(-1, "TRUE");
+            return c;
+        } else {
+            // always false, just jump
+            Cond* c = new Cond(addInstruction("JUMP "), "FALSE");
+            return c;
+        }
+    }
     long long int first = offset + 1;
     makeConstant(var2->address);
     if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
@@ -844,7 +910,7 @@ bool CodeGenerator::add(Variable* var1, Variable* var2) {
     if (var1 != nullptr && var2 != nullptr) {
         if (var1->isConstant && var2->isConstant) {
             makeConstant(var1->val + var2->val);
-        } else if (var2->isConstant && !var1->isConstant && (var2->val == 0 || var2->val == 1 || var2->val == -1)) { // TODO mozna zrobic tez dla tab;ic
+        } else if (var2->isConstant && !var1->isConstant && (var2->val == 0 || var2->val == 1 || var2->val == -1)) {
             makeConstant(var1->address); // in a
             if (var1->isArray && var1->isArrayWithVar) { // in register c address of first element in array
                 addInstruction("SWAP c");
@@ -877,7 +943,7 @@ bool CodeGenerator::add(Variable* var1, Variable* var2) {
                 addInstruction("DEC a");
             }
             return true;
-        } else if (var1->isConstant && !var2->isConstant && (var1->val == 0 || var1->val == 1 || var1->val == -1)) { // TODO mozna zrobic tez dla tab;ic
+        } else if (var1->isConstant && !var2->isConstant && (var1->val == 0 || var1->val == 1 || var1->val == -1)) {
             makeConstant(var2->address); // in a
             if (var2->isArray && var2->isArrayWithVar) { // in register c address of first element in array
                 addInstruction("SWAP c");
@@ -1359,7 +1425,6 @@ bool CodeGenerator::multiply(Variable* var1, Variable* var2) {
 
 // result in register a
 bool CodeGenerator::divide(Variable* var1, Variable* var2) {
-    // TODO  poteg 2 mozna pomylslec zeby tylko byly shifty
     if (var1 != nullptr && var2 != nullptr) {
         if (var1->isConstant && var2->isConstant) {
             if (var2->val == 0 || var1->val == 0) {

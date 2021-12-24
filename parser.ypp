@@ -232,26 +232,34 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                     }
 
             | IF condition THEN commands {  line = codeGen->addInstruction("JUMP "); // omit else, edit later
-                                            std::string instr = codeGen->getInstruction($2->index);
-                                            instr = instr + std::to_string(codeGen->offset - $2->index);
-                                            codeGen->changeInstruction($2->index, instr); // go to else
-                                            if ($2->type == "EQ" || $2->type == "LE" || $2->type == "GE") {
-                                                instr = codeGen->getInstruction($2->index - 1);
-                                                instr = instr + std::to_string(codeGen->offset - $2->index + 1);
-                                                codeGen->changeInstruction($2->index - 1, instr);
+                                            if ($2->index != -1 && $2->type != "TRUE") { // if condition isn't always true
+                                                std::string instr = codeGen->getInstruction($2->index);
+                                                instr = instr + std::to_string(codeGen->offset - $2->index);
+                                                codeGen->changeInstruction($2->index, instr); // go to else
+                                                if ($2->type == "EQ" || $2->type == "LE" || $2->type == "GE") {
+                                                    instr = codeGen->getInstruction($2->index - 1);
+                                                    instr = instr + std::to_string(codeGen->offset - $2->index + 1);
+                                                    codeGen->changeInstruction($2->index - 1, instr);
+                                                }
                                             }
                                           }
               ELSE commands ENDIF        {  std::string instr = "JUMP " + std::to_string(codeGen->offset - line);
-                                            codeGen->changeInstruction(line, instr); // edit instr from first block, jump adter else
+                                            codeGen->changeInstruction(line, instr); // edit instr from first block, jump after else
                                          }
 
-            | IF condition THEN commands ENDIF {  std::string instr = codeGen->getInstruction($2->index); /* if EQ there are two jumps */
-                                                    instr = instr + std::to_string(codeGen->offset - $2->index);
-                                                    codeGen->changeInstruction($2->index, instr);
-                                                    if ($2->type == "EQ" || $2->type == "LE" || $2->type == "GE") {
-                                                        instr = codeGen->getInstruction($2->index - 1);
-                                                        instr = instr + std::to_string(codeGen->offset - $2->index + 1);
-                                                        codeGen->changeInstruction($2->index - 1, instr);
+            | IF condition THEN commands ENDIF {    if ($2->type == "FALSE") { // condition always false, just jump
+                                                        std::string instr = codeGen->getInstruction($2->index);
+                                                        instr = instr + std::to_string(codeGen->offset - $2->index);
+                                                        codeGen->changeInstruction($2->index, instr);
+                                                    } else if ($2->index != -1 && $2->type != "TRUE") { // if condition is always true then don't add any jump
+                                                        std::string instr = codeGen->getInstruction($2->index); /* if EQ there are two jumps */
+                                                        instr = instr + std::to_string(codeGen->offset - $2->index);
+                                                        codeGen->changeInstruction($2->index, instr);
+                                                        if ($2->type == "EQ" || $2->type == "LE" || $2->type == "GE") {
+                                                            instr = codeGen->getInstruction($2->index - 1);
+                                                            instr = instr + std::to_string(codeGen->offset - $2->index + 1);
+                                                            codeGen->changeInstruction($2->index - 1, instr);
+                                                        }
                                                     }
                                                 }
 
