@@ -42,12 +42,13 @@ public:
     Cond* evalLessEqual(Variable* var1, Variable* var2);
     Cond* evalGreater(Variable* var1, Variable* var2);
     Cond* evalGreaterEqual(Variable* var1, Variable* var2);
-    long long int generateFor(Variable* iterator, Variable* to, bool isDown);
+    long long int generateFor(Variable* iterator, Variable* from, Variable* to, bool isDown);
     bool initializeIterator(Variable* iterator, Variable* from, Variable* to);
     bool modifyIterator(Variable* iterator, bool isDown);
     bool restoreVariable(std::string name);
-private:
+    bool unwindLoop(long long int then, Variable* iterator);
     std::vector<std::string> code;
+private:
     std::shared_ptr<MemoryData> memo;
 };
 #endif //KOMPILATOR_CODEGENERATOR_HPP

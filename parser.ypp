@@ -304,7 +304,7 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                                      long long int now = codeGen->offset;
                                                      forNowStack.push(now);
                                                      // generate code
-                                                     long long int modify = codeGen->generateFor(var, $6, false);
+                                                     long long int modify = codeGen->generateFor(var, $4 , $6, false);
                                                      forModifyStack.push(modify);
                                                      forStack.push(var);
                                                    }
@@ -315,10 +315,15 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                     long long int now = forNowStack.top();
                                     forNowStack.pop();
                                     codeGen->modifyIterator(var, false);
-                                    codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - now)));
-                                    std::string instr = codeGen->getInstruction(modify);
-                                    instr = instr + std::to_string((codeGen->offset - modify));
-                                    codeGen->changeInstruction(modify, instr);
+                                    if (modify != -1) {
+                                        codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - now)));
+                                        std::string instr = codeGen->getInstruction(modify);
+                                        instr = instr + std::to_string((codeGen->offset - modify));
+                                        codeGen->changeInstruction(modify, instr);
+                                    } else {
+                                          // copy commands from index now to code->offset
+                                          codeGen->unwindLoop(now, var);
+                                    }
                                     //codeGen->eraseVariable(var->name);
                                     codeGen->restoreVariable(var->name);
                                 }
@@ -336,7 +341,8 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                                                 long long int now = codeGen->offset;
                                                                 forNowStack.push(now);
                                                                 // generate code
-                                                                long long int modify = codeGen->generateFor(var, $6, true);
+                                                                long long int modify = codeGen->generateFor(var, $4, $6, true);
+
                                                                 forModifyStack.push(modify);
                                                                 forStack.push(var);
                                                               }
@@ -347,10 +353,15 @@ command:    WRITE value';' { if (!codeGen->write($2) && !error) {
                                                long long int now = forNowStack.top();
                                                forNowStack.pop();
                                                codeGen->modifyIterator(var, true);
-                                               codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - now)));
-                                               std::string instr = codeGen->getInstruction(modify);
-                                               instr = instr + std::to_string((codeGen->offset - modify));
-                                               codeGen->changeInstruction(modify, instr);
+                                               if (modify != -1) { // don't unwind
+                                                   codeGen->addInstruction("JUMP -" + std::to_string((codeGen->offset - now)));
+                                                   std::string instr = codeGen->getInstruction(modify);
+                                                   instr = instr + std::to_string((codeGen->offset - modify));
+                                                   codeGen->changeInstruction(modify, instr);
+                                               } else { // unwind loop, copy code
+                                                    // copy commands from index now to code->offset
+                                                    codeGen->unwindLoop(now, var);
+                                               }
                                                //codeGen->eraseVariable(var->name);
                                                codeGen->restoreVariable(var->name);
 

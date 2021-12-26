@@ -198,44 +198,67 @@ bool CodeGenerator::initializeIterator(Variable* iterator, Variable* from, Varia
     return true;
 }
 
-long long int CodeGenerator::generateFor(Variable* iterator, Variable* to, bool isDown) {
+long long int CodeGenerator::generateFor(Variable* iterator, Variable* from, Variable* to, bool isDown) {
+
     // load current iterator value
     makeConstant(iterator->address);
     addInstruction("LOAD a");
     addInstruction("SWAP c");
 
-    // load current value of end condition and save it
-    makeConstant(iterator->toIterator);
-    if (iterator->toIteratorVar->isArray && iterator->toIteratorVar->isArrayWithVar) { // in register c address of first element in array
-        addInstruction("SWAP d");
-        // load address of index
-        makeConstant(iterator->toIteratorVar->offsetStack.top());
-        iterator->toIteratorVar->offsetStack.pop();
-        // load value of this variable
+    if (from->isConstant && to->isConstant && std::abs(from->val - to->val) <= 7) { // loop unwinding
+        iterator->times = std::abs(from->val - to->val);
+        return -1;
+    } else {
+
+        // load current value of end condition and save it
+        makeConstant(iterator->toIterator);
+        if (iterator->toIteratorVar->isArray &&
+            iterator->toIteratorVar->isArrayWithVar) { // in register c address of first element in array
+            addInstruction("SWAP d");
+            // load address of index
+            makeConstant(iterator->toIteratorVar->offsetStack.top());
+            iterator->toIteratorVar->offsetStack.pop();
+            // load value of this variable
+            addInstruction("LOAD a");
+            // calculate offset in array (how many cells of memory to 'jump'
+            addInstruction("SWAP f"); // value of variable
+            long long int start = iterator->toIteratorVar->startArray;
+            if (start < 0) {
+                start = -start;
+            }
+            makeConstant(start); // has to be positive
+            addInstruction("SWAP f"); // in a value of var, in f start of array
+            if (iterator->toIteratorVar->startArray < 0) { // add
+                addInstruction("ADD f"); // index - (-start)
+            } else {
+                addInstruction("SUB f"); // index - start
+            }
+            // add address of array's first element
+            addInstruction("ADD d"); // index - start + address - this is address of element in array
+            // addInstruction("SWAP c"); // new address in register a
+        }
         addInstruction("LOAD a");
-        // calculate offset in array (how many cells of memory to 'jump'
-        addInstruction("SWAP f"); // value of variable
-        long long int start = iterator->toIteratorVar->startArray;
-        if (start < 0) {
-            start = -start;
+        addInstruction("SUB c");
+        if (isDown) {
+            return addInstruction("JPOS ");
         }
-        makeConstant(start); // has to be positive
-        addInstruction("SWAP f"); // in a value of var, in f start of array
-        if (iterator->toIteratorVar->startArray < 0) { // add
-            addInstruction("ADD f"); // index - (-start)
-        } else {
-            addInstruction("SUB f"); // index - start
+        return addInstruction("JNEG "); // modify later
+    }
+}
+
+bool CodeGenerator::unwindLoop(long long int then, Variable* iterator) {
+    // copy instruction from then to last instruction
+    int times = iterator->times;
+    long long int end = offset;
+    long long int start = then;
+    for (int i = 0; i < times; i++) {
+        start = then;
+        while (start < end) {
+            addInstruction(code[start]);
+            start++;
         }
-        // add address of array's first element
-        addInstruction("ADD d"); // index - start + address - this is address of element in array
-        // addInstruction("SWAP c"); // new address in register a
     }
-    addInstruction("LOAD a");
-    addInstruction("SUB c");
-    if (isDown) {
-        return addInstruction("JPOS ");
-    }
-    return addInstruction("JNEG "); // modify later
+    return true;
 }
 
 bool CodeGenerator::modifyIterator(Variable* iterator, bool isDown) {

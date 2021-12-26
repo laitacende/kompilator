@@ -24,5 +24,6 @@ public:
     long long int toIterator = 0; // address of variable in end condition in for loop
     std::stack<long long int> offsetStack;
     Variable* toIteratorVar;
+    int times = 0;
 };
 #endif //KOMPILATOR_VARIABLE_HPP
