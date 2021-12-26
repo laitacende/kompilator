@@ -1960,7 +1960,7 @@ yyreduce:
                                    // $$ = nullptr;
                                  } else if (!var->isVariable) {
                                     error = true;
-                                    yyerror("Improper use of array variable " + *(yyvsp[0].pidentifier));
+                                    yyerror("Invalid use of array variable " + *(yyvsp[0].pidentifier));
                                     YYABORT;
                                     //$$ = nullptr;
                                  } else {
@@ -1979,7 +1979,7 @@ yyreduce:
                                                 (yyval.var) = nullptr;
                                           } else if (!var->isArray) {
                                                 error = true;
-                                                yyerror("Improper use of variable " + *(yyvsp[-3].pidentifier));
+                                                yyerror("Invalid use of variable " + *(yyvsp[-3].pidentifier));
                                                 YYABORT;
                                                 //$$ = nullptr;
                                           } else {
@@ -2006,7 +2006,7 @@ yyreduce:
                                                   (yyval.var) = nullptr;
                                             } else if (!var->isArray) {
                                                   error = true;
-                                                  yyerror("Improper use of variable " + *(yyvsp[-4].pidentifier));
+                                                  yyerror("Invalid use of variable " + *(yyvsp[-4].pidentifier));
                                                   YYABORT;
                                                   //$$ = nullptr;
                                             } else {
@@ -2040,7 +2040,7 @@ yyreduce:
                                                             YYABORT;
                                                      } else if (!var->isVariable) {
                                                            error = true;
-                                                           yyerror("Improper use of variable " + *(yyvsp[-1].pidentifier));
+                                                           yyerror("Invalid use of variable " + *(yyvsp[-1].pidentifier));
                                                            YYABORT;
                                                      } else if (!var->isInit) {
                                                         error = true;
@@ -2048,7 +2048,7 @@ yyreduce:
                                                         YYABORT;
                                                      } else if (!arr->isArray) {
                                                         error = true;
-                                                        yyerror("Improper use of variable " + *(yyvsp[-3].pidentifier));
+                                                        yyerror("Invalid use of variable " + *(yyvsp[-3].pidentifier));
                                                         YYABORT;
                                                      } else { // add to arr offset which is address of var
 

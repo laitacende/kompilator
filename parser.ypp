@@ -402,7 +402,7 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                    // $$ = nullptr;
                                  } else if (!var->isVariable) {
                                     error = true;
-                                    yyerror("Improper use of array variable " + *$1);
+                                    yyerror("Invalid use of array variable " + *$1);
                                     YYABORT;
                                     //$$ = nullptr;
                                  } else {
@@ -416,7 +416,7 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                                 $$ = nullptr;
                                           } else if (!var->isArray) {
                                                 error = true;
-                                                yyerror("Improper use of variable " + *$1);
+                                                yyerror("Invalid use of variable " + *$1);
                                                 YYABORT;
                                                 //$$ = nullptr;
                                           } else {
@@ -438,7 +438,7 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                                   $$ = nullptr;
                                             } else if (!var->isArray) {
                                                   error = true;
-                                                  yyerror("Improper use of variable " + *$1);
+                                                  yyerror("Invalid use of variable " + *$1);
                                                   YYABORT;
                                                   //$$ = nullptr;
                                             } else {
@@ -467,7 +467,7 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                                             YYABORT;
                                                      } else if (!var->isVariable) {
                                                            error = true;
-                                                           yyerror("Improper use of variable " + *$3);
+                                                           yyerror("Invalid use of variable " + *$3);
                                                            YYABORT;
                                                      } else if (!var->isInit) {
                                                         error = true;
@@ -475,7 +475,7 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
                                                         YYABORT;
                                                      } else if (!arr->isArray) {
                                                         error = true;
-                                                        yyerror("Improper use of variable " + *$1);
+                                                        yyerror("Invalid use of variable " + *$1);
                                                         YYABORT;
                                                      } else { // add to arr offset which is address of var
 
