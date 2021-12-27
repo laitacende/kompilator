@@ -362,7 +362,7 @@ bool CodeGenerator::getConstant(std::string name) {
 
         return true;
     }
-    return false; // TODO handle errors
+    return false;
 }
 
 void CodeGenerator::changeInstruction(long long int index, std::string newInstruction) {
@@ -1613,19 +1613,19 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
         addInstruction("ADD c");
         addInstruction("SUB f"); // v2- v1
         addInstruction("JPOS 5");
-       // addInstruction("JNEG 5"); // skip this, ldivpre
+       // addInstruction("JNEG 5"); // skip this, block1
         addInstruction("SWAP c");
         addInstruction("SHIFT e");
         addInstruction("SWAP c");
         addInstruction("JUMP -7");
 
-        // ldivpre
+        // block1
         addInstruction("SWAP c");
         addInstruction("SHIFT h");
         addInstruction("SWAP c");
-        addInstruction("JUMP 16"); // ldivcond
+        addInstruction("JUMP 16"); // block4
 
-        // ldivp1
+        // block2
         addInstruction("SWAP f");
         addInstruction("SUB c");
         addInstruction("SWAP f");
@@ -1635,7 +1635,7 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
         addInstruction("INC a");
         addInstruction("SWAP d");
 
-        // ldivp2
+        // block3
         addInstruction("RESET a");
         addInstruction("ADD c");
         addInstruction("SUB b");
@@ -1645,16 +1645,16 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
         addInstruction("SHIFT h");
         addInstruction("SWAP c");
 
-        // ldivcond
+        // block4
         addInstruction("RESET a");
         addInstruction("ADD c");
         addInstruction("SUB f"); // v2 - v1 <=0
-        addInstruction("JZERO -18"); // ldivp1
-        addInstruction("JNEG -19"); // ldivp1
+        addInstruction("JZERO -18"); // block2
+        addInstruction("JNEG -19"); // block2
         addInstruction("SWAP d");
         addInstruction("SHIFT e");
         addInstruction("SWAP d");
-        addInstruction("JUMP -16"); // ldivp2
+        addInstruction("JUMP -16"); // block3
 
         long long int offset2 = addInstruction("SWAP g");
         addInstruction("JNEG 4"); // negate
@@ -1794,19 +1794,19 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         addInstruction("ADD c");
         addInstruction("SUB f"); // v2- v1
         addInstruction("JPOS 5");
-        // addInstruction("JNEG 5"); // skip this, ldivpre
+        // addInstruction("JNEG 5"); // skip this, block1
         addInstruction("SWAP c");
         addInstruction("SHIFT e");
         addInstruction("SWAP c");
         addInstruction("JUMP -7");
 
-        // ldivpre
+        // block1
         addInstruction("SWAP c");
         addInstruction("SHIFT h");
         addInstruction("SWAP c");
-        addInstruction("JUMP 16"); // ldivcond
+        addInstruction("JUMP 16"); // block4
 
-        // ldivp1
+        // block2
         addInstruction("SWAP f");
         addInstruction("SUB c");
         addInstruction("SWAP f");
@@ -1816,7 +1816,7 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         addInstruction("INC a");
         addInstruction("SWAP d");
 
-        // ldivp2
+        // block3
         addInstruction("RESET a");
         addInstruction("ADD c");
         addInstruction("SUB b");
@@ -1826,16 +1826,16 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         addInstruction("SHIFT h");
         addInstruction("SWAP c");
 
-        // ldivcond
+        // block4
         addInstruction("RESET a");
         addInstruction("ADD c");
         addInstruction("SUB f"); // v2 - v1 <=0
-        addInstruction("JZERO -18"); // ldivp1
-        addInstruction("JNEG -19"); // ldivp1
+        addInstruction("JZERO -18"); // block2
+        addInstruction("JNEG -19"); // block2
         addInstruction("SWAP d");
         addInstruction("SHIFT e");
         addInstruction("SWAP d");
-        addInstruction("JUMP -16"); // ldivp2
+        addInstruction("JUMP -16"); // block3
 
         long long int offset2 = addInstruction("SWAP g");
         addInstruction("JZERO 3"); // negate
