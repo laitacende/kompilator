@@ -1465,8 +1465,9 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
                         tmp2 = -tmp2;
                     }
                 }
-                makeConstant(tmp1 / tmp2);
+                makeConstant((tmp1 / tmp2));
                 if (negate) {
+                    addInstruction("INC a");
                     addInstruction("SWAP b");
                     addInstruction("RESET a");
                     addInstruction("SUB b");
@@ -1660,9 +1661,10 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
         addInstruction("JNEG 4"); // negate
         addInstruction("JPOS 3"); // negate
         addInstruction("SWAP d");
-        addInstruction("JUMP 3");
+        addInstruction("JUMP 4");
         addInstruction("RESET a");
         addInstruction("SUB d");
+        addInstruction("DEC a");
 
         changeInstruction(offset1, "JZERO " + std::to_string(offset2 - offset1));
 
@@ -1681,17 +1683,36 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
                 bool negate = false;
                 long long int tmp1 = var1->val;
                 long long int tmp2 = var2->val;
-                if (var2->val < 0) {
+                if (var2->val < 0 || var1->val < 0) {
                     negate = true;
+                    if (tmp1 < 0) {
+                        tmp1 = -tmp1;
+                    }
                     if (tmp2 < 0) {
                         tmp2 = -tmp2;
                     }
                 }
                 makeConstant(tmp1 % tmp2);
                 if (negate) {
-                    addInstruction("SWAP b");
-                    addInstruction("RESET a");
-                    addInstruction("SUB b");
+                    // if var1 negative and var2 positive = var2 - result (positive)
+                    // if var1 positive and var2 negative = -(var2-result)
+                    // if both negative result is just var1 % var2 but negative
+                    if ((var1->val < 0 && var2->val > 0) || (var1->val > 0 && var2->val < 0)) {
+                        // result in a
+                        addInstruction("SWAP c"); // result in b
+                        makeConstant(tmp2);
+                        addInstruction("SUB c");
+                        if (var1->val > 0 && var2->val < 0) {
+                            // negate
+                            addInstruction("SWAP b");
+                            addInstruction("RESET a");
+                            addInstruction("SUB b");
+                        }
+                    } else if (var1->val < 0 && var2->val < 0) {
+                        addInstruction("SWAP b");
+                        addInstruction("RESET a");
+                        addInstruction("SUB b");
+                    }
                 }
                 return true;
             }
@@ -1733,9 +1754,9 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         }
         addInstruction("LOAD a"); // value2 to a
         long long int offset1 = addInstruction("JZERO ");
+        addInstruction("RESET g");
         addInstruction("JPOS 5"); // if positive don't do this
-        // +1 to register d - negate result
-        addInstruction("DEC g"); // var2 was negative, if g == 0 then negate result
+        addInstruction("INC g"); // var2 was negative, g now is 1
         // make positive
         addInstruction("SWAP c"); // store in c, c == multiplier
         addInstruction("RESET a");
@@ -1769,9 +1790,16 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
             // addInstruction("SWAP c"); // new address in register a
         }
         addInstruction("LOAD a"); // a == val1
-        addInstruction("JPOS 4"); // var1  > 0
+        addInstruction("JPOS 10"); // var1  > 0
         addInstruction("SWAP f"); // f == val1
         // check if var1 is negative
+        addInstruction("RESET a");
+        addInstruction("ADD g"); // if g == 1 then it means var2 < 0
+        addInstruction("JZERO 3");
+        addInstruction("INC g"); // g == 2, var1 < 0 and var2 < 0
+        addInstruction("JUMP 2");
+        addInstruction("DEC g"); // g == -1, var1 < 0 and var2 > 0
+
         // make positive
         addInstruction("RESET a");
         addInstruction("SUB f");
@@ -1837,12 +1865,34 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         addInstruction("SWAP d");
         addInstruction("JUMP -16"); // block3
 
-        long long int offset2 = addInstruction("SWAP g");
-        addInstruction("JZERO 3"); // negate
-        addInstruction("SWAP f");
-        addInstruction("JUMP 3");
+        // if var1 negative and var2 positive = var2 - result (positive) (1)
+        // if var1 positive and var2 negative = -(var2-result) (2)
+        // if both negative result is just var1 % var2 but negative (3)
+        // g == 2 both neg (3)
+        // g == -1 var1 < 0, var2 > 0 (1)
+        // g == 1 var1 > 0, var2 < 0 (2)
+        long long int offset2 = addInstruction("RESET a");
+        addInstruction("ADD g");
+        addInstruction("JZERO 15"); // don't negate, to end (swap f)
+        addInstruction("DEC a"); // g==2-> g==1, g==1->g==0, g==-1->g==-2
+        addInstruction("JPOS 10"); // g==1 so previously g == 2, both neg
+        addInstruction("SWAP g"); // is g shifted
+        // var2-result, var2 in c g == -2
+        addInstruction("SWAP b"); // var2 in a
+        addInstruction("SUB f"); // var2-result
+        addInstruction("SWAP f"); // result
+        addInstruction("SWAP g");
+        // if var2 is neg, g == 0, negate the res
+        addInstruction("JNEG 7"); // to end (with swapping f)
+        // var2 < 0, negate it
         addInstruction("RESET a");
         addInstruction("SUB f");
+        addInstruction("JUMP 5"); // jump to end (without swapping f)
+        // both negative, negate res
+        addInstruction("RESET a");
+        addInstruction("SUB f");
+        addInstruction("JUMP 2");
+        addInstruction("SWAP f");
 
         changeInstruction(offset1, "JZERO " + std::to_string(offset2 - offset1));
 
