@@ -1887,14 +1887,15 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         // var2 < 0, negate it
         addInstruction("RESET a");
         addInstruction("SUB f");
-        addInstruction("JUMP 5"); // jump to end (without swapping f)
+        addInstruction("JUMP 7"); // jump to end (without swapping f)
         // both negative, negate res
         addInstruction("RESET a");
         addInstruction("SUB f");
         addInstruction("JUMP 2");
         addInstruction("SWAP f");
-
-        changeInstruction(offset1, "JZERO " + std::to_string(offset2 - offset1));
+        addInstruction("JUMP 2");
+        long long int offset3 = addInstruction("RESET a");
+        changeInstruction(offset1, "JZERO " + std::to_string(offset3 - offset1));
 
         return true;
     }
