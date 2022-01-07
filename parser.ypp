@@ -14,6 +14,7 @@
     extern int yylex();
     extern FILE *yyin;
 
+    int yyerror(std::string s, int off);
     int yyerror(std::string s);
 
     std::shared_ptr<MemoryData> dataController = std::make_shared<MemoryData>();
@@ -73,6 +74,7 @@
 %token <num> num
 %token <pidentifier> pidentifier
 %token ERROR
+%token <pidentifier> ERRORP
 
 %type <var> value
 %type <var> identifier
@@ -86,7 +88,7 @@ program:    VAR declarations BEGIN_ commands END
 declarations: declarations',' pidentifier { Variable* v = codeGen->allocateVariable(*$3);
                                              if (nullptr == v) {
                                                 error = true;
-                                                yyerror("Redefinition of variable " + *$3);
+                                                yyerror("Redeclaration of variable " + *$3, 1);
                                                 YYABORT;
                                              }
                                             }
@@ -202,6 +204,15 @@ declarations: declarations',' pidentifier { Variable* v = codeGen->allocateVaria
                                                                       YYABORT;
                                                                   }
                                                                }
+             | ERRORP {  error = true;
+                         yyerror("Invalid string " + *$1);
+                         YYABORT;
+                       }
+            | declarations','ERRORP { error = true;
+                                      yyerror("Invalid string " + *$3);
+                                      YYABORT;
+                                     }
+
 
 
 commands:   commands command
@@ -486,12 +497,17 @@ identifier:     pidentifier { Variable* var = codeGen->getVar(*$1);
 
                                                      }
                                                 }
-
 %%
 
-int yyerror (std::string s) {
+int yyerror(std::string s) {
     error = true;
     std::cerr << "Error: " << s << " in line " << yylineno << std::endl;
+    return 1;
+}
+
+int yyerror (std::string s, int off) {
+    error = true;
+    std::cerr << "Error: " << s << " in line " << yylineno - off << std::endl;
     return 1;
 }
 

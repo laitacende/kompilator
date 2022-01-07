@@ -16,7 +16,6 @@
 %x COMMENT
 
 %%
-
 \\\n            ; /* skip empty lines */
 [ \t]+          ;
 "("             { BEGIN(COMMENT); }
@@ -64,7 +63,9 @@
 "["         { return yytext[0]; }
 "]"         { return yytext[0]; }
 ":"         { return yytext[0]; }
-[_a-z]+     {  yylval.pidentifier = new std::string(yytext); return pidentifier; }
+[_a-z]+    {  yylval.pidentifier = new std::string(yytext); return pidentifier; }
+[0-9]*[_a-z]+[0-9]+ { yylval.pidentifier = new std::string(yytext); return ERRORP; }
+[0-9]+[_a-z]+[0-9]* { yylval.pidentifier = new std::string(yytext); return ERRORP; }
 \n          ;
 .           { return ERROR; }
 
