@@ -1028,7 +1028,7 @@ YY_RULE_SETUP
 case 37:
 YY_RULE_SETUP
 #line 59 "lex.l"
-{ yylval.num = atoi(yytext); return num; }
+{ yylval.num = std::stoll(yytext); return num; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP

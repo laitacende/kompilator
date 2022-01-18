@@ -56,7 +56,7 @@
 "TO"        { return TO; }
 "DOWNTO"    { return DOWNTO; }
 "ENDFOR"    { return  ENDFOR; }
-[0-9]+      { yylval.num = atoi(yytext); return num; }
+[0-9]+      { yylval.num = std::stoll(yytext); return num; }
 ";"         { return yytext[0]; }
 ","         { return yytext[0]; }
 "-"         { return yytext[0]; }

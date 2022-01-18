@@ -68,7 +68,7 @@ long long int CodeGenerator::makeConstant(long long int val) {
 
 Variable* CodeGenerator::allocateConstant(long long int value) {
     long long int address = memo->addConstant(value);
-    //if (address != -1) { // problem jak kod w ifie, wtedy stala ma zla wartosc, bo nie zostala obliczona
+    //if (address != -1) { /
        // addInstruction("( const alloc" + std::to_string(value) + " )");
         makeConstant(address);
         addInstruction("SWAP c");
@@ -280,7 +280,6 @@ bool CodeGenerator::modifyIterator(Variable* iterator, bool isDown) {
 }
 
 bool CodeGenerator::assignToVariable(Variable* var1, Variable* var2) {
-    // TODO mozna wczytywac do rejestrow,a nie sa dwa razy do pamieci odwolywac
     if (var1 != nullptr && var2 != nullptr) {
         var1->isInit = true;
         var1->val = var2->val;
