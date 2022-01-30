@@ -1876,6 +1876,9 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         // g == -1 var1 < 0, var2 > 0 (1)
         // g == 1 var1 > 0, var2 < 0 (2)
         long long int offset2 = addInstruction("RESET a");
+        addInstruction("ADD f");
+        long long int offset0 = addInstruction("JZERO 21"); // to end
+        addInstruction("RESET a");
         addInstruction("ADD g");
         addInstruction("JZERO 15"); // don't negate, to end (swap f)
         addInstruction("DEC a"); // g==2-> g==1, g==1->g==0, g==-1->g==-2
@@ -1900,6 +1903,7 @@ bool CodeGenerator::modulo(Variable* var1, Variable* var2) {
         addInstruction("JUMP 2");
         long long int offset3 = addInstruction("RESET a");
         changeInstruction(offset1, "JZERO " + std::to_string(offset3 - offset1));
+       // changeInstruction(offset0, "JZERO " + std::to_string(offset3));
 
         return true;
     }

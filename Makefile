@@ -1,6 +1,6 @@
 # Makefile
 
-FLAGS = -W -pedantic -std=c++17 -O3
+FLAGS = -W -pedantic -std=c++17
 
 .PHONY = all clean cleanall
 
