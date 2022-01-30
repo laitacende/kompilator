@@ -1657,13 +1657,18 @@ bool CodeGenerator::divide(Variable* var1, Variable* var2) {
         addInstruction("JUMP -16"); // block3
 
         long long int offset2 = addInstruction("SWAP g");
-        addInstruction("JNEG 4"); // negate
-        addInstruction("JPOS 3"); // negate
-        addInstruction("SWAP d");
-        addInstruction("JUMP 4");
+        addInstruction("JNEG 3"); // negate
+        addInstruction("JPOS 2"); // negate
+        //addInstruction("SWAP d");
+        addInstruction("JUMP 7");
         addInstruction("RESET a");
-        addInstruction("SUB d");
-        addInstruction("DEC a");
+        addInstruction("SUB d"); // in f is remainder
+        addInstruction("SWAP d"); // in d result
+        addInstruction("SWAP f"); // remainder
+        addInstruction("JZERO 2"); // don't subtract 1
+        addInstruction("DEC d");
+        addInstruction("SWAP d");
+      //  addInstruction("DEC a"); // check if remainder is 0 if it is then don't substract
 
         changeInstruction(offset1, "JZERO " + std::to_string(offset2 - offset1));
 
