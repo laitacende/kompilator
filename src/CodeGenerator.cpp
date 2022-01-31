@@ -117,7 +117,7 @@ Variable* CodeGenerator::allocateIterator(std::string name) {
         memo->eraseVariable(name);
         memo->addVariable(name);
     }
-    Variable* var = memo->getVar(name); // TODO INIT ITERATOR WITH CORRECT VALUE
+    Variable* var = memo->getVar(name);
     var->isIterator = true;
     var->isInit = true;
     return var;
