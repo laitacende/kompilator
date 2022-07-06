@@ -7,7 +7,7 @@
 
 #include "MemoryData.hpp"
 #include "Cond.hpp"
-
+// Class which generates code in assembly
 class CodeGenerator {
 public:
     CodeGenerator(std::shared_ptr<MemoryData> controller);
